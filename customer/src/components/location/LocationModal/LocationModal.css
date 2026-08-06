@@ -1,0 +1,191 @@
+.location-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at top, var(--color-gold-soft), transparent 42%),
+    rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  animation: fade-in 0.35s var(--ease-out) both;
+}
+
+.location-modal__panel {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: min(82vh, 580px);
+  overflow-y: auto;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1rem 1rem 1.05rem;
+  box-shadow: var(--shadow-lift);
+  animation: soft-scale 0.4s var(--ease-out) both;
+}
+
+.location-modal__close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.6rem;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-heading);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.location-modal__close:hover {
+  border-color: var(--color-gold-deep);
+  color: var(--color-gold-bright);
+  background: var(--color-gold-soft);
+}
+
+.location-modal__head {
+  margin-bottom: 0.75rem;
+}
+
+.location-modal__eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gold-bright);
+}
+
+.location-modal__head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.location-modal__head p {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+}
+
+.location-modal__modes {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-bg);
+  margin-bottom: 0.65rem;
+}
+
+.location-modal__modes button {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-button);
+  padding: 0.32rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.location-modal__modes button.is-active {
+  background: var(--color-gold-soft);
+  color: var(--color-gold-bright);
+}
+
+.location-modal__gps,
+.location-modal__confirm,
+.location-modal__manual button {
+  width: 100%;
+}
+
+.location-modal__gps {
+  margin-bottom: 0.7rem;
+}
+
+.location-modal__gps:disabled,
+.location-modal__confirm:disabled,
+.location-modal__manual button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.location-modal__map-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.location-modal__selected {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.location-modal__selected strong {
+  color: var(--color-heading);
+  font-weight: 500;
+}
+
+.location-modal__manual {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.location-modal__manual label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.location-modal__manual textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 72px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-heading);
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.location-modal__manual textarea:focus {
+  outline: none;
+  border-color: var(--color-gold-deep);
+  box-shadow: 0 0 0 3px var(--color-gold-soft);
+}
+
+.location-modal__error {
+  margin: 0.85rem 0 0;
+  color: #d98989;
+  font-size: 0.88rem;
+}
+
+.location-modal__error--blocked {
+  padding: 0.7rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(217, 137, 137, 0.35);
+  background: rgba(217, 137, 137, 0.1);
+  font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .location-modal__panel {
+    width: min(360px, 100%);
+    padding: 0.9rem 0.85rem 0.95rem;
+  }
+
+  .location-map__canvas {
+    height: 170px;
+  }
+}

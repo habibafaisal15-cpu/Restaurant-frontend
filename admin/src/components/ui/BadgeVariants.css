@@ -1,0 +1,49 @@
+.status-badge--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.status-badge--info {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.status-badge--copper {
+  background: var(--copper-glow);
+  color: var(--copper-light);
+}
+
+.status-badge--success {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.status-badge--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.status-badge--default {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.channel-badge--online {
+  background: rgba(90, 143, 196, 0.15);
+  color: var(--online);
+}
+
+.channel-badge--dine-in {
+  background: var(--copper-glow);
+  color: var(--copper-light);
+}
+
+.channel-badge--takeaway {
+  background: var(--success-bg);
+  color: var(--takeaway);
+}
+
+.channel-badge--walkin {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}

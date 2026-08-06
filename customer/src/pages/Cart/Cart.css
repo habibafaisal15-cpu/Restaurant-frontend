@@ -1,0 +1,201 @@
+.cart-page {
+  width: 100%;
+  min-height: 60vh;
+  padding: 0.85rem var(--chrome-gutter) 3rem;
+  box-sizing: border-box;
+}
+
+.cart-page__top {
+  width: 100%;
+  max-width: calc(var(--max-width) + 340px);
+  margin: 0 auto 1.35rem;
+}
+
+.cart-page__shell {
+  width: 100%;
+  max-width: calc(var(--max-width) + 340px);
+  margin: 0 auto;
+}
+
+.cart-page__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 48px;
+  padding: 0.3rem 0.85rem 0.3rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+[data-theme='night'] .cart-page__pill {
+  background: rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+[data-theme='day'] .cart-page__pill {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: color-mix(in srgb, var(--color-gold) 40%, var(--color-border));
+}
+
+.cart-page__icon {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-heading);
+  text-decoration: none;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cart-page__icon:hover {
+  background: var(--color-gold-soft);
+}
+
+[data-theme='day'] .cart-page__icon:hover {
+  color: var(--color-gold-bright);
+}
+
+.cart-page__icon--burger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.cart-page__icon--burger span {
+  display: block;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+
+.cart-page__divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 0.15rem;
+  background: color-mix(in srgb, var(--color-heading) 18%, transparent);
+}
+
+.cart-page__title {
+  margin: 0;
+  padding-right: 0.35rem;
+  font-size: var(--chrome-title-size);
+  letter-spacing: var(--chrome-title-track);
+  color: var(--color-heading);
+  display: inline-flex;
+  align-items: center;
+}
+
+[data-theme='day'] .cart-page__title {
+  color: var(--color-gold-bright);
+}
+
+.cart-page__shell .order-roadmap {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.cart-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.75fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.cart-page__aside {
+  position: sticky;
+  top: 1rem;
+}
+
+.cart-page__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 1.3rem;
+  border-radius: 22px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-elevated) 88%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+[data-theme='night'] .cart-page__actions {
+  background: rgba(0, 0, 0, 0.45);
+  border-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+[data-theme='day'] .cart-page__actions {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: color-mix(in srgb, var(--color-gold) 30%, var(--color-border));
+}
+
+.cart-page__total {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cart-page__total span {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.cart-page__total strong {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 500;
+  color: var(--color-heading);
+}
+
+[data-theme='day'] .cart-page__total strong {
+  color: var(--color-gold-bright);
+}
+
+.cart-page__note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.cart-page__checkout {
+  width: 100%;
+}
+
+.cart-page__checkout--ghost {
+  display: inline-flex;
+}
+
+@media (max-width: 860px) {
+  .cart-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-page__aside {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .cart-page {
+    padding: 0.75rem var(--chrome-gutter-mobile) 2.5rem;
+  }
+
+  .cart-page__title {
+    font-size: 1.15rem;
+    letter-spacing: 0.1em;
+  }
+}

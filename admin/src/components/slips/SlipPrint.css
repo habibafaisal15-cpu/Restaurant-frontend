@@ -1,0 +1,264 @@
+/* Slip preview shell */
+.slip-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.slip-preview__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.slip-preview__toolbar-left,
+.slip-preview__toolbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slip-preview__size-toggle {
+  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.slip-preview__size-btn {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.slip-preview__size-btn.active {
+  background: var(--copper);
+  color: #fff;
+}
+
+.slip-preview__viewport {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  overflow: auto;
+}
+
+/* Thermal 80mm slip */
+.slip-print-area {
+  background: #fff;
+  color: #111;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  line-height: 1.45;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.slip-print-area--thermal {
+  width: 80mm;
+  max-width: 80mm;
+  padding: 4mm 3mm;
+}
+
+.slip-print-area--a4 {
+  width: 210mm;
+  max-width: 210mm;
+  min-height: 148mm;
+  padding: 12mm;
+  font-size: 12px;
+}
+
+.slip__logo {
+  display: block;
+  max-width: 48mm;
+  max-height: 18mm;
+  margin: 0 auto 3mm;
+  object-fit: contain;
+}
+
+.slip__header {
+  text-align: center;
+  margin-bottom: 3mm;
+}
+
+.slip__name {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slip-print-area--a4 .slip__name {
+  font-size: 18px;
+}
+
+.slip__meta {
+  font-size: 10px;
+  color: #444;
+  margin-top: 1mm;
+}
+
+.slip__divider {
+  border: none;
+  border-top: 1px dashed #999;
+  margin: 2.5mm 0;
+}
+
+.slip__divider--solid {
+  border-top-style: solid;
+}
+
+.slip__title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 2mm;
+}
+
+.slip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 2mm;
+  margin-bottom: 1mm;
+}
+
+.slip__row--bold {
+  font-weight: 700;
+}
+
+.slip__label {
+  color: #555;
+  flex-shrink: 0;
+}
+
+.slip__value {
+  text-align: right;
+  word-break: break-word;
+}
+
+.slip__items {
+  margin: 2mm 0;
+}
+
+.slip__item {
+  margin-bottom: 2.5mm;
+}
+
+.slip__item-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 2mm;
+  font-weight: 600;
+}
+
+.slip__item-qty {
+  flex-shrink: 0;
+}
+
+.slip__item-name {
+  flex: 1;
+}
+
+.slip__item-price {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.slip__item-mod,
+.slip__item-note {
+  padding-left: 4mm;
+  font-size: 10px;
+  color: #555;
+}
+
+.slip__totals {
+  margin-top: 2mm;
+}
+
+.slip__total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1mm;
+}
+
+.slip__total-row--grand {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 2mm;
+  padding-top: 2mm;
+  border-top: 1px solid #333;
+}
+
+.slip__footer {
+  text-align: center;
+  font-size: 10px;
+  color: #555;
+  margin-top: 3mm;
+}
+
+.slip__kitchen-badge {
+  display: inline-block;
+  border: 2px solid #111;
+  padding: 1mm 3mm;
+  font-weight: 700;
+  font-size: 11px;
+  margin-bottom: 2mm;
+}
+
+.slip__delivery-box {
+  border: 1px solid #333;
+  padding: 2mm;
+  margin: 2mm 0;
+}
+
+.slip__address {
+  font-weight: 600;
+  white-space: pre-line;
+}
+
+.slip__barcode-placeholder {
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 3px;
+  margin: 3mm 0 1mm;
+  font-family: 'Libre Barcode 39', monospace;
+}
+
+/* Print overrides */
+@media print {
+  .slip-preview__toolbar,
+  .slip-preview__size-toggle {
+    display: none !important;
+  }
+
+  .slip-preview__viewport {
+    padding: 0;
+    background: none;
+    border: none;
+  }
+
+  .slip-print-area {
+    box-shadow: none;
+  }
+
+  .slip-print-area--thermal {
+    width: 80mm;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .slip-print-area--thermal {
+    width: 100%;
+    max-width: 100%;
+  }
+}

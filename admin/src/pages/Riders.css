@@ -1,0 +1,151 @@
+.riders-page .riders-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.riders-stat-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.riders-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--text-muted);
+  opacity: 0.4;
+}
+
+.riders-stat-card--success::before { background: var(--success); opacity: 1; }
+.riders-stat-card--warning::before { background: var(--warning); opacity: 1; }
+.riders-stat-card--copper::before { background: var(--copper); opacity: 1; }
+
+.riders-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.riders-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.riders-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.riders-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--copper-glow);
+  color: var(--copper-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.riders-name {
+  font-weight: 500;
+}
+
+.riders-phone,
+.riders-vehicle,
+.riders-deliveries {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.riders-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.riders-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.riders-status-dot--available {
+  background: var(--success);
+  box-shadow: 0 0 6px var(--success);
+}
+
+.riders-status-dot--busy {
+  background: var(--warning);
+  box-shadow: 0 0 6px var(--warning);
+}
+
+.riders-status-dot--offline {
+  background: var(--text-muted);
+}
+
+.riders-active-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+}
+
+.riders-active-badge--on {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.riders-active-badge--off {
+  background: var(--bg-hover);
+  color: var(--text-muted);
+}
+
+.riders-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.riders-toggle-btn--disable:hover {
+  color: var(--danger) !important;
+}
+
+.riders-toggle-btn--enable:hover {
+  color: var(--success) !important;
+}
+
+@media (max-width: 900px) {
+  .riders-page .riders-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .riders-page .riders-stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,157 @@
+.data-table {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.data-table--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1.5rem;
+  color: var(--text-muted);
+}
+
+.data-table--empty svg {
+  opacity: 0.45;
+  color: var(--copper);
+}
+
+.data-table__desktop {
+  overflow-x: auto;
+}
+
+.data-table__desktop table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table__desktop th,
+.data-table__desktop td {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table__desktop th {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  background: var(--bg-elevated);
+  white-space: nowrap;
+}
+
+.data-table__th--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--transition);
+}
+
+.data-table__th--sortable:hover {
+  color: var(--copper-light);
+}
+
+.data-table__th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.data-table__desktop tbody tr {
+  transition: background var(--transition);
+}
+
+.data-table__desktop tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table__row--clickable {
+  cursor: pointer;
+}
+
+.data-table__row--clickable:hover td {
+  background: var(--bg-hover);
+}
+
+.data-table__desktop td {
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.data-table__mobile {
+  display: none;
+}
+
+.data-table__card {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table__card:last-child {
+  border-bottom: none;
+}
+
+.data-table__card--clickable {
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.data-table__card--clickable:hover {
+  background: var(--bg-hover);
+}
+
+.data-table__card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.35rem 0;
+}
+
+.data-table__card-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.data-table__card-value {
+  font-size: 0.88rem;
+  color: var(--text);
+  text-align: right;
+}
+
+.data-table__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.data-table__page-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.data-table__page-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .data-table__desktop {
+    display: none;
+  }
+
+  .data-table__mobile {
+    display: block;
+  }
+}

@@ -1,0 +1,10 @@
+.empty-state-component p {
+  max-width: 360px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.empty-state__action {
+  margin-top: 1.25rem;
+}

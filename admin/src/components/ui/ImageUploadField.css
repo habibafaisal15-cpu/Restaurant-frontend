@@ -1,0 +1,136 @@
+.image-upload-field__label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.image-upload-field__modes {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 0.55rem;
+  padding: 0.25rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.image-upload-field__mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition);
+}
+
+.image-upload-field__mode:hover {
+  color: var(--text);
+  background: var(--bg-hover);
+}
+
+.image-upload-field__mode.active {
+  background: var(--copper);
+  color: #fff;
+}
+
+.image-upload-field__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.image-upload-field__preview {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--bg-input);
+}
+
+.image-upload-field__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-upload-field__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text-muted);
+}
+
+.image-upload-field__controls {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.image-upload-field__file-input {
+  display: none;
+}
+
+.image-upload-field__upload-btn {
+  width: fit-content;
+}
+
+.image-upload-field__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.image-upload-field__icon {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.image-upload-field__input {
+  padding-left: 2.4rem;
+  width: 100%;
+}
+
+.image-upload-field__clear {
+  align-self: flex-start;
+  color: var(--text-muted);
+}
+
+.image-upload-field__clear:hover {
+  color: var(--danger);
+}
+
+@media (max-width: 500px) {
+  .image-upload-field__row {
+    flex-direction: column;
+  }
+
+  .image-upload-field__preview {
+    width: 100%;
+    height: 120px;
+  }
+
+  .image-upload-field__modes {
+    width: 100%;
+  }
+
+  .image-upload-field__mode {
+    flex: 1;
+    justify-content: center;
+  }
+}

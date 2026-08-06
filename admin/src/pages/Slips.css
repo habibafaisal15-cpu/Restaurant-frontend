@@ -1,0 +1,59 @@
+.slips-filters {
+  margin-bottom: 1.25rem;
+}
+
+.slips-filters .filters-bar {
+  margin-bottom: 0;
+}
+
+.slips-table-panel {
+  overflow: hidden;
+}
+
+.slips-slip-no {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--copper-light);
+  font-weight: 500;
+}
+
+.slips-type {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slips-type--kitchen {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.slips-type--delivery {
+  background: var(--info-bg);
+  color: var(--info);
+}
+
+.slips-type--receipt {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.slips-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.slips-spin {
+  animation: spin 0.75s linear infinite;
+}
+
+.slips-preview-loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+}

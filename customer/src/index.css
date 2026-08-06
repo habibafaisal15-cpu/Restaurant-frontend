@@ -1,0 +1,285 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap');
+@import './assets/styles/theme.css';
+@import './assets/styles/animations.css';
+
+:root {
+  font-family: var(--font-body);
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  letter-spacing: 0.01em;
+  transition: background-color 0.35s var(--ease-soft), color 0.35s var(--ease-soft);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: var(--heading-track);
+  line-height: 1.2;
+  color: var(--color-heading);
+  text-align: left;
+  margin-top: 0;
+}
+
+/* Pill / chrome page titles — Menu, Cart, Checkout, brand */
+.app-header__brand,
+.menu-top__title,
+.cart-page__title,
+.checkout-page__title {
+  font-family: var(--font-display);
+  font-size: var(--chrome-title-size);
+  font-weight: 500;
+  letter-spacing: var(--chrome-title-track);
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: left;
+}
+
+/* Page + section display titles */
+.page h1,
+.info-page h1,
+.checkout-page__heading,
+.best-sellers__head h2,
+.top-deals__head h2,
+.explore-menu__head h2,
+.menu-explore__section h2,
+.order-panel__head h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: var(--heading-track);
+  text-align: left;
+  line-height: 1.2;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+/* Minimal primary actions */
+.btn,
+.menu-item-card__footer button,
+.order-form button[type='submit'],
+.checkout-actions__next,
+.location-picker button,
+.best-sellers__body button,
+.top-deals__body button,
+.menu-explore__body button,
+.location-modal__manual button,
+.location-modal__confirm,
+.location-modal__gps,
+.app-header__cta,
+.cart-page__checkout,
+.rider-assign-popup__done,
+.home-page__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0.7rem 1.35rem;
+  border-radius: var(--radius-button);
+  border: 1px solid var(--color-button);
+  background: transparent;
+  color: var(--color-heading);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.25s var(--ease-soft),
+    color 0.25s var(--ease-soft),
+    border-color 0.25s var(--ease-soft),
+    opacity 0.25s ease;
+}
+
+[data-theme='night'] .btn,
+[data-theme='night'] .menu-item-card__footer button,
+[data-theme='night'] .order-form button[type='submit'],
+[data-theme='night'] .checkout-actions__next,
+[data-theme='night'] .location-picker button,
+[data-theme='night'] .best-sellers__body button,
+[data-theme='night'] .top-deals__body button,
+[data-theme='night'] .menu-explore__body button,
+[data-theme='night'] .location-modal__manual button,
+[data-theme='night'] .location-modal__confirm,
+[data-theme='night'] .location-modal__gps,
+[data-theme='night'] .app-header__cta,
+[data-theme='night'] .cart-page__checkout,
+[data-theme='night'] .rider-assign-popup__done {
+  color: var(--color-gold-bright);
+  border-color: var(--color-gold-bright);
+}
+
+[data-theme='day'] .btn,
+[data-theme='day'] .menu-item-card__footer button,
+[data-theme='day'] .order-form button[type='submit'],
+[data-theme='day'] .checkout-actions__next,
+[data-theme='day'] .location-picker button,
+[data-theme='day'] .best-sellers__body button,
+[data-theme='day'] .top-deals__body button,
+[data-theme='day'] .menu-explore__body button,
+[data-theme='day'] .location-modal__manual button,
+[data-theme='day'] .location-modal__confirm,
+[data-theme='day'] .location-modal__gps,
+[data-theme='day'] .app-header__cta,
+[data-theme='day'] .cart-page__checkout,
+[data-theme='day'] .rider-assign-popup__done {
+  color: var(--color-gold-bright);
+  border-color: var(--color-gold);
+}
+
+.btn:hover,
+.menu-item-card__footer button:hover,
+.order-form button[type='submit']:hover,
+.checkout-actions__next:hover,
+.location-picker button:hover,
+.best-sellers__body button:hover,
+.top-deals__body button:hover,
+.menu-explore__body button:hover,
+.location-modal__manual button:hover,
+.location-modal__confirm:hover,
+.location-modal__gps:hover,
+.app-header__cta:hover,
+.cart-page__checkout:hover,
+.rider-assign-popup__done:hover {
+  background: var(--color-button);
+  color: var(--color-button-text);
+  border-color: var(--color-button);
+}
+
+.btn:disabled,
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Round edges for action buttons site-wide */
+button:not(.side-drawer__backdrop):not(.app-header__toggle):not(.app-header__mode):not(.best-sellers__dot):not(.hero__menu-btn):not(.payment-method__option),
+.btn,
+a.app-header__cta,
+a.cart-page__checkout,
+a.side-drawer__login {
+  border-radius: var(--radius-button);
+}
+
+input {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-heading);
+  transition: border-color 0.25s var(--ease-soft), box-shadow 0.25s var(--ease-soft);
+}
+
+input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--color-button) 55%, var(--color-border));
+  box-shadow: 0 0 0 3px var(--color-gold-soft);
+}
+
+::selection {
+  background: var(--color-gold-soft);
+  color: var(--color-heading);
+}
+
+/* Dark mode: force black surfaces + cherry/maroon chrome (override hard-coded whites) */
+[data-theme='night'] .app-header__pill,
+[data-theme='night'] .menu-top__pill,
+[data-theme='night'] .cart-page__pill,
+[data-theme='night'] .checkout-page__pill {
+  background: rgba(0, 0, 0, 0.88);
+  border-color: color-mix(in srgb, var(--color-gold-bright) 42%, transparent);
+}
+
+[data-theme='night'] .cart-drawer,
+[data-theme='night'] .cart-page__actions,
+[data-theme='night'] .checkout-page .order-form,
+[data-theme='night'] .checkout-page__summary,
+[data-theme='night'] .side-drawer {
+  background: rgba(0, 0, 0, 0.72);
+  border-color: color-mix(in srgb, var(--color-gold) 45%, transparent);
+}
+
+[data-theme='night'] .hero__title {
+  color: var(--color-gold-bright);
+  text-shadow: 0 14px 40px rgba(40, 22, 10, 0.65);
+}
+
+[data-theme='night'] .hero__showcase,
+[data-theme='night'] .hero__rail-card {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 28%, transparent);
+}
+
+[data-theme='night'] .order-panel {
+  border-color: color-mix(in srgb, var(--color-gold-bright) 35%, transparent);
+}
+
+[data-theme='night'] .menu-explore__card {
+  border-color: color-mix(in srgb, var(--color-gold) 40%, transparent);
+}
+
+[data-theme='night'] .menu-explore__card-price,
+[data-theme='night'] .best-sellers__dot.is-active,
+[data-theme='night'] .order-roadmap__step.is-done .order-roadmap__dot,
+[data-theme='night'] .order-roadmap__step.is-current .order-roadmap__dot {
+  color: var(--color-gold-bright);
+}
+
+[data-theme='night'] .side-drawer__backdrop {
+  background: rgba(20, 10, 4, 0.5);
+}
+
+[data-theme='night'] .side-drawer::-webkit-scrollbar-thumb,
+[data-theme='night'] .order-panel__body::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-gold-bright) 45%, transparent);
+}
+
+[data-theme='night'] .payment-method__option.is-selected .payment-method__check {
+  box-shadow: inset 0 0 0 3px #000;
+}
+
+[data-theme='night'] .checkout-review__paid,
+[data-theme='night'] .checkout-page__summary-row--ok span:last-child {
+  color: var(--color-gold-bright) !important;
+}
+
+[data-theme='night'] .error-text,
+[data-theme='night'] .order-form__delivery-error {
+  color: #e08a6a;
+}
+
+[data-theme='night'] .order-form__delivery-ok {
+  color: var(--color-gold-bright);
+}

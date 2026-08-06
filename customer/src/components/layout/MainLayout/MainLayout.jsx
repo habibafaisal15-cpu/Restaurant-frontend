@@ -1,0 +1,61 @@
+import { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import LocationModal from '../../location/LocationModal';
+import { ROUTES } from '../../../constants';
+import { useLocationContext, useNavDrawer } from '../../../context';
+import Footer from '../Footer';
+import Header from '../Header';
+import SideDrawer from '../SideDrawer';
+import './MainLayout.css';
+
+function MainLayout() {
+  const { pathname } = useLocation();
+  const { drawerOpen, closeDrawer } = useNavDrawer();
+  const { isLocationModalOpen } = useLocationContext();
+  const isHome = pathname === ROUTES.HOME;
+  const isMenu = pathname === ROUTES.MENU;
+  const isCart = pathname === ROUTES.CART;
+  const isCheckout = pathname === ROUTES.CHECKOUT;
+  const hideChromeHeader = isHome || isMenu || isCart || isCheckout;
+
+  useEffect(() => {
+    if (!hideChromeHeader) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') closeDrawer();
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.body.style.overflow =
+      drawerOpen || isLocationModalOpen ? 'hidden' : '';
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = isLocationModalOpen ? 'hidden' : '';
+    };
+  }, [hideChromeHeader, drawerOpen, isLocationModalOpen, closeDrawer]);
+
+  const layoutClass = isHome
+    ? 'main-layout main-layout--home'
+    : isMenu
+      ? 'main-layout main-layout--menu'
+      : isCart
+        ? 'main-layout main-layout--cart'
+        : isCheckout
+          ? 'main-layout main-layout--checkout'
+          : 'main-layout';
+
+  return (
+    <div className={layoutClass}>
+      {!hideChromeHeader && <Header />}
+      <main className="main-layout__content">
+        <Outlet />
+      </main>
+      <Footer />
+      <SideDrawer open={drawerOpen} onClose={closeDrawer} />
+      <LocationModal />
+    </div>
+  );
+}
+
+export default MainLayout;

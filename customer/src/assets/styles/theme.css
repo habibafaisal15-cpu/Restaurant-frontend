@@ -1,0 +1,80 @@
+:root,
+[data-theme='night'] {
+  /* Black canvas */
+  --color-bg: #000000;
+  --color-bg-elevated: #0c0907;
+  --color-bg-soft: #16110d;
+  --color-drawer: #080605;
+
+  /* Copper / amber system (kept as --color-gold* for existing usages) */
+  --color-white: #f5e6d8;
+  --color-ivory: #edd4bc;
+  --color-gold: #d4894a;
+  --color-gold-bright: #e8a86a;
+  --color-gold-deep: #a86532;
+  --color-gold-soft: rgba(232, 168, 106, 0.16);
+  --color-teal: #d4894a;
+  --color-teal-bright: #e8a86a;
+  --color-teal-deep: #a86532;
+  --color-teal-soft: rgba(232, 168, 106, 0.12);
+  --color-orange: #d4894a;
+  --color-orange-bright: #e8a86a;
+  --color-orange-deep: #a86532;
+  --color-orange-soft: rgba(232, 168, 106, 0.12);
+
+  --color-text: #e6d2c0;
+  --color-text-muted: #a89078;
+  --color-heading: #f3e0cc;
+  --color-button: #d4894a;
+  --color-button-text: #000000;
+  --color-border: #3a2a1c;
+  --color-hero-overlay: rgba(0, 0, 0, 0.58);
+
+  --shadow-soft: 0 16px 40px rgba(40, 22, 10, 0.4);
+  --shadow-lift: 0 20px 50px rgba(40, 22, 10, 0.5);
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-button: 999px;
+  --header-height: 64px;
+  --chrome-gutter: 1.85rem;
+  --chrome-gutter-mobile: 1.35rem;
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --max-width: 1120px;
+  --heading-track: 0.02em;
+  --chrome-title-size: 1.35rem;
+  --chrome-title-track: 0.14em;
+  --section-title-size: clamp(1.85rem, 3.2vw, 2.4rem);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='day'] {
+  --color-bg: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-bg-soft: #f7f4ee;
+  --color-drawer: #ffffff;
+  --color-white: #ffffff;
+  --color-ivory: #1a1a1a;
+  --color-gold: #c2a86a;
+  --color-gold-bright: #b8963f;
+  --color-gold-deep: #9a8550;
+  --color-gold-soft: rgba(194, 168, 106, 0.14);
+  --color-teal: var(--color-gold);
+  --color-teal-bright: var(--color-gold-bright);
+  --color-teal-deep: var(--color-gold-deep);
+  --color-teal-soft: var(--color-gold-soft);
+  --color-orange: var(--color-gold);
+  --color-orange-bright: var(--color-gold-bright);
+  --color-orange-deep: var(--color-gold-deep);
+  --color-orange-soft: var(--color-gold-soft);
+  --color-text: #2a2a2a;
+  --color-text-muted: #6b6b6b;
+  --color-heading: #111111;
+  --color-button: var(--color-gold);
+  --color-button-text: #ffffff;
+  --color-border: #e6dfd0;
+  --color-hero-overlay: rgba(255, 255, 255, 0.45);
+  --shadow-soft: 0 14px 36px rgba(40, 35, 25, 0.08);
+  --shadow-lift: 0 18px 44px rgba(40, 35, 25, 0.12);
+}

@@ -3,25 +3,20 @@ import { useSearchParams } from 'react-router-dom';
 import MenuTopBar from '../../components/menu/MenuTopBar';
 import OrderPanel from '../../components/menu/OrderPanel';
 import Loader from '../../components/common/Loader';
-import {
-  ROUTES,
-} from '../../constants';
 import { useCart, useLocationContext } from '../../context';
+import { dealToCartItem } from '../../api/adapters';
+import { useCategoryMetrics } from '../../hooks/useCategoryMetrics';
+import { useDeals } from '../../hooks/useDeals';
 import { useCategories, useFullMenu } from '../../hooks/useMenu';
 import { formatCurrency } from '../../utils/format';
 import './Menu.css';
 
-const EXTRA_MENU_PILLS = [
-  {
-    id: 'best-sellers',
-    name: 'Best Sellers',
-    to: { pathname: ROUTES.HOME, hash: 'best-sellers' },
-  },
-  {
-    id: 'deals',
-    name: 'Deals',
-    to: ROUTES.DEALS,
-  },
+const BEST_SELLERS_SECTION_ID = 'best-sellers';
+const DEALS_SECTION_ID = 'deals';
+
+const EXTRA_MENU_SECTIONS = [
+  { id: BEST_SELLERS_SECTION_ID, name: 'Best Sellers' },
+  { id: DEALS_SECTION_ID, name: 'Deals' },
 ];
 
 function Menu() {
@@ -30,11 +25,14 @@ function Menu() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { categories } = useCategories(branch?.id);
   const { menu, loading, error } = useFullMenu(branch?.id);
+  const { bestSellers } = useCategoryMetrics(branch?.id);
+  const { deals } = useDeals(branch?.id);
   const categoryList = categories;
-  const pillItems = useMemo(
-    () => [...categoryList, ...EXTRA_MENU_PILLS],
+  const sectionList = useMemo(
+    () => [...categoryList, ...EXTRA_MENU_SECTIONS],
     [categoryList]
   );
+  const pillItems = sectionList;
   const [activeCategoryId, setActiveCategoryId] = useState(
     searchParams.get('category') || categoryList[0]?.id
   );
@@ -75,7 +73,7 @@ function Menu() {
     const categoryFromUrl = searchParams.get('category');
     if (!categoryFromUrl) return;
 
-    const exists = categoryList.some((category) => category.id === categoryFromUrl);
+    const exists = sectionList.some((section) => section.id === categoryFromUrl);
     if (!exists) return;
 
     const timer = window.setTimeout(() => {
@@ -84,11 +82,11 @@ function Menu() {
 
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, categoryList]);
+  }, [searchParams, sectionList]);
 
   useEffect(() => {
-    const sections = categoryList
-      .map((category) => document.getElementById(`category-${category.id}`))
+    const sections = sectionList
+      .map((section) => document.getElementById(`category-${section.id}`))
       .filter(Boolean);
 
     if (!sections.length) return undefined;
@@ -113,7 +111,7 @@ function Menu() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [categoryList]);
+  }, [sectionList]);
 
   const toggleFavorite = (id) => {
     setFavorites((current) => {
@@ -123,6 +121,97 @@ function Menu() {
       return next;
     });
   };
+
+  const handleAddDeal = (deal) => {
+    const cartItem = dealToCartItem(deal);
+    if (cartItem) addItem(cartItem);
+  };
+
+  const renderMenuCard = (item) => (
+    <article key={item.id} className="menu-explore__card">
+      <button
+        type="button"
+        className={
+          favorites.has(item.id)
+            ? 'menu-explore__fav is-active'
+            : 'menu-explore__fav'
+        }
+        aria-label="Toggle favorite"
+        onClick={() => toggleFavorite(item.id)}
+      >
+        ♥
+      </button>
+
+      <div className="menu-explore__media">
+        {item.image ? (
+          <img src={item.image} alt={item.name} loading="lazy" />
+        ) : (
+          <div className="menu-explore__placeholder">{item.name}</div>
+        )}
+      </div>
+
+      <div className="menu-explore__body">
+        <h3>{item.name}</h3>
+        {item.description ? <p>{item.description}</p> : null}
+        <strong>
+          {item.originalPrice ? (
+            <>
+              <span className="menu-explore__price-old">
+                {formatCurrency(item.originalPrice)}
+              </span>
+              {formatCurrency(item.price)}
+            </>
+          ) : (
+            formatCurrency(item.price)
+          )}
+        </strong>
+        <button
+          type="button"
+          onClick={() => addItem(item)}
+          disabled={item.inStock === false}
+        >
+          {item.inStock === false ? 'Out of stock' : 'Add to cart'}
+        </button>
+      </div>
+    </article>
+  );
+
+  const renderDealCard = (deal) => (
+    <article key={deal.id} className="menu-explore__card">
+      <div className="menu-explore__media">
+        {deal.image ? (
+          <img src={deal.image} alt={deal.title} loading="lazy" />
+        ) : (
+          <div className="menu-explore__placeholder">{deal.title}</div>
+        )}
+      </div>
+
+      <div className="menu-explore__body">
+        {deal.badge ? <span className="menu-explore__deal-badge">{deal.badge}</span> : null}
+        <h3>{deal.title}</h3>
+        {deal.description || deal.detail ? (
+          <p>{deal.description || deal.detail}</p>
+        ) : null}
+        <strong>
+          {deal.originalPrice != null && deal.originalPrice > (deal.price ?? 0) && (
+            <span className="menu-explore__price-old">
+              {formatCurrency(deal.originalPrice)}
+            </span>
+          )}
+          {deal.price != null
+            ? formatCurrency(deal.price)
+            : deal.discountType === 'fixed'
+              ? `${formatCurrency(deal.discountValue)} off`
+              : `${deal.discountValue}% off`}
+        </strong>
+        {deal.canAddToCart && (
+          <button type="button" onClick={() => handleAddDeal(deal)}>
+            Add to cart
+          </button>
+        )}
+      </div>
+    </article>
+  );
 
   if (!branch?.id) {
     return (
@@ -157,57 +246,42 @@ function Menu() {
               <h2>{category.name}</h2>
 
               <div className="menu-explore__grid">
-                {(catalog[category.id] || []).map((item) => (
-                  <article key={item.id} className="menu-explore__card">
-                    <button
-                      type="button"
-                      className={
-                        favorites.has(item.id)
-                          ? 'menu-explore__fav is-active'
-                          : 'menu-explore__fav'
-                      }
-                      aria-label="Toggle favorite"
-                      onClick={() => toggleFavorite(item.id)}
-                    >
-                      ♥
-                    </button>
-
-                    <div className="menu-explore__media">
-                      {item.image ? (
-                        <img src={item.image} alt={item.name} loading="lazy" />
-                      ) : (
-                        <div className="menu-explore__placeholder">{item.name}</div>
-                      )}
-                    </div>
-
-                    <div className="menu-explore__body">
-                      <h3>{item.name}</h3>
-                      <p>{item.description}</p>
-                      <strong>
-                        {item.originalPrice ? (
-                          <>
-                            <span style={{ textDecoration: 'line-through', opacity: 0.6, marginRight: '0.5rem' }}>
-                              {formatCurrency(item.originalPrice)}
-                            </span>
-                            {formatCurrency(item.price)}
-                          </>
-                        ) : (
-                          formatCurrency(item.price)
-                        )}
-                      </strong>
-                      <button
-                        type="button"
-                        onClick={() => addItem(item)}
-                        disabled={item.inStock === false}
-                      >
-                        {item.inStock === false ? 'Out of stock' : 'Add to cart'}
-                      </button>
-                    </div>
-                  </article>
-                ))}
+                {(catalog[category.id] || []).map((item) => renderMenuCard(item))}
               </div>
             </section>
           ))}
+
+          <section
+            id={`category-${BEST_SELLERS_SECTION_ID}`}
+            className="menu-explore__section"
+          >
+            <h2>Best Sellers</h2>
+            {bestSellers.length ? (
+              <div className="menu-explore__grid">
+                {bestSellers.map((item) => renderMenuCard(item))}
+              </div>
+            ) : (
+              <p className="menu-explore__section-empty">
+                Best sellers will appear here once orders start coming in.
+              </p>
+            )}
+          </section>
+
+          <section
+            id={`category-${DEALS_SECTION_ID}`}
+            className="menu-explore__section"
+          >
+            <h2>Deals</h2>
+            {deals.length ? (
+              <div className="menu-explore__grid">
+                {deals.map((deal) => renderDealCard(deal))}
+              </div>
+            ) : (
+              <p className="menu-explore__section-empty">
+                No active deals right now. Check back soon.
+              </p>
+            )}
+          </section>
         </div>
 
         <div className="menu-explore__aside">

@@ -1,16 +1,22 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import Loader from '../../components/common/Loader';
 import { ROUTES } from '../../constants';
-import { useLocationContext } from '../../context';
+import { useCart, useLocationContext } from '../../context';
+import { dealToCartItem } from '../../api/adapters';
 import { useDeals } from '../../hooks/useDeals';
 import { formatCurrency } from '../../utils/format';
 import '../Contact/Contact.css';
 
 function Deals() {
   const { branch } = useLocationContext();
+  const { addItem } = useCart();
   const { deals, loading, error } = useDeals(branch?.id);
+
+  const handleAddToCart = (deal) => {
+    const cartItem = dealToCartItem(deal);
+    if (cartItem) addItem(cartItem);
+  };
 
   return (
     <section className="info-page page-container">
@@ -44,6 +50,13 @@ function Deals() {
                   ? `${formatCurrency(deal.discountValue)} off`
                   : `${deal.discountValue}% off`}
             </p>
+            {deal.canAddToCart ? (
+              <button type="button" onClick={() => handleAddToCart(deal)}>
+                Add to cart
+              </button>
+            ) : (
+              <p>This deal is display-only. Browse the menu to order items.</p>
+            )}
           </article>
         ))}
 

@@ -7,6 +7,7 @@ import ImageUploadField from '../components/ui/ImageUploadField';
 import EmptyState from '../components/ui/EmptyState';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import * as dealService from '../services/dealService';
+import * as menuService from '../services/menuService';
 import { formatPKR } from '../utils/format';
 import './Deals.css';
 
@@ -17,6 +18,7 @@ const EMPTY_FORM = {
   originalPrice: '',
   image: '',
   badge: '',
+  productId: '',
   active: true,
   showOnCustomer: true,
 };
@@ -32,6 +34,7 @@ export default function Deals() {
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [removeId, setRemoveId] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
 
   const loadDeals = useCallback(async () => {
     setLoading(true);
@@ -44,6 +47,13 @@ export default function Deals() {
       setLoading(false);
     }
   }, [search]);
+
+  useEffect(() => {
+    menuService
+      .getAll()
+      .then((items) => setMenuItems(Array.isArray(items) ? items : []))
+      .catch(() => setMenuItems([]));
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(loadDeals, search ? 250 : 0);
@@ -77,6 +87,7 @@ export default function Deals() {
       originalPrice: deal.originalPrice != null ? String(deal.originalPrice) : '',
       image: deal.image ?? '',
       badge: deal.badge ?? '',
+      productId: deal.productId ?? '',
       active: Boolean(deal.active),
       showOnCustomer: Boolean(deal.showOnCustomer),
     });
@@ -112,6 +123,7 @@ export default function Deals() {
         originalPrice: form.originalPrice ? Number(form.originalPrice) : '',
         image: form.image.trim(),
         badge: form.badge.trim(),
+        productId: form.productId || null,
         active: form.active,
         showOnCustomer: form.showOnCustomer,
       };
@@ -378,6 +390,23 @@ export default function Deals() {
                 placeholder="1150"
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="deal-product">Linked menu item</label>
+            <select
+              id="deal-product"
+              className="form-control"
+              value={form.productId}
+              onChange={(e) => updateForm('productId', e.target.value)}
+            >
+              <option value="">Auto-match by deal title (or none)</option>
+              {menuItems.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">

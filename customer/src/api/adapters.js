@@ -112,6 +112,10 @@ export function mapDeal(deal) {
       : deal.originalPrice != null
         ? Number(deal.originalPrice)
         : undefined;
+  const productId =
+    deal.product_id ||
+    deal.productId ||
+    (deal.quantity_sold != null ? deal.id : null);
 
   return {
     id: deal.id,
@@ -131,6 +135,20 @@ export function mapDeal(deal) {
     badge: deal.badge || '',
     image: resolveMediaUrl(deal.image_url || deal.image),
     productIds: deal.product_ids,
+    productId,
+    canAddToCart: Boolean(productId),
+  };
+}
+
+export function dealToCartItem(deal) {
+  if (!deal?.productId) return null;
+
+  return {
+    id: deal.productId,
+    name: deal.name || deal.title,
+    price: Number(deal.price ?? 0),
+    image: deal.image || '',
+    description: deal.description || deal.detail || '',
   };
 }
 

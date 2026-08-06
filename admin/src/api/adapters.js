@@ -232,6 +232,7 @@ export function mapDeal(row) {
     originalPrice: row.originalPrice != null ? Number(row.originalPrice) : undefined,
     image: resolveMediaUrl(row.image_url || row.image),
     badge: row.badge || '',
+    productId: row.productId || row.product_id || null,
     active: row.is_active ?? row.active ?? true,
     showOnCustomer: row.showOnCustomer ?? row.show_on_customer ?? true,
     sortOrder: row.sortOrder ?? row.sort_order ?? 0,

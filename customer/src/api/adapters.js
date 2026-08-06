@@ -136,15 +136,17 @@ export function mapDeal(deal) {
     image: resolveMediaUrl(deal.image_url || deal.image),
     productIds: deal.product_ids,
     productId,
-    canAddToCart: Boolean(productId),
+    canAddToCart: Boolean(productId) || price != null,
   };
 }
 
 export function dealToCartItem(deal) {
-  if (!deal?.productId) return null;
+  const productId = deal?.productId;
+  if (!productId) return null;
 
   return {
-    id: deal.productId,
+    id: productId,
+    menuItemId: productId,
     name: deal.name || deal.title,
     price: Number(deal.price ?? 0),
     image: deal.image || '',

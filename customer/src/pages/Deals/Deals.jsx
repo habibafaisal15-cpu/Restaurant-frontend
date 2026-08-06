@@ -50,12 +50,10 @@ function Deals() {
                   ? `${formatCurrency(deal.discountValue)} off`
                   : `${deal.discountValue}% off`}
             </p>
-            {deal.canAddToCart ? (
+            {deal.canAddToCart && (
               <button type="button" onClick={() => handleAddToCart(deal)}>
                 Add to cart
               </button>
-            ) : (
-              <p>This deal is display-only. Browse the menu to order items.</p>
             )}
           </article>
         ))}

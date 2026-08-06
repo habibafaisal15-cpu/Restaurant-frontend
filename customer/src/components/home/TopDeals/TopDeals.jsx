@@ -13,7 +13,7 @@ function dealLabel(deal) {
 }
 
 function TopDeals({ deals = [] }) {
-  const list = deals || [];
+  const list = (deals || []).slice(0, 3);
 
   if (!list.length) {
     return (

@@ -6,7 +6,7 @@ import { formatCurrency } from '../../../utils/format';
 import './BestSellers.css';
 
 const ROTATE_MS = 1500;
-const MAX_BEST_SELLERS = 5;
+const MAX_BEST_SELLERS = 3;
 
 function BestSellers({ items = [] }) {
   const { addItem } = useCart();

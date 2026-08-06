@@ -3,6 +3,7 @@ import {
   mapCategory,
   mapDeal,
   mapMenuItem,
+  mapPopularItem,
   mapZoneToBranch,
 } from './adapters';
 
@@ -67,13 +68,19 @@ export async function getMenuMetrics(zoneId) {
   const allItems = (menu.categories || []).flatMap((category) =>
     (category.items || []).map(mapMenuItem)
   );
+  const bestSellers = (menu.best_sellers || menu.bestSellers || []).map(
+    mapPopularItem,
+  );
 
   return {
     data: {
       totalCategories: menu.categories?.length || 0,
       totalDishes: allItems.length,
       totalItems: allItems.length,
-      bestSellers: allItems.slice(0, 5),
+      bestSellers,
+      topSellingDeals: (menu.top_selling_deals || menu.topSellingDeals || []).map(
+        mapDeal,
+      ),
       updatedAt: new Date().toISOString(),
     },
   };
@@ -85,7 +92,12 @@ export async function getDeals(zoneId, { refresh = false } = {}) {
     refresh || !menuCache.has(zoneId)
       ? await fetchStorefrontMenu(zoneId)
       : menuCache.get(zoneId);
-  return { data: (menu.deals || []).map(mapDeal) };
+  const deals =
+    menu.top_selling_deals ||
+    menu.topSellingDeals ||
+    menu.deals ||
+    [];
+  return { data: deals.map(mapDeal) };
 }
 
 export { mapCategory, mapDeal, mapMenuItem, mapZoneToBranch };

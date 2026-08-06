@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getStorefrontPopular } from '../api/content';
 import { getCategories, getMenuMetrics } from '../api/menu';
 
 const POLL_MS = 20000;
-const MAX_BEST_SELLERS = 5;
+const MAX_BEST_SELLERS = 3;
 
 const normalizeBestSellers = (raw) => {
   if (!Array.isArray(raw)) return [];
@@ -17,7 +18,7 @@ const normalizeBestSellers = (raw) => {
       image: item.image || item.imageUrl || item.photo || '',
       description: item.description || '',
     }))
-    .filter((item) => item.id && item.name && item.image);
+    .filter((item) => item.id && item.name);
 };
 
 export function useCategoryMetrics(branchId) {
@@ -27,18 +28,25 @@ export function useCategoryMetrics(branchId) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!branchId) {
-      setCategories([]);
-      setMetrics(null);
-      setLoading(false);
-      return undefined;
-    }
-
     let active = true;
 
     const fetchLive = async () => {
       try {
         setError(null);
+
+        if (!branchId) {
+          const popular = await getStorefrontPopular();
+          if (!active) return;
+
+          setCategories([]);
+          setMetrics({
+            bestSellers: popular.bestSellers,
+            topSellingDeals: popular.topDeals,
+            updatedAt: new Date().toISOString(),
+          });
+          return;
+        }
+
         const [categoriesRes, metricsRes] = await Promise.allSettled([
           getCategories(branchId),
           getMenuMetrics(branchId),
@@ -79,7 +87,7 @@ export function useCategoryMetrics(branchId) {
 
   const resolved = useMemo(() => {
     const bestSellers = normalizeBestSellers(
-      metrics?.bestSellers || metrics?.best_sellers || metrics?.topSellers
+      metrics?.bestSellers || metrics?.best_sellers || metrics?.topSellers,
     );
 
     return {
@@ -91,7 +99,7 @@ export function useCategoryMetrics(branchId) {
         categories.reduce(
           (sum, category) =>
             sum + (category.itemCount || category.itemsCount || 0),
-          0
+          0,
         ),
       bestSellers,
       liveUpdatedAt:

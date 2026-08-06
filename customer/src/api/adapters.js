@@ -81,6 +81,24 @@ export function mapMenuItem(item) {
   };
 }
 
+export function mapPopularItem(item) {
+  return {
+    id: item.id,
+    name: item.name || item.title || '',
+    title: item.title || item.name || '',
+    price: Number(item.price) || 0,
+    originalPrice:
+      item.original_price != null
+        ? Number(item.original_price)
+        : item.originalPrice != null
+          ? Number(item.originalPrice)
+          : undefined,
+    description: item.description || '',
+    image: resolveMediaUrl(item.image_url || item.image),
+    quantitySold: item.quantity_sold != null ? Number(item.quantity_sold) : undefined,
+  };
+}
+
 export function mapDeal(deal) {
   const price =
     deal.price != null
@@ -97,8 +115,8 @@ export function mapDeal(deal) {
 
   return {
     id: deal.id,
-    title: deal.title,
-    name: deal.title,
+    title: deal.title || deal.name,
+    name: deal.title || deal.name,
     detail: deal.description || '',
     description: deal.description || '',
     discountType: deal.discount_type || 'fixed',

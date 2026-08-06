@@ -265,10 +265,6 @@ export default function Hero() {
       <div className="page-header">
         <div>
           <h1>Home Hero</h1>
-          <p>
-            Rotating slides (max {MAX_SLIDES}) aur Menu / Top Seller / Deals cards — Add, Edit,
-            Remove
-          </p>
         </div>
       </div>
 

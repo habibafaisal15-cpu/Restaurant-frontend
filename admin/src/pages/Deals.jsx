@@ -130,7 +130,7 @@ export default function Deals() {
 
       if (editingId) {
         await dealService.update(editingId, payload);
-        toast.success('Deal updated — customer site will show the latest');
+        toast.success('Deal updated successfully.');
       } else {
         await dealService.create(payload);
         toast.success(
@@ -169,7 +169,9 @@ export default function Deals() {
         active: !deal.showOnCustomer ? true : deal.active,
       });
       toast.success(
-        !deal.showOnCustomer ? 'Deal now visible on customer site' : 'Deal hidden from customers',
+        !deal.showOnCustomer
+          ? 'Deal is now visible on the customer website.'
+          : 'Deal is now hidden from customers.',
       );
       await loadDeals();
     } catch (err) {
@@ -191,8 +193,8 @@ export default function Deals() {
         <div>
           <h1>Deals</h1>
           <p>
-            New deals yahan banao — title, price, description. Active deals customer website pe
-            show hongi.
+            Create and manage promotional deals. Active deals are displayed on the customer
+            website.
           </p>
         </div>
         <button type="button" className="btn btn-primary" onClick={openCreate}>
@@ -338,7 +340,8 @@ export default function Deals() {
       >
         <div className="deals-form">
           <p className="deals-form-hint">
-            Yeh deal customer website pe dikhegi jab “Show on customer” on ho.
+            This deal will appear on the customer website when &ldquo;Show on customer&rdquo; is
+            enabled.
           </p>
 
           <div className="form-group">
@@ -462,7 +465,7 @@ export default function Deals() {
       <ConfirmDialog
         open={confirmOpen}
         title="Deactivate deal"
-        message="Deal customer site se hide ho jayegi. Continue?"
+        message="This deal will be hidden from the customer website. Do you want to continue?"
         confirmText="Deactivate"
         danger
         onConfirm={handleRemove}

@@ -249,11 +249,6 @@ export default function Categories() {
         </button>
       </div>
 
-      <div className="categories-hint panel animate-slide-up">
-        <strong>Flow:</strong> pehle category banao → usme dishes/items add karo → woh items
-        Menu Items page pe bhi collectively dikhengi (online + POS dono ke liye).
-      </div>
-
       <div className="filters-bar animate-slide-up">
         <div className="search-input">
           <Search size={16} />

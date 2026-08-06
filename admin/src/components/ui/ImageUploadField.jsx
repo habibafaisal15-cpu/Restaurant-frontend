@@ -1,6 +1,7 @@
 import { useId, useRef, useState } from 'react';
 import { ImageIcon, Link2, Upload, X } from 'lucide-react';
 import { uploadImage } from '../../api/upload';
+import { resolveMediaUrl } from '../../api/adapters';
 import './ImageUploadField.css';
 
 const MAX_FILE_MB = 4;
@@ -64,7 +65,7 @@ export default function ImageUploadField({
   };
 
   const previewUrl =
-    value && !String(value).startsWith('data:') ? value : '';
+    value && !String(value).startsWith('data:') ? resolveMediaUrl(value) : '';
   const showPreview = Boolean(previewUrl) && !imgBroken;
 
   return (

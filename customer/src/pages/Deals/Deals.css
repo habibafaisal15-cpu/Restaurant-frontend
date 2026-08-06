@@ -1,0 +1,130 @@
+.deals-page {
+  padding: 1.25rem var(--chrome-gutter) 3rem;
+}
+
+.deals-page__intro {
+  max-width: 42rem;
+  margin-bottom: 1.75rem;
+  color: var(--color-text-muted);
+}
+
+.deals-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+.deals-page__card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  overflow: hidden;
+  transition:
+    border-color 0.25s var(--ease-soft),
+    transform 0.25s var(--ease-soft);
+}
+
+.deals-page__card:hover {
+  border-color: var(--color-button);
+  transform: translateY(-2px);
+}
+
+.deals-page__media {
+  aspect-ratio: 4 / 3;
+  background: var(--color-bg-soft);
+  overflow: hidden;
+}
+
+.deals-page__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.deals-page__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.deals-page__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 1rem 1rem 1.1rem;
+  flex: 1;
+}
+
+.deals-page__body h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--color-heading);
+}
+
+.deals-page__body p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.deals-page__price {
+  margin: 0;
+  color: var(--color-heading);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.deals-page__price-old {
+  margin-right: 0.5rem;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.deals-page__body button {
+  margin-top: auto;
+  width: 100%;
+}
+
+.deals-page__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 0.15rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: var(--color-button);
+  color: var(--color-bg);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.deals-page__footer-link {
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 1100px) {
+  .deals-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .deals-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

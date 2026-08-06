@@ -79,8 +79,12 @@ export async function getMenuMetrics(zoneId) {
   };
 }
 
-export async function getDeals(zoneId) {
-  const menu = menuCache.get(zoneId) || (await fetchStorefrontMenu(zoneId));
+export async function getDeals(zoneId, { refresh = false } = {}) {
+  if (refresh && zoneId) clearMenuCache(zoneId);
+  const menu =
+    refresh || !menuCache.has(zoneId)
+      ? await fetchStorefrontMenu(zoneId)
+      : menuCache.get(zoneId);
   return { data: (menu.deals || []).map(mapDeal) };
 }
 

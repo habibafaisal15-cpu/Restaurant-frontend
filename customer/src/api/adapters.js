@@ -82,15 +82,36 @@ export function mapMenuItem(item) {
 }
 
 export function mapDeal(deal) {
+  const price =
+    deal.price != null
+      ? Number(deal.price)
+      : deal.price === 0
+        ? 0
+        : undefined;
+  const originalPrice =
+    deal.original_price != null
+      ? Number(deal.original_price)
+      : deal.originalPrice != null
+        ? Number(deal.originalPrice)
+        : undefined;
+
   return {
     id: deal.id,
     title: deal.title,
     name: deal.title,
     detail: deal.description || '',
     description: deal.description || '',
-    discountType: deal.discount_type,
-    discountValue: Number(deal.discount_value),
-    image: resolveMediaUrl(deal.image_url),
+    discountType: deal.discount_type || 'fixed',
+    discountValue:
+      deal.discount_value != null
+        ? Number(deal.discount_value)
+        : originalPrice != null && price != null
+          ? Math.max(0, originalPrice - price)
+          : 0,
+    price,
+    originalPrice,
+    badge: deal.badge || '',
+    image: resolveMediaUrl(deal.image_url || deal.image),
     productIds: deal.product_ids,
   };
 }

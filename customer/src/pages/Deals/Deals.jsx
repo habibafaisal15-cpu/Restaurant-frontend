@@ -18,8 +18,8 @@ function Deals() {
       <h1>Deals</h1>
       <p>Live offers from the restaurant. Updates instantly when admin adds or changes deals.</p>
 
-      {!branch?.id && (
-        <p>Select a delivery location on the home page to load branch deals.</p>
+      {!branch?.id && !loading && deals.length === 0 && (
+        <p>Select a delivery location on the home page to load branch-specific menu pricing.</p>
       )}
 
       {loading && <Loader label="Loading deals..." />}
@@ -38,14 +38,16 @@ function Deals() {
             <h2>{deal.title}</h2>
             <p>{deal.detail || deal.description}</p>
             <p>
-              {deal.discountType === 'fixed'
-                ? `${formatCurrency(deal.discountValue)} off`
-                : `${deal.discountValue}% off`}
+              {deal.price != null
+                ? formatCurrency(deal.price)
+                : deal.discountType === 'fixed'
+                  ? `${formatCurrency(deal.discountValue)} off`
+                  : `${deal.discountValue}% off`}
             </p>
           </article>
         ))}
 
-        {!loading && branch?.id && deals.length === 0 && (
+        {!loading && deals.length === 0 && (
           <p>No active deals right now. Check back soon.</p>
         )}
       </div>

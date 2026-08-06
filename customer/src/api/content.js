@@ -1,5 +1,5 @@
 import apiClient from './client';
-import { resolveMediaUrl } from './adapters';
+import { mapDeal, resolveMediaUrl } from './adapters';
 
 export async function getStorefrontHero() {
   const response = await apiClient.get('/storefront/hero');
@@ -28,4 +28,11 @@ export function mapHeroSlides(slides = []) {
       title: slide.title || '',
       image: resolveMediaUrl(slide.image),
     }));
+}
+
+export async function getStorefrontHeroDeals() {
+  const response = await apiClient.get('/storefront/hero');
+  const payload = response?.data || response;
+  const deals = payload?.deals || payload?.topDeals || [];
+  return { data: deals.map(mapDeal) };
 }

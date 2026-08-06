@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
+import { getStorefrontHeroDeals } from '../api/content';
 import { getDeals } from '../api/menu';
 import { joinMenuUpdates, onMenuUpdated } from '../api/socket';
+
+async function loadDeals(zoneId, refresh = false) {
+  if (zoneId) {
+    return getDeals(zoneId, { refresh });
+  }
+  return getStorefrontHeroDeals();
+}
 
 export function useDeals(zoneId) {
   const [deals, setDeals] = useState([]);
@@ -8,18 +16,13 @@ export function useDeals(zoneId) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!zoneId) {
-      setDeals([]);
-      return undefined;
-    }
-
     let active = true;
 
-    const load = () => {
+    const load = (refresh = false) => {
       setLoading(true);
       setError(null);
 
-      getDeals(zoneId)
+      loadDeals(zoneId, refresh)
         .then((response) => {
           if (active) setDeals(response?.data || response || []);
         })
@@ -31,9 +34,9 @@ export function useDeals(zoneId) {
         });
     };
 
-    load();
+    load(true);
     joinMenuUpdates();
-    const unsubscribe = onMenuUpdated(load);
+    const unsubscribe = onMenuUpdated(() => load(true));
 
     return () => {
       active = false;

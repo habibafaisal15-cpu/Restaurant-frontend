@@ -1,9 +1,39 @@
 import apiClient from './client';
 import { mapDeal, mapPopularItem, resolveMediaUrl } from './adapters';
 
-export async function getStorefrontHero() {
-  const response = await apiClient.get('/storefront/hero');
-  return response?.data || response;
+let heroCache = null;
+let heroInflight = null;
+let heroCachedAt = 0;
+const HERO_TTL_MS = 60_000;
+
+export async function getStorefrontHero({ refresh = false } = {}) {
+  const now = Date.now();
+  if (!refresh && heroCache && now - heroCachedAt < HERO_TTL_MS) {
+    return heroCache;
+  }
+  if (!refresh && heroInflight) {
+    return heroInflight;
+  }
+
+  heroInflight = apiClient
+    .get('/storefront/hero')
+    .then((response) => {
+      const payload = response?.data || response;
+      heroCache = payload;
+      heroCachedAt = Date.now();
+      return payload;
+    })
+    .finally(() => {
+      heroInflight = null;
+    });
+
+  return heroInflight;
+}
+
+export function clearHeroCache() {
+  heroCache = null;
+  heroCachedAt = 0;
+  heroInflight = null;
 }
 
 export function mapHeroSideCards(cards = []) {
@@ -30,9 +60,8 @@ export function mapHeroSlides(slides = []) {
     }));
 }
 
-export async function getStorefrontHeroDeals() {
-  const response = await apiClient.get('/storefront/hero');
-  const payload = response?.data || response;
+export async function getStorefrontHeroDeals(options = {}) {
+  const payload = await getStorefrontHero(options);
   const deals =
     payload?.top_selling_deals ||
     payload?.topSellingDeals ||
@@ -42,9 +71,8 @@ export async function getStorefrontHeroDeals() {
   return { data: deals.map(mapDeal) };
 }
 
-export async function getStorefrontPopular() {
-  const response = await apiClient.get('/storefront/hero');
-  const payload = response?.data || response;
+export async function getStorefrontPopular(options = {}) {
+  const payload = await getStorefrontHero(options);
 
   return {
     bestSellers: (payload?.best_sellers || payload?.bestSellers || []).map(

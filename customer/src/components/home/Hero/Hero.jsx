@@ -41,7 +41,7 @@ function Hero({ categories = [] }) {
   useEffect(() => {
     let active = true;
 
-    fetchHeroContent(branch?.id, categories).then((content) => {
+    fetchHeroContent(branch?.id, []).then((content) => {
       if (!active) return;
 
       if (content.slides?.length) {
@@ -58,7 +58,7 @@ function Hero({ categories = [] }) {
     return () => {
       active = false;
     };
-  }, [branch?.id, categories]);
+  }, [branch?.id]);
 
   useEffect(() => {
     if (slides.length < 2) return undefined;

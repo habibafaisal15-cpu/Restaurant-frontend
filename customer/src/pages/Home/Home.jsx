@@ -7,14 +7,12 @@ import TopDeals from '../../components/home/TopDeals';
 import { ROUTES } from '../../constants';
 import { useLocationContext } from '../../context';
 import { useCategoryMetrics } from '../../hooks/useCategoryMetrics';
-import { useDeals } from '../../hooks/useDeals';
 import { useReveal } from '../../hooks/useReveal';
 import './Home.css';
 
 function Home() {
   const { hasLocation, branch, openLocationModal } = useLocationContext();
-  const { categories, bestSellers } = useCategoryMetrics(branch?.id);
-  const { deals } = useDeals(branch?.id);
+  const { categories, bestSellers, deals } = useCategoryMetrics(branch?.id);
   const { hash } = useLocation();
   useReveal();
 

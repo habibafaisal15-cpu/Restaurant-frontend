@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getStorefrontPopular } from '../api/content';
-import { getCategories, getMenuMetrics } from '../api/menu';
+import { getCategories, getMenuMetrics, clearMenuCache } from '../api/menu';
+import { joinMenuUpdates, onMenuUpdated } from '../api/socket';
 
-const POLL_MS = 20000;
 const MAX_BEST_SELLERS = 3;
 
 const normalizeBestSellers = (raw) => {
@@ -30,12 +30,12 @@ export function useCategoryMetrics(branchId) {
   useEffect(() => {
     let active = true;
 
-    const fetchLive = async () => {
+    const fetchLive = async ({ refresh = false } = {}) => {
       try {
         setError(null);
 
         if (!branchId) {
-          const popular = await getStorefrontPopular();
+          const popular = await getStorefrontPopular({ refresh });
           if (!active) return;
 
           setCategories([]);
@@ -47,9 +47,11 @@ export function useCategoryMetrics(branchId) {
           return;
         }
 
+        if (refresh) clearMenuCache(branchId);
+
         const [categoriesRes, metricsRes] = await Promise.allSettled([
-          getCategories(branchId),
-          getMenuMetrics(branchId),
+          getCategories(branchId, { refresh }),
+          getMenuMetrics(branchId, { refresh }),
         ]);
 
         if (!active) return;
@@ -76,12 +78,13 @@ export function useCategoryMetrics(branchId) {
     };
 
     setLoading(true);
-    fetchLive();
-    const intervalId = setInterval(fetchLive, POLL_MS);
+    fetchLive({ refresh: false });
+    joinMenuUpdates();
+    const unsubscribe = onMenuUpdated(() => fetchLive({ refresh: true }));
 
     return () => {
       active = false;
-      clearInterval(intervalId);
+      unsubscribe();
     };
   }, [branchId]);
 
@@ -89,6 +92,8 @@ export function useCategoryMetrics(branchId) {
     const bestSellers = normalizeBestSellers(
       metrics?.bestSellers || metrics?.best_sellers || metrics?.topSellers,
     );
+    const topSellingDeals =
+      metrics?.topSellingDeals || metrics?.top_selling_deals || [];
 
     return {
       categories,
@@ -102,6 +107,7 @@ export function useCategoryMetrics(branchId) {
           0,
         ),
       bestSellers,
+      deals: topSellingDeals,
       liveUpdatedAt:
         metrics?.updatedAt ||
         metrics?.liveUpdatedAt ||

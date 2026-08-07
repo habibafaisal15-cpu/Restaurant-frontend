@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getCategories, getFullMenu } from '../api/menu';
+import { getCategories, getFullMenu, clearMenuCache } from '../api/menu';
 import { joinMenuUpdates, onMenuUpdated } from '../api/socket';
 
 export function useCategories(branchId) {
@@ -15,11 +15,12 @@ export function useCategories(branchId) {
 
     let active = true;
 
-    const load = () => {
+    const load = ({ refresh = false } = {}) => {
       setLoading(true);
       setError(null);
+      if (refresh) clearMenuCache(branchId);
 
-      getCategories(branchId)
+      getCategories(branchId, { refresh })
         .then((data) => {
           const next = data?.data || data || [];
           if (active && Array.isArray(next)) {
@@ -34,9 +35,9 @@ export function useCategories(branchId) {
         });
     };
 
-    load();
+    load({ refresh: false });
     joinMenuUpdates();
-    const unsubscribe = onMenuUpdated(load);
+    const unsubscribe = onMenuUpdated(() => load({ refresh: true }));
 
     return () => {
       active = false;
@@ -81,23 +82,34 @@ export function useMenuItems(branchId, categoryId) {
 }
 
 export function useFullMenu(branchId) {
-  const [menu, setMenu] = useState({ categories: [], deals: [] });
+  const [menu, setMenu] = useState({
+    categories: [],
+    deals: [],
+    bestSellers: [],
+    topSellingDeals: [],
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!branchId) {
-      setMenu({ categories: [], deals: [] });
+      setMenu({
+        categories: [],
+        deals: [],
+        bestSellers: [],
+        topSellingDeals: [],
+      });
       return undefined;
     }
 
     let active = true;
 
-    const load = () => {
+    const load = ({ refresh = false } = {}) => {
       setLoading(true);
       setError(null);
+      if (refresh) clearMenuCache(branchId);
 
-      getFullMenu(branchId)
+      getFullMenu(branchId, { refresh })
         .then((next) => {
           if (active) setMenu(next);
         })
@@ -109,9 +121,9 @@ export function useFullMenu(branchId) {
         });
     };
 
-    load();
+    load({ refresh: false });
     joinMenuUpdates();
-    const unsubscribe = onMenuUpdated(load);
+    const unsubscribe = onMenuUpdated(() => load({ refresh: true }));
 
     return () => {
       active = false;

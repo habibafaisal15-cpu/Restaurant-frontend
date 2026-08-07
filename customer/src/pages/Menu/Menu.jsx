@@ -5,9 +5,7 @@ import OrderPanel from '../../components/menu/OrderPanel';
 import Loader from '../../components/common/Loader';
 import { useCart, useLocationContext } from '../../context';
 import { dealToCartItem } from '../../api/adapters';
-import { useCategoryMetrics } from '../../hooks/useCategoryMetrics';
-import { useDeals } from '../../hooks/useDeals';
-import { useCategories, useFullMenu } from '../../hooks/useMenu';
+import { useFullMenu } from '../../hooks/useMenu';
 import { formatCurrency } from '../../utils/format';
 import './Menu.css';
 
@@ -23,11 +21,12 @@ function Menu() {
   const { branch } = useLocationContext();
   const { addItem } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { categories } = useCategories(branch?.id);
   const { menu, loading, error } = useFullMenu(branch?.id);
-  const { bestSellers } = useCategoryMetrics(branch?.id);
-  const { deals } = useDeals(branch?.id);
-  const categoryList = categories;
+  const categoryList = menu.categories || [];
+  const bestSellers = menu.bestSellers || [];
+  const deals = menu.deals?.length
+    ? menu.deals
+    : menu.topSellingDeals || [];
   const sectionList = useMemo(
     () => [...categoryList, ...EXTRA_MENU_SECTIONS],
     [categoryList]

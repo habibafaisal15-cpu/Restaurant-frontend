@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { getStorefrontHeroDeals } from '../api/content';
-import { getDeals } from '../api/menu';
+import { getStorefrontHeroDeals, clearHeroCache } from '../api/content';
+import { getDeals, clearMenuCache } from '../api/menu';
 import { joinMenuUpdates, onMenuUpdated } from '../api/socket';
 
 async function loadDeals(zoneId, refresh = false) {
   if (zoneId) {
+    if (refresh) clearMenuCache(zoneId);
     return getDeals(zoneId, { refresh });
   }
-  return getStorefrontHeroDeals();
+  if (refresh) clearHeroCache();
+  return getStorefrontHeroDeals({ refresh });
 }
 
 export function useDeals(zoneId) {
@@ -34,7 +36,7 @@ export function useDeals(zoneId) {
         });
     };
 
-    load(true);
+    load(false);
     joinMenuUpdates();
     const unsubscribe = onMenuUpdated(() => load(true));
 

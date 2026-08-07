@@ -8,17 +8,32 @@ import {
 } from './adapters';
 
 const menuCache = new Map();
+const menuInflight = new Map();
 
-async function fetchStorefrontMenu(zoneId) {
+async function fetchStorefrontMenu(zoneId, { refresh = false } = {}) {
   if (!zoneId) return { categories: [], deals: [] };
 
-  const response = await apiClient.get('/storefront/menu', {
-    params: { zone_id: zoneId },
-  });
+  if (!refresh && menuCache.has(zoneId)) {
+    return menuCache.get(zoneId);
+  }
 
-  const menu = response?.data || response || {};
-  menuCache.set(zoneId, menu);
-  return menu;
+  if (!refresh && menuInflight.has(zoneId)) {
+    return menuInflight.get(zoneId);
+  }
+
+  const request = apiClient
+    .get('/storefront/menu', { params: { zone_id: zoneId } })
+    .then((response) => {
+      const menu = response?.data || response || {};
+      menuCache.set(zoneId, menu);
+      return menu;
+    })
+    .finally(() => {
+      menuInflight.delete(zoneId);
+    });
+
+  menuInflight.set(zoneId, request);
+  return request;
 }
 
 export function getCachedMenu(zoneId) {
@@ -26,36 +41,43 @@ export function getCachedMenu(zoneId) {
 }
 
 export function clearMenuCache(zoneId) {
-  if (zoneId) menuCache.delete(zoneId);
-  else menuCache.clear();
+  if (zoneId) {
+    menuCache.delete(zoneId);
+    menuInflight.delete(zoneId);
+  } else {
+    menuCache.clear();
+    menuInflight.clear();
+  }
 }
 
-export async function getCategories(zoneId) {
-  const menu = await fetchStorefrontMenu(zoneId);
+export async function getCategories(zoneId, options = {}) {
+  const menu = await fetchStorefrontMenu(zoneId, options);
   const categories = (menu.categories || []).map(mapCategory);
   return { data: categories };
 }
 
 export async function getMenuItems(zoneId, categoryId) {
-  const menu = menuCache.get(zoneId) || (await fetchStorefrontMenu(zoneId));
+  const menu = await fetchStorefrontMenu(zoneId);
   const category = (menu.categories || []).find((entry) => entry.id === categoryId);
   const items = (category?.items || []).map(mapMenuItem);
   return { data: items };
 }
 
-export async function getFullMenu(zoneId) {
-  const menu = await fetchStorefrontMenu(zoneId);
+export async function getFullMenu(zoneId, options = {}) {
+  const menu = await fetchStorefrontMenu(zoneId, options);
   return {
     categories: (menu.categories || []).map((category) => ({
       ...mapCategory(category),
       items: (category.items || []).map(mapMenuItem),
     })),
     deals: (menu.deals || []).map(mapDeal),
+    bestSellers: (menu.best_sellers || menu.bestSellers || []).map(mapPopularItem),
+    topSellingDeals: (menu.top_selling_deals || menu.topSellingDeals || []).map(mapDeal),
   };
 }
 
 export async function getMenuItemById(itemId, zoneId) {
-  const menu = menuCache.get(zoneId) || (await fetchStorefrontMenu(zoneId));
+  const menu = await fetchStorefrontMenu(zoneId);
   const item = (menu.categories || [])
     .flatMap((category) => category.items || [])
     .find((entry) => entry.id === itemId);
@@ -63,8 +85,8 @@ export async function getMenuItemById(itemId, zoneId) {
   return item ? { data: mapMenuItem(item) } : { data: null };
 }
 
-export async function getMenuMetrics(zoneId) {
-  const menu = await fetchStorefrontMenu(zoneId);
+export async function getMenuMetrics(zoneId, options = {}) {
+  const menu = await fetchStorefrontMenu(zoneId, options);
   const allItems = (menu.categories || []).flatMap((category) =>
     (category.items || []).map(mapMenuItem)
   );
@@ -87,11 +109,7 @@ export async function getMenuMetrics(zoneId) {
 }
 
 export async function getDeals(zoneId, { refresh = false } = {}) {
-  if (refresh && zoneId) clearMenuCache(zoneId);
-  const menu =
-    refresh || !menuCache.has(zoneId)
-      ? await fetchStorefrontMenu(zoneId)
-      : menuCache.get(zoneId);
+  const menu = await fetchStorefrontMenu(zoneId, { refresh });
   const deals =
     menu.top_selling_deals ||
     menu.topSellingDeals ||

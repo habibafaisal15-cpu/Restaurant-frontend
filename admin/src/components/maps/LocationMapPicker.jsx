@@ -16,9 +16,16 @@ L.Icon.Default.mergeOptions({
 
 const DEFAULT_CENTER = [24.8607, 67.0011]; // Karachi
 
+function copperColor() {
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue('--copper').trim() ||
+    '#7b1e3a'
+  );
+}
+
 /**
- * Interactive map: click to place pin, circle shows delivery radius (km).
- * Customer maps will use the same lat/lng + radiusKm values.
+ * Interactive map: click/drag pin; circle shows delivery radius (km).
+ * When lat/lng/radius change from the form (e.g. typed address), the pin and circle update.
  */
 export default function LocationMapPicker({
   latitude,
@@ -40,7 +47,10 @@ export default function LocationMapPicker({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return undefined;
 
-    const hasCoords = Number.isFinite(latitude) && Number.isFinite(longitude) && (latitude !== 0 || longitude !== 0);
+    const hasCoords =
+      Number.isFinite(latitude) &&
+      Number.isFinite(longitude) &&
+      (latitude !== 0 || longitude !== 0);
     const center = hasCoords ? [latitude, longitude] : DEFAULT_CENTER;
 
     const map = L.map(containerRef.current, {
@@ -58,12 +68,12 @@ export default function LocationMapPicker({
       onChangeRef.current?.({
         latitude: Number(e.latlng.lat.toFixed(6)),
         longitude: Number(e.latlng.lng.toFixed(6)),
+        source: 'map',
       });
     });
 
     mapRef.current = map;
 
-    // Modal / delayed layout: ensure tiles render at full size
     requestAnimationFrame(() => {
       map.invalidateSize();
     });
@@ -76,6 +86,7 @@ export default function LocationMapPicker({
       markerRef.current = null;
       circleRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- init once
   }, []);
 
   useEffect(() => {
@@ -84,7 +95,8 @@ export default function LocationMapPicker({
 
     const lat = Number(latitude);
     const lng = Number(longitude);
-    const radius = Math.max(0.5, Number(radiusKm) || 10) * 1000;
+    const radiusMeters = Math.max(0.5, Number(radiusKm) || 10) * 1000;
+    const color = copperColor();
 
     if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
@@ -95,6 +107,7 @@ export default function LocationMapPicker({
         onChangeRef.current?.({
           latitude: Number(pos.lat.toFixed(6)),
           longitude: Number(pos.lng.toFixed(6)),
+          source: 'map',
         });
       });
     } else {
@@ -103,18 +116,25 @@ export default function LocationMapPicker({
 
     if (!circleRef.current) {
       circleRef.current = L.circle([lat, lng], {
-        radius,
-        color: getComputedStyle(document.documentElement).getPropertyValue('--copper').trim() || '#7b1e3a',
-        fillColor: getComputedStyle(document.documentElement).getPropertyValue('--copper').trim() || '#7b1e3a',
-        fillOpacity: 0.12,
+        radius: radiusMeters,
+        color,
+        fillColor: color,
+        fillOpacity: 0.15,
         weight: 2,
       }).addTo(map);
     } else {
       circleRef.current.setLatLng([lat, lng]);
-      circleRef.current.setRadius(radius);
+      circleRef.current.setRadius(radiusMeters);
     }
 
-    map.panTo([lat, lng]);
+    try {
+      const bounds = circleRef.current.getBounds();
+      map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15, animate: true });
+    } catch {
+      map.panTo([lat, lng]);
+    }
+
+    window.setTimeout(() => map.invalidateSize(), 50);
   }, [latitude, longitude, radiusKm]);
 
   return (
@@ -126,8 +146,8 @@ export default function LocationMapPicker({
         role="presentation"
       />
       <p className="location-map-picker__hint">
-        Click the map to set the pin, or drag the marker. The circle is the delivery radius
-        customers will see on their map.
+        Type an address above to place the pin automatically, or click/drag the marker.
+        The circle is the delivery coverage radius (km) used for customer orders.
       </p>
     </div>
   );

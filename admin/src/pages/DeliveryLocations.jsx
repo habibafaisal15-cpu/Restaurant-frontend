@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Plus,
   Search,
@@ -8,6 +8,7 @@ import {
   Power,
   Navigation,
   CircleDot,
+  LocateFixed,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DataTable from '../components/ui/DataTable';
@@ -41,6 +42,9 @@ export default function DeliveryLocations() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState(null);
   const [confirmMode, setConfirmMode] = useState('toggle'); // toggle | delete
+  const [geocoding, setGeocoding] = useState(false);
+  const skipNextAddressGeocode = useRef(false);
+  const geocodeRequestId = useRef(0);
 
   const loadLocations = useCallback(async () => {
     setLoading(true);
@@ -90,18 +94,93 @@ export default function DeliveryLocations() {
     [locations],
   );
 
+  const applyGeocodeResult = useCallback((result, { updateAddress = true } = {}) => {
+    if (updateAddress) {
+      skipNextAddressGeocode.current = true;
+    }
+    setForm((prev) => ({
+      ...prev,
+      ...(updateAddress && result.address ? { address: result.address } : {}),
+      latitude: Number(result.latitude.toFixed(6)),
+      longitude: Number(result.longitude.toFixed(6)),
+    }));
+  }, []);
+
+  const findAddressOnMap = useCallback(
+    async (addressOverride) => {
+      const query = String(addressOverride ?? form.address).trim();
+      if (query.length < 3) {
+        toast.error('Enter a fuller address to place it on the map');
+        return;
+      }
+
+      const requestId = ++geocodeRequestId.current;
+      setGeocoding(true);
+      try {
+        const result = await locationService.geocodeAddress(query);
+        if (requestId !== geocodeRequestId.current) return;
+        applyGeocodeResult(result, { updateAddress: true });
+        toast.success('Location selected on map');
+      } catch (err) {
+        if (requestId !== geocodeRequestId.current) return;
+        toast.error(err.message || 'Could not find that address on the map');
+      } finally {
+        if (requestId === geocodeRequestId.current) {
+          setGeocoding(false);
+        }
+      }
+    },
+    [applyGeocodeResult, form.address],
+  );
+
+  useEffect(() => {
+    if (!modalOpen) return undefined;
+    if (skipNextAddressGeocode.current) {
+      skipNextAddressGeocode.current = false;
+      return undefined;
+    }
+
+    const query = form.address.trim();
+    if (query.length < 5) return undefined;
+
+    const timer = window.setTimeout(() => {
+      findAddressOnMap(query);
+    }, 700);
+
+    return () => window.clearTimeout(timer);
+  }, [form.address, modalOpen, findAddressOnMap]);
+
+  const handleMapChange = async ({ latitude, longitude, source }) => {
+    setForm((prev) => ({
+      ...prev,
+      latitude,
+      longitude,
+    }));
+
+    if (source !== 'map') return;
+
+    try {
+      const result = await locationService.reverseGeocode(latitude, longitude);
+      applyGeocodeResult(result, { updateAddress: true });
+    } catch {
+      // Keep pin even if reverse lookup fails
+    }
+  };
+
   const updateForm = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const openCreate = () => {
     setEditingId(null);
+    skipNextAddressGeocode.current = true;
     setForm({ ...EMPTY_FORM });
     setModalOpen(true);
   };
 
   const openEdit = (row) => {
     setEditingId(row.id);
+    skipNextAddressGeocode.current = true;
     setForm({
       name: row.name,
       address: row.address,
@@ -409,13 +488,34 @@ export default function DeliveryLocations() {
 
           <div className="form-group">
             <label htmlFor="loc-address">Address *</label>
-            <input
-              id="loc-address"
-              className="form-control"
-              placeholder="Street, area, city"
-              value={form.address}
-              onChange={(e) => updateForm('address', e.target.value)}
-            />
+            <div className="loc-address-row">
+              <input
+                id="loc-address"
+                className="form-control"
+                placeholder="Street, area, city — map pin updates automatically"
+                value={form.address}
+                onChange={(e) => updateForm('address', e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    findAddressOnMap();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={geocoding || !form.address.trim()}
+                onClick={() => findAddressOnMap()}
+              >
+                <LocateFixed size={16} />
+                {geocoding ? 'Finding…' : 'Find on map'}
+              </button>
+            </div>
+            <p className="form-hint">
+              Enter an address and the map pin moves there. Delivery is allowed only inside the
+              radius circle below.
+            </p>
           </div>
 
           <div className="form-row">
@@ -453,7 +553,9 @@ export default function DeliveryLocations() {
                 value={form.radiusKm}
                 onChange={(e) => updateForm('radiusKm', e.target.value)}
               />
-              <p className="form-hint">Default 10 km — customers outside this circle cannot order here.</p>
+              <p className="form-hint">
+                Customers outside this circle see &ldquo;Sorry, we don&apos;t deliver here.&rdquo;
+              </p>
             </div>
           </div>
 
@@ -465,13 +567,7 @@ export default function DeliveryLocations() {
                 latitude={Number(form.latitude)}
                 longitude={Number(form.longitude)}
                 radiusKm={Number(form.radiusKm) || DEFAULT_RADIUS_KM}
-                onChange={({ latitude, longitude }) => {
-                  setForm((prev) => ({
-                    ...prev,
-                    latitude,
-                    longitude,
-                  }));
-                }}
+                onChange={handleMapChange}
               />
             )}
           </div>

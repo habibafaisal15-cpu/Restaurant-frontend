@@ -127,8 +127,28 @@
   margin-top: 0.25rem;
 }
 
+.loc-address-row {
+  display: flex;
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.loc-address-row .form-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.loc-address-row .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 @media (max-width: 700px) {
   .loc-address {
     max-width: 160px;
+  }
+
+  .loc-address-row {
+    flex-direction: column;
   }
 }

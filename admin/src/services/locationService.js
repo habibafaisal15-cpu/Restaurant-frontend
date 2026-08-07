@@ -148,4 +148,27 @@ export async function remove(id) {
   );
 }
 
+export async function geocodeAddress(address) {
+  const response = await api.post('/storefront/location/geocode', { address });
+  const data = unwrap(response);
+  return {
+    address: data.formatted_address || address,
+    latitude: Number(data.latitude),
+    longitude: Number(data.longitude),
+  };
+}
+
+export async function reverseGeocode(latitude, longitude) {
+  const response = await api.post('/storefront/location/reverse-geocode', {
+    latitude: Number(latitude),
+    longitude: Number(longitude),
+  });
+  const data = unwrap(response);
+  return {
+    address: data.formatted_address || `${latitude}, ${longitude}`,
+    latitude: Number(data.latitude ?? latitude),
+    longitude: Number(data.longitude ?? longitude),
+  };
+}
+
 export { DEFAULT_RADIUS_KM };

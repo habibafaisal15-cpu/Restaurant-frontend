@@ -1,6 +1,6 @@
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { ImageIcon, Link2, Upload, X } from 'lucide-react';
-import { uploadImage } from '../../api/upload';
+import { uploadImage, isImageFile } from '../../api/upload';
 import { resolveMediaUrl } from '../../api/adapters';
 import './ImageUploadField.css';
 
@@ -10,21 +10,34 @@ export default function ImageUploadField({
   label,
   value = '',
   onChange,
-  placeholder = 'https://...',
+  placeholder = 'https://… or upload a file',
   uploadFolder = 'products',
 }) {
   const uid = useId();
   const fileRef = useRef(null);
-  const [mode, setMode] = useState(() =>
-    value && !String(value).startsWith('data:') ? 'link' : 'upload',
-  );
+  const [mode, setMode] = useState('upload');
   const [error, setError] = useState('');
   const [imgBroken, setImgBroken] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [localPreview, setLocalPreview] = useState('');
+
+  useEffect(() => {
+    setImgBroken(false);
+  }, [value]);
+
+  useEffect(() => {
+    return () => {
+      if (localPreview) URL.revokeObjectURL(localPreview);
+    };
+  }, [localPreview]);
 
   const handleUrlChange = (e) => {
     setError('');
     setImgBroken(false);
+    if (localPreview) {
+      URL.revokeObjectURL(localPreview);
+      setLocalPreview('');
+    }
     onChange?.(e.target.value);
   };
 
@@ -33,7 +46,7 @@ export default function ImageUploadField({
     e.target.value = '';
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
+    if (!isImageFile(file)) {
       setError('Please select an image file (JPG, PNG, WEBP…)');
       return;
     }
@@ -43,6 +56,9 @@ export default function ImageUploadField({
       return;
     }
 
+    if (localPreview) URL.revokeObjectURL(localPreview);
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreview(objectUrl);
     setUploading(true);
     setError('');
     setImgBroken(false);
@@ -50,9 +66,11 @@ export default function ImageUploadField({
     try {
       const url = await uploadImage(file, uploadFolder);
       onChange?.(url);
-      setMode('link');
+      setMode('upload');
     } catch (err) {
       setError(err.message || 'Upload failed — try again');
+      URL.revokeObjectURL(objectUrl);
+      setLocalPreview('');
     } finally {
       setUploading(false);
     }
@@ -61,11 +79,16 @@ export default function ImageUploadField({
   const clearImage = () => {
     setError('');
     setImgBroken(false);
+    if (localPreview) {
+      URL.revokeObjectURL(localPreview);
+      setLocalPreview('');
+    }
     onChange?.('');
   };
 
-  const previewUrl =
+  const remotePreview =
     value && !String(value).startsWith('data:') ? resolveMediaUrl(value) : '';
+  const previewUrl = localPreview || remotePreview;
   const showPreview = Boolean(previewUrl) && !imgBroken;
 
   return (
@@ -101,7 +124,9 @@ export default function ImageUploadField({
             <img
               src={previewUrl}
               alt="Preview"
-              onError={() => setImgBroken(true)}
+              onError={() => {
+                if (!localPreview) setImgBroken(true);
+              }}
             />
           ) : (
             <div className="image-upload-field__placeholder">
@@ -117,7 +142,7 @@ export default function ImageUploadField({
                 ref={fileRef}
                 id={`${uid}-file`}
                 type="file"
-                accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/jfif,.jfif"
+                accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.jfif"
                 className="image-upload-field__file-input"
                 onChange={handleFile}
               />
@@ -130,14 +155,21 @@ export default function ImageUploadField({
                 <Upload size={15} />
                 {uploading ? 'Uploading…' : value ? 'Change image' : 'Choose image'}
               </button>
-              <p className="form-hint">Saved to server (max {MAX_FILE_MB}MB)</p>
+              <p className="form-hint">
+                {uploading
+                  ? 'Uploading to server…'
+                  : value
+                    ? 'Image ready — save the deal to apply it'
+                    : `Saved to server (max ${MAX_FILE_MB}MB)`}
+              </p>
             </>
           ) : (
             <div className="image-upload-field__input-wrap">
               <Link2 size={16} className="image-upload-field__icon" aria-hidden="true" />
               <input
                 id={`${uid}-url`}
-                type="url"
+                type="text"
+                inputMode="url"
                 className="form-control image-upload-field__input"
                 value={value?.startsWith('data:') ? '' : value}
                 onChange={handleUrlChange}
@@ -159,9 +191,10 @@ export default function ImageUploadField({
         </div>
       </div>
 
-      {(error || (imgBroken && previewUrl)) && (
+      {error && <p className="form-error">{error}</p>}
+      {!error && imgBroken && remotePreview && !localPreview && (
         <p className="form-error">
-          {error || 'Image could not be loaded — try another file or URL'}
+          Image could not be loaded — try another file or URL
         </p>
       )}
     </div>

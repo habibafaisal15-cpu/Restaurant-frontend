@@ -35,7 +35,7 @@ const ORDER_TYPES = [
 const PAYMENT_METHODS = [
   { key: 'cash', label: 'Cash', icon: Banknote },
   { key: 'card', label: 'Card', icon: CreditCard },
-  { key: 'online', label: 'Online transfer', icon: Smartphone },
+  { key: 'online', label: 'Online', icon: Smartphone },
 ];
 
 function settingsForSlip(settings) {
@@ -326,7 +326,7 @@ export default function POS() {
               disabled={cart.length === 0}
             >
               <Trash2 size={15} />
-              Clear cart
+              Clear
             </button>
           </div>
 
@@ -358,9 +358,7 @@ export default function POS() {
                 />
               </div>
 
-              <p className="pos-token-hint">
-                Token will be assigned automatically when the order is placed.
-              </p>
+              <p className="pos-token-hint">Token assigned on place order.</p>
             </div>
 
             <div className="pos-cart-items">
@@ -437,7 +435,7 @@ export default function POS() {
                     className={`pos-payment-btn ${paymentMethod === key ? 'active' : ''}`}
                     onClick={() => setPaymentMethod(key)}
                   >
-                    <Icon size={20} />
+                    <Icon size={14} />
                     {label}
                   </button>
                 ))}
@@ -446,17 +444,17 @@ export default function POS() {
 
             <button
               type="button"
-              className="btn btn-primary btn-lg pos-place-btn"
+              className="btn btn-primary pos-place-btn"
               disabled={cart.length === 0 || placing}
               onClick={handlePlaceOrder}
             >
               {placing ? (
                 <>
-                  <Loader2 size={20} className="pos-spin" />
-                  Placing order…
+                  <Loader2 size={16} className="pos-spin" />
+                  Placing…
                 </>
               ) : (
-                <>Place Order · {formatPKR(totals.total)}</>
+                <>Place · {formatPKR(totals.total)}</>
               )}
             </button>
           </div>

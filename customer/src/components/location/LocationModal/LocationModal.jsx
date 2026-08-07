@@ -11,6 +11,17 @@ import {
 import LocationMap from '../LocationMap';
 import './LocationModal.css';
 
+function isBlockedDeliveryMessage(message = '') {
+  const text = String(message).toLowerCase();
+  return (
+    text.includes("don't deliver") ||
+    text.includes('do not deliver') ||
+    text.includes('not deliver') ||
+    text.includes('outside') ||
+    text.includes('unavailable')
+  );
+}
+
 function LocationModal() {
   const {
     isLocationModalOpen,
@@ -22,6 +33,7 @@ function LocationModal() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [manualAddress, setManualAddress] = useState('');
+  const [mapEpoch, setMapEpoch] = useState(0);
   const [pin, setPin] = useState({
     lat: null,
     lng: null,
@@ -46,6 +58,13 @@ function LocationModal() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [isLocationModalOpen, dismissLocationModal]);
 
+  useEffect(() => {
+    if (!isLocationModalOpen) {
+      setLoading(false);
+      setError(null);
+    }
+  }, [isLocationModalOpen]);
+
   if (!isLocationModalOpen) return null;
 
   const confirmLocation = async (coords) => {
@@ -55,11 +74,12 @@ function LocationModal() {
       const result = await validateAndAssignLocation(coords);
       applyDeliverableLocation(result.location, result.branch);
     } catch (err) {
-      setError(
+      const message =
         err instanceof DeliveryUnavailableError
-          ? err.message
-          : err.message || DELIVERY_UNAVAILABLE_MESSAGE
-      );
+          ? err.message || DELIVERY_UNAVAILABLE_MESSAGE
+          : err.message || DELIVERY_UNAVAILABLE_MESSAGE;
+      setError(message);
+      setMode('map');
     } finally {
       setLoading(false);
     }
@@ -79,16 +99,39 @@ function LocationModal() {
         const nextPin = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
+          address: '',
         };
-        setPin((current) => ({ ...current, ...nextPin }));
+
         setMode('map');
+        setPin(nextPin);
+        setMapEpoch((value) => value + 1);
+
+        try {
+          const address = await reverseGeocode(nextPin.lat, nextPin.lng);
+          nextPin.address = address;
+          setPin({ ...nextPin });
+        } catch {
+          nextPin.address = `${nextPin.lat.toFixed(5)}, ${nextPin.lng.toFixed(5)}`;
+          setPin({ ...nextPin });
+        }
+
         await confirmLocation(nextPin);
       },
-      () => {
+      (geoError) => {
         setLoading(false);
-        setError('Unable to detect location. Use map or enter address manually.');
+        setMode('map');
+        const denied = geoError?.code === 1;
+        setError(
+          denied
+            ? 'Location permission denied. Allow location access or drop a pin on the map.'
+            : 'Unable to detect location. Use map or enter address manually.',
+        );
       },
-      { enableHighAccuracy: true, timeout: 12000 }
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      },
     );
   };
 
@@ -117,8 +160,8 @@ function LocationModal() {
     } catch (err) {
       setError(
         err instanceof DeliveryUnavailableError
-          ? err.message
-          : err.message || DELIVERY_UNAVAILABLE_MESSAGE
+          ? err.message || DELIVERY_UNAVAILABLE_MESSAGE
+          : err.message || DELIVERY_UNAVAILABLE_MESSAGE,
       );
       setLoading(false);
     }
@@ -186,7 +229,12 @@ function LocationModal() {
 
         {mode === 'map' ? (
           <div className="location-modal__map-block">
-            <LocationMap lat={pin.lat} lng={pin.lng} onPick={handleMapPick} />
+            <LocationMap
+              key={mapEpoch}
+              lat={pin.lat}
+              lng={pin.lng}
+              onPick={handleMapPick}
+            />
             {pin.address && (
               <p className="location-modal__selected">
                 Selected: <strong>{pin.address}</strong>
@@ -221,17 +269,18 @@ function LocationModal() {
         {error && (
           <p
             className={
-              error.toLowerCase().includes("don't deliver")
+              isBlockedDeliveryMessage(error)
                 ? 'location-modal__error location-modal__error--blocked'
                 : 'location-modal__error'
             }
+            role="alert"
           >
             {error}
           </p>
         )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 

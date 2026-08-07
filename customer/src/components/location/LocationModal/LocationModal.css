@@ -172,11 +172,14 @@
 }
 
 .location-modal__error--blocked {
-  padding: 0.7rem 0.8rem;
+  padding: 0.85rem 0.9rem;
   border-radius: 10px;
-  border: 1px solid rgba(217, 137, 137, 0.35);
-  background: rgba(217, 137, 137, 0.1);
-  font-weight: 600;
+  border: 1px solid rgba(217, 137, 137, 0.45);
+  background: rgba(217, 137, 137, 0.14);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #f0b4b4;
+  text-align: center;
 }
 
 @media (max-width: 560px) {

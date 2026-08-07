@@ -12,8 +12,17 @@ export async function uploadImage(file, folder = 'products') {
   const formData = new FormData();
   formData.append('image', file);
 
+  // Do not set Content-Type manually — the browser must add the multipart boundary.
   const response = await api.post(`/delivery/media/${folder}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: { 'Content-Type': undefined },
+    transformRequest: [
+      (data, headers) => {
+        if (data instanceof FormData) {
+          delete headers['Content-Type'];
+        }
+        return data;
+      },
+    ],
   });
 
   const data = unwrap(response);

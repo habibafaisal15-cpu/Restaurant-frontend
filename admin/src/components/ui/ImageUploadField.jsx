@@ -117,7 +117,7 @@ export default function ImageUploadField({
                 ref={fileRef}
                 id={`${uid}-file`}
                 type="file"
-                accept="image/png,image/jpeg,image/jpg,image/webp,image/gif"
+                accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/jfif,.jfif"
                 className="image-upload-field__file-input"
                 onChange={handleFile}
               />

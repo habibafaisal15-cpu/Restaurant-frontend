@@ -177,11 +177,36 @@
 }
 
 @media (max-width: 720px) {
+  .explore-menu {
+    padding: 2.25rem 0 2.5rem;
+  }
+
+  .explore-menu__head {
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.55rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .explore-menu__view-all {
+    font-size: 0.72rem;
+  }
+
   .explore-menu__arrow {
     display: none;
   }
 
   .explore-menu__card {
-    flex-basis: min(170px, 72vw);
+    flex-basis: min(158px, 70vw);
+  }
+
+  .explore-menu__blob {
+    min-height: 220px;
+    padding: 1rem 0.85rem 1.15rem;
+  }
+
+  .explore-menu__blob img {
+    width: 100px;
+    height: 100px;
   }
 }

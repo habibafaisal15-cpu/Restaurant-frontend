@@ -92,3 +92,24 @@
   color: var(--color-text-muted);
   text-align: left;
 }
+
+@media (max-width: 720px) {
+  .info-page {
+    padding-top: 1.5rem;
+    padding-bottom: calc(2.5rem + var(--safe-bottom));
+  }
+
+  .info-page h1 {
+    font-size: clamp(1.55rem, 7vw, 2rem);
+  }
+
+  .info-page__grid {
+    margin-top: 1.35rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .info-page__list article {
+    padding: 0.9rem;
+  }
+}

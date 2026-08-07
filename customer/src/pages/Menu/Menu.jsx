@@ -283,9 +283,9 @@ function Menu() {
           </section>
         </div>
 
-        <div className="menu-explore__aside">
+        <aside className="menu-explore__aside">
           <OrderPanel />
-        </div>
+        </aside>
       </div>
     </section>
   );

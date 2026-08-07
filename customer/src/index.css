@@ -23,16 +23,32 @@
 html {
   background: var(--color-bg);
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-bg);
   color: var(--color-text);
   letter-spacing: 0.01em;
+  overflow-x: hidden;
   transition: background-color 0.35s var(--ease-soft), color 0.35s var(--ease-soft);
+}
+
+img,
+video,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+#root {
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 h1,

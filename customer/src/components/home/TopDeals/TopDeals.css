@@ -182,8 +182,32 @@
   }
 }
 
+@media (max-width: 720px) {
+  .top-deals {
+    padding: 0 0 2.75rem;
+  }
+
+  .top-deals__head {
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.55rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .top-deals__view-all {
+    font-size: 0.72rem;
+  }
+}
+
 @media (max-width: 640px) {
   .top-deals__grid {
     grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 640px) {
+  .top-deals__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

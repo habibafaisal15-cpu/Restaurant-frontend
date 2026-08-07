@@ -191,11 +191,25 @@
 
 @media (max-width: 720px) {
   .cart-page {
-    padding: 0.75rem var(--chrome-gutter-mobile) 2.5rem;
+    padding: 0.75rem var(--chrome-gutter-mobile) calc(2.5rem + var(--safe-bottom));
   }
 
   .cart-page__title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     letter-spacing: 0.1em;
+  }
+
+  .cart-page__pill {
+    max-width: 100%;
+    min-height: 46px;
+  }
+
+  .cart-page__actions {
+    padding: 1.05rem 1rem;
+    border-radius: 16px;
+  }
+
+  .cart-page__total strong {
+    font-size: 1.45rem;
   }
 }

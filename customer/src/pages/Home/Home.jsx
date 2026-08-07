@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import BestSellers from '../../components/home/BestSellers';
 import ExploreCategories from '../../components/home/ExploreCategories';
 import Hero from '../../components/home/Hero';
 import TopDeals from '../../components/home/TopDeals';
-import { ROUTES } from '../../constants';
 import { useLocationContext } from '../../context';
 import { useCategoryMetrics } from '../../hooks/useCategoryMetrics';
 import { useReveal } from '../../hooks/useReveal';
@@ -49,22 +48,6 @@ function Home() {
       <div className="reveal reveal-delay-2">
         <TopDeals deals={deals} />
       </div>
-
-      <section className="home-page__panel page-container reveal reveal-delay-3">
-        <div className="home-page__next">
-          {!hasLocation ? (
-            <Link to={ROUTES.LOCATION} className="home-page__next-link">
-              Choose location to start ordering
-            </Link>
-          ) : (
-            <p>
-              Serving from <strong>{branch?.name || 'your nearest branch'}</strong>
-              {' · '}
-              <Link to={ROUTES.MENU}>Open full menu</Link>
-            </p>
-          )}
-        </div>
-      </section>
     </div>
   );
 }

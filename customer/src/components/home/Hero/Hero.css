@@ -236,8 +236,13 @@
 }
 
 @media (max-width: 980px) {
+  .hero {
+    min-height: auto;
+  }
+
   .hero__stage {
     grid-template-columns: 1fr;
+    min-height: auto;
   }
 
   .hero__showcase,
@@ -246,48 +251,97 @@
   }
 
   .hero__showcase {
-    min-height: min(74vh, 700px);
+    min-height: min(68vh, 640px);
   }
 
   .hero__rail {
     grid-template-rows: none;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    min-height: 190px;
+    min-height: 170px;
   }
 
   .hero__card {
-    min-height: 170px;
+    min-height: 150px;
   }
 }
 
 @media (max-width: 720px) {
   .hero {
-    padding: 0.5rem;
-    --hero-pad: 0.5rem;
+    padding: 0.45rem;
+    --hero-pad: 0.45rem;
   }
 
   .hero .app-header--overlay {
     left: calc(var(--chrome-gutter-mobile) - var(--hero-pad));
+    right: calc(var(--chrome-gutter-mobile) - var(--hero-pad));
+  }
+
+  .hero .app-header--overlay .app-header__pill {
+    width: 100%;
+    max-width: none;
   }
 
   .hero__showcase {
-    border-radius: 22px;
-    padding: 0.9rem 0.9rem 1.15rem;
-    min-height: min(68vh, 620px);
+    border-radius: 18px;
+    padding: 0.85rem 0.85rem 1rem;
+    min-height: min(62vh, 520px);
+  }
+
+  .hero__slide--base {
+    background-position: 70% center;
+  }
+
+  .hero__footer-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 
   .hero__title {
-    font-size: clamp(2.2rem, 12vw, 3.2rem);
+    max-width: 10ch;
+    font-size: clamp(2rem, 11vw, 2.85rem);
+  }
+
+  .hero__social {
+    padding-bottom: 0;
   }
 
   .hero__rail {
-    grid-template-columns: 1fr;
+    display: flex;
     gap: 0.55rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.15rem;
+  }
+
+  .hero__rail::-webkit-scrollbar {
+    display: none;
   }
 
   .hero__card {
-    min-height: 132px;
-    border-radius: 18px;
+    flex: 0 0 min(78%, 280px);
+    min-height: 128px;
+    border-radius: 16px;
+    scroll-snap-align: start;
+  }
+
+  .hero__card-label {
+    right: 0.65rem;
+    bottom: 0.65rem;
+    font-size: 0.62rem;
+    padding: 0.3rem 0.35rem 0.3rem 0.65rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero__showcase {
+    min-height: min(58vh, 460px);
+  }
+
+  .hero__title {
+    font-size: clamp(1.85rem, 10.5vw, 2.4rem);
   }
 }
 

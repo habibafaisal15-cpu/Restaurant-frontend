@@ -11,6 +11,8 @@
   overflow-x: auto;
   scrollbar-width: none;
   padding: 0.15rem 0.1rem 0.25rem;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
 
 .category-pills__track::-webkit-scrollbar {

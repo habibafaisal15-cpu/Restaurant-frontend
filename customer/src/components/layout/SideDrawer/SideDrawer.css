@@ -217,11 +217,11 @@
 
 @media (max-width: 640px) {
   .side-drawer {
-    top: 5.1rem;
+    top: max(4.6rem, calc(var(--safe-top) + 4.2rem));
     left: var(--chrome-gutter-mobile);
-    bottom: 0.65rem;
-    width: min(250px, calc(100vw - (var(--chrome-gutter-mobile) * 2)));
-    max-height: calc(100vh - 5.75rem);
-    border-radius: 18px;
+    bottom: calc(0.65rem + var(--safe-bottom));
+    width: min(280px, calc(100vw - (var(--chrome-gutter-mobile) * 2)));
+    max-height: calc(100dvh - 5.5rem - var(--safe-top) - var(--safe-bottom));
+    border-radius: 16px;
   }
 }

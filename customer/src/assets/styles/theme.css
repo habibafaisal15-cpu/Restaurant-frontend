@@ -37,7 +37,10 @@
   --radius-button: 999px;
   --header-height: 64px;
   --chrome-gutter: 1.85rem;
-  --chrome-gutter-mobile: 1.35rem;
+  --chrome-gutter-mobile: 1rem;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --mobile-cart-bar-height: 4.5rem;
   --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
   --font-body: 'Outfit', system-ui, sans-serif;
   --max-width: 1120px;

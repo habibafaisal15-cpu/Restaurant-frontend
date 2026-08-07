@@ -183,12 +183,36 @@
 }
 
 @media (max-width: 560px) {
+  .location-modal {
+    align-items: end;
+    padding: 0;
+    padding-bottom: var(--safe-bottom);
+  }
+
   .location-modal__panel {
-    width: min(360px, 100%);
-    padding: 0.9rem 0.85rem 0.95rem;
+    width: 100%;
+    max-width: none;
+    max-height: min(92vh, 720px);
+    border-radius: 18px 18px 0 0;
+    padding: 1rem 0.95rem calc(1rem + var(--safe-bottom));
   }
 
   .location-map__canvas {
-    height: 170px;
+    height: min(42vw, 200px);
+    min-height: 160px;
+  }
+
+  .location-modal__modes {
+    width: 100%;
+  }
+
+  .location-modal__modes button {
+    flex: 1;
+  }
+
+  .location-modal__confirm,
+  .location-modal__gps,
+  .location-modal__manual button {
+    width: 100%;
   }
 }

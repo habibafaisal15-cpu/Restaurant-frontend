@@ -47,7 +47,7 @@
   flex-shrink: 0;
   border-radius: var(--radius-sm);
   background: linear-gradient(135deg, var(--copper), var(--copper-dark));
-  color: var(--text-inverse);
+  color: #fff;
   border: none;
   box-shadow: var(--shadow-copper);
 }

@@ -30,14 +30,14 @@ createRoot(document.getElementById('root')).render(
                 },
                 success: {
                   iconTheme: {
-                    primary: '#51553d',
-                    secondary: '#f7f1ea',
+                    primary: '#d4894a',
+                    secondary: '#fff',
                   },
                 },
                 error: {
                   iconTheme: {
-                    primary: '#9a4f42',
-                    secondary: '#f7f1ea',
+                    primary: '#c45c4a',
+                    secondary: '#fff',
                   },
                 },
               }}

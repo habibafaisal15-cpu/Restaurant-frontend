@@ -6,17 +6,17 @@
   padding: 2rem 1.25rem;
   position: relative;
   overflow: hidden;
-  background: #1a1612;
+  background: #0a0a0a;
 }
 
 .login-atmosphere {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in srgb, var(--copper) 22%, transparent), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 90% 80%, color-mix(in srgb, var(--terracotta) 12%, transparent), transparent 50%),
-    radial-gradient(ellipse 40% 35% at 10% 90%, color-mix(in srgb, var(--umber) 10%, transparent), transparent 45%),
-    linear-gradient(180deg, #1a1612 0%, #221c17 50%, #1a1612 100%);
+    radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in srgb, var(--copper) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 80%, color-mix(in srgb, var(--copper) 8%, transparent), transparent 50%),
+    radial-gradient(ellipse 40% 35% at 10% 90%, rgba(184, 110, 53, 0.06), transparent 45%),
+    linear-gradient(180deg, #0a0a0a 0%, #111010 50%, #0a0a0a 100%);
   pointer-events: none;
 }
 
@@ -24,8 +24,8 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(227, 215, 201, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(227, 215, 201, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(212, 137, 74, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 137, 74, 0.04) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 75%);
   pointer-events: none;
@@ -63,7 +63,7 @@
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 6vw, 3rem);
   font-weight: 600;
-  color: #efe7dc;
+  color: #f5f0ea;
   line-height: 1.1;
   letter-spacing: 0.01em;
   animation: fadeIn 0.6s ease 0.1s both;
@@ -72,7 +72,7 @@
 .login-subtitle {
   margin-top: 0.4rem;
   font-size: 0.9rem;
-  color: #9a8878;
+  color: #8a8074;
   font-weight: 400;
   animation: fadeIn 0.6s ease 0.2s both;
 }
@@ -107,15 +107,15 @@
   left: 0.85rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #9a8878;
+  color: #7a7268;
   pointer-events: none;
 }
 
 .login-input-wrap .form-control {
   padding-left: 2.5rem;
   padding-right: 2.5rem;
-  background: #261f19;
-  border-color: #3f342b;
+  background: #1a1a1a;
+  border-color: #2a2a2a;
 }
 
 .login-input-wrap .form-control.invalid {
@@ -132,7 +132,7 @@
   right: 0.65rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #9a8878;
+  color: #7a7268;
   padding: 0.25rem;
   display: flex;
   align-items: center;
@@ -151,10 +151,10 @@
 .login-demo-hint {
   margin-top: 1.25rem;
   padding-top: 1.25rem;
-  border-top: 1px solid #3f342b;
+  border-top: 1px solid #2a2a2a;
   text-align: center;
   font-size: 0.78rem;
-  color: #9a8878;
+  color: #7a7268;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -182,14 +182,14 @@
 }
 
 .login-demo-sep {
-  color: #7a6a5c;
+  color: #5c5348;
 }
 
 .login-footer {
   text-align: center;
   margin-top: 1.75rem;
   font-size: 0.75rem;
-  color: #7a6a5c;
+  color: #5c5348;
   animation: fadeIn 0.6s ease 0.4s both;
 }
 

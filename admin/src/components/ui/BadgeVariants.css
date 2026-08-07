@@ -45,24 +45,24 @@
 
 .channel-badge--online {
   background: var(--info);
-  color: var(--text-inverse);
+  color: #fff;
   border: none;
 }
 
 .channel-badge--dine-in {
   background: var(--walkin);
-  color: var(--text-inverse);
+  color: #fff;
   border: none;
 }
 
 .channel-badge--takeaway {
   background: var(--takeaway);
-  color: var(--text-inverse);
+  color: #fff;
   border: none;
 }
 
 .channel-badge--walkin {
   background: var(--copper);
-  color: var(--text-inverse);
+  color: #fff;
   border: none;
 }

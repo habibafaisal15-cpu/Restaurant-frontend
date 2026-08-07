@@ -93,6 +93,10 @@ export async function getMenuMetrics(zoneId, options = {}) {
   const bestSellers = (menu.best_sellers || menu.bestSellers || []).map(
     mapPopularItem,
   );
+  const marketingDeals = (menu.deals || []).map(mapDeal);
+  const rankedDeals = (menu.top_selling_deals || menu.topSellingDeals || []).map(
+    mapDeal,
+  );
 
   return {
     data: {
@@ -100,9 +104,11 @@ export async function getMenuMetrics(zoneId, options = {}) {
       totalDishes: allItems.length,
       totalItems: allItems.length,
       bestSellers,
-      topSellingDeals: (menu.top_selling_deals || menu.topSellingDeals || []).map(
-        mapDeal,
+      topSellingDeals: (marketingDeals.length ? marketingDeals : rankedDeals).slice(
+        0,
+        3,
       ),
+      deals: marketingDeals,
       updatedAt: new Date().toISOString(),
     },
   };
@@ -110,11 +116,9 @@ export async function getMenuMetrics(zoneId, options = {}) {
 
 export async function getDeals(zoneId, { refresh = false } = {}) {
   const menu = await fetchStorefrontMenu(zoneId, { refresh });
-  const deals =
-    menu.top_selling_deals ||
-    menu.topSellingDeals ||
-    menu.deals ||
-    [];
+  const deals = menu.deals?.length
+    ? menu.deals
+    : menu.top_selling_deals || menu.topSellingDeals || [];
   return { data: deals.map(mapDeal) };
 }
 

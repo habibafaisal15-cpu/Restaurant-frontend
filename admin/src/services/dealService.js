@@ -79,7 +79,14 @@ export async function create(payload) {
 export async function update(id, payload) {
   await delay();
   return withFallback(
-    async () => mapDeal(unwrap(await api.put(`/admin/deals/${id}`, payload))),
+    async () =>
+      mapDeal(
+        unwrap(
+          await api.put(`/admin/deals/${id}`, payload, {
+            timeout: 45000,
+          }),
+        ),
+      ),
     () => mockUpdate(id, payload),
   );
 }

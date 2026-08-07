@@ -141,7 +141,8 @@ export default function Deals() {
       closeModal();
       await loadDeals();
     } catch (err) {
-      toast.error(err.message ?? 'Failed to save deal');
+      console.error('Deal save failed', err);
+      toast.error(err?.message || 'Failed to save deal. Please try again.');
     } finally {
       setSaving(false);
     }

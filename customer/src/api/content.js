@@ -62,27 +62,30 @@ export function mapHeroSlides(slides = []) {
 
 export async function getStorefrontHeroDeals(options = {}) {
   const payload = await getStorefrontHero(options);
-  const deals =
-    payload?.top_selling_deals ||
-    payload?.topSellingDeals ||
-    payload?.deals ||
-    payload?.topDeals ||
-    [];
+  const deals = payload?.deals?.length
+    ? payload.deals
+    : payload?.top_selling_deals ||
+      payload?.topSellingDeals ||
+      payload?.topDeals ||
+      [];
   return { data: deals.map(mapDeal) };
 }
 
 export async function getStorefrontPopular(options = {}) {
   const payload = await getStorefrontHero(options);
+  const marketingDeals = payload?.deals || [];
 
   return {
     bestSellers: (payload?.best_sellers || payload?.bestSellers || []).map(
       mapPopularItem,
     ),
+    // Prefer admin marketing deals so updated deal images show on the storefront.
     topDeals: (
-      payload?.top_selling_deals ||
-      payload?.topSellingDeals ||
-      payload?.deals ||
-      []
-    ).map(mapDeal),
+      marketingDeals.length
+        ? marketingDeals
+        : payload?.top_selling_deals || payload?.topSellingDeals || []
+    )
+      .slice(0, 3)
+      .map(mapDeal),
   };
 }

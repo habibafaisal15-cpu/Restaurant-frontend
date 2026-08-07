@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import BackButton from '../../components/common/BackButton';
 import Loader from '../../components/common/Loader';
@@ -23,6 +23,20 @@ const STATUS_HEADING = {
   [ORDER_STATUS.CANCELLED]: 'Order cancelled',
 };
 
+function shouldWaitForRider(status, rider) {
+  if (rider?.name || rider?.phone) return false;
+  const value = String(status || '').toLowerCase();
+  return ![
+    ORDER_STATUS.OUT_FOR_DELIVERY,
+    ORDER_STATUS.DELIVERED,
+    ORDER_STATUS.CANCELLED,
+    'out_for_delivery',
+    'delivered',
+    'cancelled',
+    'rejected',
+  ].includes(value);
+}
+
 function OrderTracking() {
   const { orderId } = useParams();
   const pageLocation = useLocation();
@@ -30,8 +44,9 @@ function OrderTracking() {
     useOrder();
   const { order, rider, loading, error } = useOrderTracking(orderId);
   const [popupOpen, setPopupOpen] = useState(
-    () => Boolean(pageLocation.state?.showRiderAssign) && !contextRider,
+    () => Boolean(pageLocation.state?.showRiderAssign),
   );
+  const [popupDismissed, setPopupDismissed] = useState(false);
 
   const resolvedOrder =
     order ||
@@ -50,6 +65,14 @@ function OrderTracking() {
   const heading =
     STATUS_HEADING[resolvedOrder.status] ||
     STATUS_HEADING[ORDER_STATUS.CONFIRMED];
+
+  useEffect(() => {
+    if (popupDismissed) return;
+    if (!orderId) return;
+    if (shouldWaitForRider(resolvedOrder.status, resolvedRider)) {
+      setPopupOpen(true);
+    }
+  }, [orderId, popupDismissed, resolvedOrder.status, resolvedRider]);
 
   const handleRiderReady = useCallback(
     (nextRider) => {
@@ -71,6 +94,11 @@ function OrderTracking() {
     },
     [orderId, setActiveOrder, setRider],
   );
+
+  const handleClosePopup = useCallback(() => {
+    setPopupDismissed(true);
+    setPopupOpen(false);
+  }, []);
 
   return (
     <section className="page page-container order-tracking-page">
@@ -99,7 +127,7 @@ function OrderTracking() {
         orderId={orderId}
         rider={resolvedRider}
         onRiderReady={handleRiderReady}
-        onClose={() => setPopupOpen(false)}
+        onClose={handleClosePopup}
       />
     </section>
   );

@@ -203,21 +203,45 @@ export function buildStorefrontOrderPayload(orderPayload) {
   const deliveryLatitude = toOptionalCoordinate(orderPayload.deliveryLocation?.lat);
   const deliveryLongitude = toOptionalCoordinate(orderPayload.deliveryLocation?.lng);
   const notes = String(orderPayload.customer?.notes || '').trim();
+  const zoneId = resolveZoneId(orderPayload.branchId);
+
+  if (!isUuid(zoneId)) {
+    throw new Error('Select a delivery location before placing your order.');
+  }
+
+  const items = (orderPayload.items || [])
+    .map((item) => ({
+      product_id: item.menuItemId || item.id,
+      quantity: Number(item.quantity) || 0,
+    }))
+    .filter((item) => isUuid(item.product_id) && item.quantity > 0);
+
+  if (!items.length) {
+    throw new Error('Your cart has no valid items to order.');
+  }
 
   const payload = {
-    zone_id: resolveZoneId(orderPayload.branchId),
-    customer_name: orderPayload.customer?.name,
-    customer_phone: orderPayload.customer?.phone,
+    zone_id: zoneId,
+    customer_name: String(orderPayload.customer?.name || '').trim(),
+    customer_phone: String(orderPayload.customer?.phone || '').trim(),
     delivery_address:
       orderPayload.customer?.address ||
       orderPayload.deliveryLocation?.address ||
       '',
-    payment_method: paymentMethod === 'cash' ? 'COD' : 'Online',
-    items: (orderPayload.items || []).map((item) => ({
-      product_id: item.menuItemId || item.id,
-      quantity: item.quantity,
-    })),
+    payment_method:
+      paymentMethod === 'cash' || paymentMethod === 'cod' ? 'COD' : 'Online',
+    items,
   };
+
+  if (!payload.customer_name) {
+    throw new Error('Customer name is required.');
+  }
+  if (!payload.customer_phone || payload.customer_phone.length < 5) {
+    throw new Error('Enter a valid phone number.');
+  }
+  if (!payload.delivery_address) {
+    throw new Error('Delivery address is required.');
+  }
 
   if (notes) payload.delivery_instructions = notes;
   if (deliveryLatitude != null) payload.delivery_latitude = deliveryLatitude;

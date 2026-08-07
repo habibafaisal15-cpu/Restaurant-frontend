@@ -513,9 +513,23 @@ export default function DeliveryLocations() {
               </button>
             </div>
             <p className="form-hint">
-              Enter an address and the map pin moves there. Delivery is allowed only inside the
-              radius circle below.
+              Enter an address and click Find on map. The pin and coverage circle move to that
+              place.
             </p>
+          </div>
+
+          <div className="form-group">
+            <label>Map pin &amp; coverage</label>
+            {modalOpen && (
+              <LocationMapPicker
+                key={editingId || 'new'}
+                latitude={Number(form.latitude)}
+                longitude={Number(form.longitude)}
+                radiusKm={Number(form.radiusKm) || DEFAULT_RADIUS_KM}
+                onChange={handleMapChange}
+                height={320}
+              />
+            )}
           </div>
 
           <div className="form-row">
@@ -557,19 +571,6 @@ export default function DeliveryLocations() {
                 Customers outside this circle see &ldquo;Sorry, we don&apos;t deliver here.&rdquo;
               </p>
             </div>
-          </div>
-
-          <div className="form-group">
-            <label>Map pin &amp; coverage</label>
-            {modalOpen && (
-              <LocationMapPicker
-                key={editingId || 'new'}
-                latitude={Number(form.latitude)}
-                longitude={Number(form.longitude)}
-                radiusKm={Number(form.radiusKm) || DEFAULT_RADIUS_KM}
-                onChange={handleMapChange}
-              />
-            )}
           </div>
 
           <div className="form-group">

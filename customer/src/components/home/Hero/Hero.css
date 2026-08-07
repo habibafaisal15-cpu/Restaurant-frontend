@@ -58,6 +58,17 @@
   filter: none;
 }
 
+/* Default kitchen scene — food sits on the right, dark space left for the brand. */
+.hero__slide--base {
+  background-position: 78% center;
+  transform: scale(1.02);
+}
+
+.hero__slide--base.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .hero__slide.is-active {
   opacity: 1;
   transform: scale(1);

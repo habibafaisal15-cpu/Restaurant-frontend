@@ -8,6 +8,7 @@ import {
   buildHeroSlides,
   fetchHeroContent,
 } from '../../../services/heroService';
+import heroKitchenImage from '../../../assets/images/hero-kitchen.png';
 import './Hero.css';
 
 const ROTATE_MS = 5500;
@@ -73,12 +74,21 @@ function Hero({ categories = [] }) {
   }, [slides.length]);
 
   const activeSlide = slides[activeIndex] || slides[0] || null;
+  const hasCmsSlides = slides.length > 0;
 
   return (
     <section className="hero" aria-label="Welcome">
       <div className="hero__stage">
         <div className="hero__showcase">
           <div className="hero__media" aria-hidden="true">
+            <div
+              className={
+                hasCmsSlides
+                  ? 'hero__slide hero__slide--base'
+                  : 'hero__slide hero__slide--base is-active'
+              }
+              style={{ backgroundImage: `url('${heroKitchenImage}')` }}
+            />
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
@@ -90,7 +100,6 @@ function Hero({ categories = [] }) {
                 style={{ backgroundImage: `url('${slide.image}')` }}
               />
             ))}
-            {!slides.length && <div className="hero__slide is-active hero__slide--empty" />}
             <div className="hero__veil" />
           </div>
 

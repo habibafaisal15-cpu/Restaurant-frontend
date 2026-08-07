@@ -1,1 +1,1 @@
-export { default, ORDER_STEPS } from './OrderRoadmap';
+export { default, ORDER_STEPS, roadmapStepFromOrderStatus } from './OrderRoadmap';

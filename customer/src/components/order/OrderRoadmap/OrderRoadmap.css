@@ -57,11 +57,14 @@
 }
 
 .order-roadmap__label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   color: var(--color-text-muted);
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  max-width: 5.5rem;
+  line-height: 1.2;
 }
 
 .order-roadmap__step.is-done .order-roadmap__dot {
@@ -88,8 +91,20 @@
   color: var(--color-gold-bright);
 }
 
+@media (max-width: 720px) {
+  .order-roadmap__label {
+    font-size: 0.62rem;
+    max-width: 4.4rem;
+  }
+
+  .order-roadmap__node {
+    padding: 0 0.15rem;
+  }
+}
+
 @media (max-width: 520px) {
   .order-roadmap__label {
-    font-size: 0.68rem;
+    font-size: 0.58rem;
+    max-width: 3.6rem;
   }
 }

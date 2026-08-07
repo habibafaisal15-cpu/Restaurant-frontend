@@ -304,169 +304,186 @@ export default function POS() {
         </button>
       </div>
 
-      <div className="pos-type-toggle animate-slide-up">
-        {ORDER_TYPES.map(({ key, label, icon: Icon }) => (
-          <button
-            key={key}
-            type="button"
-            className={`pos-type-btn ${orderType === key ? 'active' : ''}`}
-            onClick={() => setOrderType(key)}
-          >
-            <Icon size={28} />
-            <span>{label}</span>
-          </button>
-        ))}
-      </div>
-
       <div className="pos-layout animate-slide-up">
-        <div className="pos-menu panel">
-          <PosItemGrid
-            items={menuItems}
-            categories={categories}
-            onAddItem={handleAddItem}
-            currency={settings.currency === 'PKR' ? 'PKR' : 'USD'}
-          />
+        <div className="pos-main">
+          <div className="pos-type-toggle" role="group" aria-label="Order type">
+            {ORDER_TYPES.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                type="button"
+                className={`pos-type-btn pos-type-btn--${key === 'DINE_IN' ? 'dine' : 'takeaway'} ${orderType === key ? 'active' : ''}`}
+                onClick={() => setOrderType(key)}
+                aria-pressed={orderType === key}
+              >
+                <span className="pos-type-btn-icon" aria-hidden="true">
+                  <Icon size={22} strokeWidth={2} />
+                </span>
+                <span className="pos-type-btn-text">
+                  <span className="pos-type-btn-label">{label}</span>
+                  <span className="pos-type-btn-hint">
+                    {key === 'DINE_IN' ? 'Table service' : 'Counter pickup'}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <div className="pos-menu panel">
+            <PosItemGrid
+              items={menuItems}
+              categories={categories}
+              onAddItem={handleAddItem}
+              currency={settings.currency === 'PKR' ? 'PKR' : 'USD'}
+            />
+          </div>
         </div>
 
         <aside className="pos-cart panel">
-          <h3 className="pos-cart-title">Order details</h3>
+          <div className="pos-cart-scroll">
+            <h3 className="pos-cart-title">Order details</h3>
 
-          <div className="pos-cart-fields">
-            {orderType === 'DINE_IN' && (
-              <div className="form-group">
-                <label htmlFor="pos-table">Table number *</label>
-                <input
-                  id="pos-table"
-                  type="text"
-                  className="form-control pos-input-lg"
-                  placeholder="e.g. T-07"
-                  value={tableNumber}
-                  onChange={(e) => setTableNumber(e.target.value)}
-                />
-              </div>
-            )}
+            <div className="pos-cart-fields">
+              {orderType === 'DINE_IN' && (
+                <div className="form-group">
+                  <label htmlFor="pos-table">Table number *</label>
+                  <input
+                    id="pos-table"
+                    type="text"
+                    className="form-control pos-input-lg"
+                    placeholder="e.g. T-07"
+                    value={tableNumber}
+                    onChange={(e) => setTableNumber(e.target.value)}
+                  />
+                </div>
+              )}
 
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="pos-name">Customer name</label>
-                <input
-                  id="pos-name"
-                  type="text"
-                  className="form-control"
-                  placeholder="Optional"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="pos-name">Customer name</label>
+                  <input
+                    id="pos-name"
+                    type="text"
+                    className="form-control"
+                    placeholder="Optional"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="pos-phone">Phone</label>
+                  <input
+                    id="pos-phone"
+                    type="tel"
+                    className="form-control"
+                    placeholder="Optional"
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="pos-phone">Phone</label>
-                <input
-                  id="pos-phone"
-                  type="tel"
-                  className="form-control"
-                  placeholder="Optional"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                />
-              </div>
+
+              <p className="pos-token-hint">
+                Token will be assigned automatically when the order is placed.
+              </p>
             </div>
 
-            <p className="pos-token-hint">
-              Token will be assigned automatically when the order is placed.
-            </p>
-          </div>
-
-          <div className="pos-cart-items">
-            <h4>Cart ({cart.reduce((s, l) => s + l.quantity, 0)} items)</h4>
-            {cart.length === 0 ? (
-              <p className="pos-cart-empty">Tap menu items to add them here</p>
-            ) : (
-              <ul className="pos-cart-list">
-                {cart.map((line) => {
-                  const key = cartLineKey(line.menuItemId, line.notes);
-                  return (
-                    <li key={key} className="pos-cart-line">
-                      <div className="pos-cart-line-top">
-                        <span className="pos-cart-line-name">{line.name}</span>
-                        <span className="pos-cart-line-price">
-                          {formatPKR(line.unitPrice * line.quantity)}
-                        </span>
-                      </div>
-                      <div className="pos-cart-line-controls">
-                        <button
-                          type="button"
-                          className="pos-qty-btn"
-                          onClick={() => updateQty(key, -1)}
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus size={16} />
-                        </button>
-                        <span className="pos-qty-value">{line.quantity}</span>
-                        <button
-                          type="button"
-                          className="pos-qty-btn"
-                          onClick={() => updateQty(key, 1)}
-                          aria-label="Increase quantity"
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </div>
-                      <input
-                        type="text"
-                        className="form-control pos-line-notes"
-                        placeholder="Item notes (optional)"
-                        value={line.notes}
-                        onChange={(e) => updateNotes(key, e.target.value)}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
-
-          <div className="pos-cart-totals">
-            <div><span>Subtotal</span><span>{formatPKR(totals.subtotal)}</span></div>
-            <div><span>Tax ({settings.taxPercent}%)</span><span>{formatPKR(totals.tax)}</span></div>
-            <div><span>Service ({settings.serviceChargePercent}%)</span><span>{formatPKR(totals.serviceCharge)}</span></div>
-            <div className="pos-cart-grand">
-              <span>Total</span>
-              <span>{formatPKR(totals.total)}</span>
+            <div className="pos-cart-items">
+              <h4>Cart ({cart.reduce((s, l) => s + l.quantity, 0)} items)</h4>
+              {cart.length === 0 ? (
+                <p className="pos-cart-empty">Tap menu items to add them here</p>
+              ) : (
+                <ul className="pos-cart-list">
+                  {cart.map((line) => {
+                    const key = cartLineKey(line.menuItemId, line.notes);
+                    return (
+                      <li key={key} className="pos-cart-line">
+                        <div className="pos-cart-line-top">
+                          <span className="pos-cart-line-name">{line.name}</span>
+                          <span className="pos-cart-line-price">
+                            {formatPKR(line.unitPrice * line.quantity)}
+                          </span>
+                        </div>
+                        <div className="pos-cart-line-controls">
+                          <button
+                            type="button"
+                            className="pos-qty-btn"
+                            onClick={() => updateQty(key, -1)}
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus size={16} />
+                          </button>
+                          <span className="pos-qty-value">{line.quantity}</span>
+                          <button
+                            type="button"
+                            className="pos-qty-btn"
+                            onClick={() => updateQty(key, 1)}
+                            aria-label="Increase quantity"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          className="form-control pos-line-notes"
+                          placeholder="Item notes (optional)"
+                          value={line.notes}
+                          onChange={(e) => updateNotes(key, e.target.value)}
+                        />
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           </div>
 
-          <div className="pos-payment">
-            <h4>Payment method</h4>
-            <div className="pos-payment-btns">
-              {PAYMENT_METHODS.map(({ key, label, icon: Icon }) => (
-                <button
-                  key={key}
-                  type="button"
-                  className={`pos-payment-btn ${paymentMethod === key ? 'active' : ''}`}
-                  onClick={() => setPaymentMethod(key)}
-                >
-                  <Icon size={20} />
-                  {label}
-                </button>
-              ))}
+          <div className="pos-cart-footer">
+            <div className="pos-cart-totals">
+              <div><span>Subtotal</span><span>{formatPKR(totals.subtotal)}</span></div>
+              <div><span>Tax ({settings.taxPercent}%)</span><span>{formatPKR(totals.tax)}</span></div>
+              <div>
+                <span>Service ({settings.serviceChargePercent}%)</span>
+                <span>{formatPKR(totals.serviceCharge)}</span>
+              </div>
+              <div className="pos-cart-grand">
+                <span>Total</span>
+                <span>{formatPKR(totals.total)}</span>
+              </div>
             </div>
-          </div>
 
-          <button
-            type="button"
-            className="btn btn-primary btn-lg pos-place-btn"
-            disabled={cart.length === 0 || placing}
-            onClick={handlePlaceOrder}
-          >
-            {placing ? (
-              <>
-                <Loader2 size={20} className="pos-spin" />
-                Placing order…
-              </>
-            ) : (
-              <>Place Order · {formatPKR(totals.total)}</>
-            )}
-          </button>
+            <div className="pos-payment">
+              <h4>Payment method</h4>
+              <div className="pos-payment-btns">
+                {PAYMENT_METHODS.map(({ key, label, icon: Icon }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`pos-payment-btn ${paymentMethod === key ? 'active' : ''}`}
+                    onClick={() => setPaymentMethod(key)}
+                  >
+                    <Icon size={20} />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-primary btn-lg pos-place-btn"
+              disabled={cart.length === 0 || placing}
+              onClick={handlePlaceOrder}
+            >
+              {placing ? (
+                <>
+                  <Loader2 size={20} className="pos-spin" />
+                  Placing order…
+                </>
+              ) : (
+                <>Place Order · {formatPKR(totals.total)}</>
+              )}
+            </button>
+          </div>
         </aside>
       </div>
     </div>

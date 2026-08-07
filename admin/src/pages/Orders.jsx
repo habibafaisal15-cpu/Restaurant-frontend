@@ -595,8 +595,8 @@ export default function Orders() {
         <div>
           <h1>Online Orders</h1>
           <p>
-            Website se aane wali delivery requests — accept karein, phir rider ka naam aur contact
-            customer ko share karein
+            Delivery requests from the website — accept them, then share the rider&apos;s name
+            and contact with the customer
           </p>
         </div>
         <button

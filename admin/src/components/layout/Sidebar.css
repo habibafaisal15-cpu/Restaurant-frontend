@@ -46,9 +46,10 @@
   height: 38px;
   flex-shrink: 0;
   border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, rgba(212, 137, 74, 0.2), rgba(212, 137, 74, 0.05));
-  color: var(--copper);
-  border: 1px solid rgba(212, 137, 74, 0.25);
+  background: linear-gradient(135deg, var(--copper), var(--copper-dark));
+  color: #fff;
+  border: none;
+  box-shadow: var(--shadow-copper);
 }
 
 .sidebar-brand-text {
@@ -123,9 +124,13 @@
 }
 
 .sidebar-link.active {
-  color: var(--copper-light);
-  background: rgba(212, 137, 74, 0.1);
+  color: var(--copper-dark);
+  background: linear-gradient(90deg, var(--fill-accent-strong), var(--fill-accent));
   border-left-color: var(--copper);
+}
+
+[data-theme='light'] .sidebar-link.active {
+  color: var(--copper);
 }
 
 .sidebar-link-icon {

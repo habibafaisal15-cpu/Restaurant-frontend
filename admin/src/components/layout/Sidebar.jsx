@@ -3,10 +3,11 @@ import {
   Bike,
   ChevronLeft,
   FileText,
-  Home,
   LayoutDashboard,
+  MapPinned,
   Package,
   Receipt,
+  Settings,
   ShoppingBag,
   ShoppingCart,
   Tag,
@@ -21,10 +22,11 @@ const NAV_ITEMS = [
   { to: '/categories', label: 'Food Categories', icon: Package },
   { to: '/menu', label: 'Menu Items', icon: UtensilsCrossed },
   { to: '/deals', label: 'Deals', icon: Tag },
-  { to: '/hero', label: 'Home Hero', icon: Home },
   { to: '/riders', label: 'Riders', icon: Bike },
+  { to: '/locations', label: 'Delivery Locations', icon: MapPinned },
   { to: '/slips', label: 'Slips / Receipts', icon: Receipt },
   { to: '/reports', label: 'Reports', icon: FileText },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function Sidebar({ collapsed, onToggle }) {

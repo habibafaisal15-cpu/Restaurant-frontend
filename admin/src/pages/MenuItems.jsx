@@ -148,7 +148,7 @@ export default function MenuItems() {
 
   const openCreate = () => {
     if (categories.length === 0) {
-      toast.error('Pehle ek food category banao (Chinese, Desi, Steak…)');
+      toast.error('Create a food category first (Chinese, Desi, Steak…)');
       return;
     }
     setEditingId(null);
@@ -447,8 +447,8 @@ export default function MenuItems() {
         <div>
           <h1>Menu Items</h1>
           <p>
-            Saari dishes collectively yahan — har item kisi food category (Chinese, Desi,
-            Steak…) ke under hoti hai
+            All dishes live here — each item belongs under a food category (Chinese, Desi,
+            Steak…)
           </p>
         </div>
         <div className="menu-items-header-actions">
@@ -464,8 +464,8 @@ export default function MenuItems() {
       </div>
 
       <div className="menu-items-hint panel animate-slide-up">
-        Category select karo, phir us category mein dishes add / edit karo. Empty category
-        pe pehli item add karke menu bharo.
+        Select a category, then add or edit dishes in that category. Add the first item to
+        an empty category to fill out the menu.
       </div>
 
       {/* Category tabs = food groups */}
@@ -581,10 +581,10 @@ export default function MenuItems() {
             }
             description={
               activeCategory && !search
-                ? `Is category mein pehli dish add karo — yeh Online aur POS dono menus mein dikhegi.`
+                ? `Add the first dish to this category — it will appear on both Online and POS menus.`
                 : search
                   ? 'Try adjusting your search or category filter'
-                  : 'Pehle Categories se food group banao, phir yahan items add karo.'
+                  : 'Create a food group under Categories first, then add items here.'
             }
             actionLabel={!search ? (activeCategory ? `Add to ${activeCategory.name}` : 'Add Item') : undefined}
             onAction={!search ? openCreate : undefined}

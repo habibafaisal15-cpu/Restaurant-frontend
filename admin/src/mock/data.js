@@ -418,6 +418,46 @@ export let riders = [
   },
 ];
 
+/** Delivery hubs — each pin + radiusKm drives customer-map coverage */
+export let deliveryLocations = [
+  {
+    id: 'loc-001',
+    name: 'Clifton Hub',
+    address: 'Block 5, Clifton, Karachi',
+    latitude: 24.8138,
+    longitude: 67.0299,
+    radiusKm: 10,
+    active: true,
+    notes: 'Main kitchen / default delivery center',
+    createdAt: daysAgo(90),
+    updatedAt: daysAgo(2),
+  },
+  {
+    id: 'loc-002',
+    name: 'DHA Phase 6 Hub',
+    address: 'Khayaban-e-Shahbaz, DHA Phase 6, Karachi',
+    latitude: 24.8035,
+    longitude: 67.0651,
+    radiusKm: 10,
+    active: true,
+    notes: 'Covers DHA Phase 4–8',
+    createdAt: daysAgo(60),
+    updatedAt: daysAgo(5),
+  },
+  {
+    id: 'loc-003',
+    name: 'Gulshan Hub',
+    address: 'Block 13-D, Gulshan-e-Iqbal, Karachi',
+    latitude: 24.9203,
+    longitude: 67.0894,
+    radiusKm: 8,
+    active: false,
+    notes: 'Temporarily paused',
+    createdAt: daysAgo(40),
+    updatedAt: daysAgo(1),
+  },
+];
+
 function buildOrderItem(menuItemId, quantity, notes = '') {
   const item = menuItems.find((m) => m.id === menuItemId);
   const unitPrice = item?.discountPrice ?? item?.price ?? 0;
@@ -980,6 +1020,10 @@ export function getMenuItems() {
 
 export function getRiders() {
   return riders;
+}
+
+export function getDeliveryLocations() {
+  return deliveryLocations;
 }
 
 export function getOrders() {

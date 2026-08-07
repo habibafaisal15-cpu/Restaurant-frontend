@@ -1,0 +1,30 @@
+.location-map-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.location-map-picker__canvas {
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--bg-input);
+  z-index: 0;
+}
+
+.location-map-picker__hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin: 0;
+}
+
+.location-map-picker .leaflet-container {
+  font-family: var(--font-body);
+  background: var(--bg-input);
+}
+
+.location-map-picker .leaflet-control-attribution {
+  font-size: 0.65rem;
+}

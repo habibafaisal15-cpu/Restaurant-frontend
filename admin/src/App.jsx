@@ -9,11 +9,12 @@ const Orders = lazy(() => import('./pages/Orders'));
 const POS = lazy(() => import('./pages/POS'));
 const Categories = lazy(() => import('./pages/Categories'));
 const MenuItems = lazy(() => import('./pages/MenuItems'));
-const Hero = lazy(() => import('./pages/Hero'));
 const Deals = lazy(() => import('./pages/Deals'));
 const Riders = lazy(() => import('./pages/Riders'));
 const Slips = lazy(() => import('./pages/Slips'));
 const Reports = lazy(() => import('./pages/Reports'));
+const Settings = lazy(() => import('./pages/Settings'));
+const DeliveryLocations = lazy(() => import('./pages/DeliveryLocations'));
 
 function PageLoader() {
   return (
@@ -43,10 +44,12 @@ export default function App() {
           <Route path="categories" element={<Categories />} />
           <Route path="menu" element={<MenuItems />} />
           <Route path="deals" element={<Deals />} />
-          <Route path="hero" element={<Hero />} />
           <Route path="riders" element={<Riders />} />
+          <Route path="locations" element={<DeliveryLocations />} />
           <Route path="slips" element={<Slips />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="hero" element={<Navigate to="/settings" replace />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

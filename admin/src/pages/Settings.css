@@ -20,7 +20,7 @@
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 1.25rem;
-  color: var(--copper-light);
+  color: var(--copper);
 }
 
 .settings-section-title {
@@ -72,7 +72,7 @@
   letter-spacing: 0.04em;
   padding: 0.15rem 0.5rem;
   background: var(--copper-glow);
-  color: var(--copper-light);
+  color: var(--copper);
   border-radius: var(--radius-sm);
 }
 

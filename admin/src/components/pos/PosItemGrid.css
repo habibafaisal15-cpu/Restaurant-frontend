@@ -24,16 +24,17 @@
   padding: 0.4rem 0.9rem;
   border-radius: 999px;
   font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
+  font-weight: 550;
+  color: var(--text-secondary);
+  background: var(--fill-accent);
+  border: 1px solid color-mix(in srgb, var(--copper) 22%, var(--border));
   transition: all var(--transition);
 }
 
 .pos-item-grid__chip:hover {
   border-color: var(--copper);
-  color: var(--copper-light);
+  color: var(--copper);
+  background: var(--fill-accent-strong);
 }
 
 .pos-item-grid__chip.active {
@@ -53,8 +54,8 @@
   display: flex;
   flex-direction: column;
   text-align: left;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--bg-panel) 52%, var(--fill-accent) 100%);
+  border: 1px solid color-mix(in srgb, var(--copper) 18%, var(--border));
   border-radius: var(--radius);
   overflow: hidden;
   transition: transform var(--transition-spring), border-color var(--transition), box-shadow var(--transition);

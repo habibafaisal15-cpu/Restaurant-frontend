@@ -1,0 +1,134 @@
+.delivery-locations-page .loc-stats {
+  margin-bottom: 1.25rem;
+}
+
+.loc-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.15rem;
+  min-height: 72px;
+  background: linear-gradient(145deg, var(--fill-accent-strong), var(--bg-panel) 60%);
+  border-color: color-mix(in srgb, var(--copper) 30%, var(--border));
+}
+
+.loc-stat:nth-child(2) {
+  background: linear-gradient(145deg, var(--fill-info), var(--bg-panel) 60%);
+  border-color: color-mix(in srgb, var(--info) 30%, var(--border));
+}
+
+.loc-stat:nth-child(2) svg {
+  background: var(--info);
+  color: #fff;
+}
+
+.loc-stat:nth-child(3) {
+  background: linear-gradient(145deg, var(--fill-success), var(--bg-panel) 60%);
+  border-color: color-mix(in srgb, var(--success) 30%, var(--border));
+}
+
+.loc-stat:nth-child(3) svg {
+  background: var(--success);
+  color: #fff;
+}
+
+.loc-stat svg {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--copper);
+  color: #fff;
+  box-sizing: content-box;
+  flex-shrink: 0;
+}
+
+.loc-radius-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 24px;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  background: var(--copper);
+  color: #fff;
+  border: none;
+}
+
+.loc-stat strong {
+  display: block;
+  font-size: 1.25rem;
+  font-family: var(--font-display);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.loc-stat span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.loc-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.loc-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.loc-address {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.loc-coords {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.loc-radius-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 24px;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  background: var(--copper);
+  color: #fff;
+  border: none;
+}
+
+.loc-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.loc-actions-danger:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.loc-form .form-hint {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 700px) {
+  .loc-address {
+    max-width: 160px;
+  }
+}

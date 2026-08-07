@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import HomeHeroSettings from '../components/settings/HomeHeroSettings';
 import { useSettings } from '../context/SettingsContext';
 import './Settings.css';
 
@@ -113,7 +114,9 @@ export default function Settings() {
       <div className="page-header">
         <div>
           <h1>Settings</h1>
-          <p>Restaurant profile, billing, slips, and preferences</p>
+          <p>
+            Restaurant profile, billing, customer home hero images, and preferences
+          </p>
         </div>
         <button
           type="button"
@@ -370,6 +373,8 @@ export default function Settings() {
           </div>
         </section>
       </div>
+
+      <HomeHeroSettings />
 
       <div className="settings-footer-actions animate-slide-up">
         <button

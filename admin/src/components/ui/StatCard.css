@@ -1,17 +1,18 @@
 .stat-card {
   position: relative;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(165deg, var(--fill-accent) 0%, var(--bg-panel) 55%);
+  border: 1px solid color-mix(in srgb, var(--copper) 28%, var(--border));
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: var(--panel-pad);
   overflow: hidden;
   transition: transform var(--transition-spring), box-shadow var(--transition), border-color var(--transition);
+  min-height: 112px;
 }
 
 .stat-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-copper);
-  border-color: var(--border-strong);
+  border-color: color-mix(in srgb, var(--copper) 45%, var(--border));
 }
 
 .stat-card__accent {
@@ -19,24 +20,48 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, var(--copper), var(--copper-light));
+}
+
+.stat-card--success {
+  background: linear-gradient(165deg, var(--fill-success) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--success) 30%, var(--border));
 }
 
 .stat-card--success .stat-card__accent {
   background: linear-gradient(90deg, var(--success), #5cb87e);
 }
 
+.stat-card--info {
+  background: linear-gradient(165deg, var(--fill-info) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--info) 30%, var(--border));
+}
+
 .stat-card--info .stat-card__accent {
   background: linear-gradient(90deg, var(--info), #7aa8d4);
+}
+
+.stat-card--warning {
+  background: linear-gradient(165deg, var(--fill-warning) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--warning) 30%, var(--border));
 }
 
 .stat-card--warning .stat-card__accent {
   background: linear-gradient(90deg, var(--warning), #e0b830);
 }
 
+.stat-card--danger {
+  background: linear-gradient(165deg, var(--danger-bg) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--border));
+}
+
 .stat-card--danger .stat-card__accent {
   background: linear-gradient(90deg, var(--danger), #d47a6a);
+}
+
+.stat-card--copper {
+  background: linear-gradient(165deg, var(--fill-accent-strong) 0%, var(--bg-panel) 55%);
 }
 
 .stat-card__top {
@@ -50,31 +75,36 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
-  background: var(--copper-glow);
-  color: var(--copper-light);
+  background: var(--copper);
+  color: #fff;
+  box-shadow: var(--shadow-copper);
 }
 
 .stat-card--success .stat-card__icon {
-  background: var(--success-bg);
-  color: var(--success);
+  background: var(--success);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--success) 35%, transparent);
 }
 
 .stat-card--info .stat-card__icon {
-  background: var(--info-bg);
-  color: var(--info);
+  background: var(--info);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--info) 35%, transparent);
 }
 
 .stat-card--warning .stat-card__icon {
-  background: var(--warning-bg);
-  color: var(--warning);
+  background: var(--warning);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--warning) 35%, transparent);
 }
 
 .stat-card--danger .stat-card__icon {
-  background: var(--danger-bg);
-  color: var(--danger);
+  background: var(--danger);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--danger) 35%, transparent);
 }
 
 .stat-card__trend {
@@ -83,8 +113,8 @@
   gap: 0.2rem;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
 }
 
 .stat-card__trend--up {
@@ -100,7 +130,7 @@
 .stat-card__label {
   font-size: 0.8rem;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 0.25rem;
 }
 
@@ -116,4 +146,5 @@
   font-size: 0.78rem;
   color: var(--text-secondary);
   margin-top: 0.35rem;
+  font-weight: 500;
 }

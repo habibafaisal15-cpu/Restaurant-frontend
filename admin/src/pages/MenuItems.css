@@ -8,8 +8,8 @@
   margin-bottom: 1rem;
   font-size: 0.85rem;
   color: var(--text-secondary);
-  border-color: rgba(212, 137, 74, 0.25);
-  background: rgba(212, 137, 74, 0.06);
+  border-color: color-mix(in srgb, var(--copper) 25%, transparent);
+  background: color-mix(in srgb, var(--copper) 6%, transparent);
 }
 
 .menu-items-page .menu-category-tabs {

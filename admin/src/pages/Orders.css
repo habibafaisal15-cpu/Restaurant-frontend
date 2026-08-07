@@ -7,10 +7,10 @@
   padding: 0.9rem 1.1rem;
   background: linear-gradient(
     135deg,
-    rgba(212, 137, 74, 0.08),
-    rgba(212, 137, 74, 0.02)
+    color-mix(in srgb, var(--copper) 8%, transparent),
+    color-mix(in srgb, var(--copper) 2%, transparent)
   );
-  border-color: rgba(212, 137, 74, 0.25);
+  border-color: color-mix(in srgb, var(--copper) 25%, transparent);
 }
 
 .orders-flow-steps {
@@ -195,9 +195,9 @@
 }
 
 .orders-alert--copper {
-  background: rgba(212, 137, 74, 0.12);
+  background: color-mix(in srgb, var(--copper) 12%, transparent);
   color: var(--copper-light);
-  border: 1px solid rgba(212, 137, 74, 0.3);
+  border: 1px solid color-mix(in srgb, var(--copper) 30%, transparent);
 }
 
 .orders-alert--success {
@@ -267,7 +267,7 @@
 .orders-share-rider {
   margin-bottom: 0.85rem;
   padding: 0.7rem 0.75rem;
-  border-color: rgba(212, 137, 74, 0.35);
+  border-color: color-mix(in srgb, var(--copper) 35%, transparent);
   background: var(--bg-elevated);
 }
 
@@ -315,8 +315,8 @@
 
 .orders-rider-option.selected {
   border-color: var(--copper);
-  background: rgba(212, 137, 74, 0.1);
-  box-shadow: 0 0 0 1px rgba(212, 137, 74, 0.2);
+  background: var(--copper-glow);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copper) 20%, transparent);
 }
 
 .orders-rider-option input {

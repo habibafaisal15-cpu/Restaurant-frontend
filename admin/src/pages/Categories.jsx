@@ -239,8 +239,8 @@ export default function Categories() {
         <div>
           <h1>Food Categories</h1>
           <p>
-            Categories jaise Chinese, Desi, Steak — har category ke andar uske menu items
-            hote hain. Saari items mil kar poora menu banati hain.
+            Categories like Chinese, Desi, and Steak — each category contains its menu
+            items. Together, all items make up the full menu.
           </p>
         </div>
         <button type="button" className="btn btn-primary" onClick={openCreate}>
@@ -464,7 +464,7 @@ export default function Categories() {
             <div className="categories-items-draft">
               <div className="categories-items-draft-head">
                 <h4>Add items to this category</h4>
-                <p>Name + price likho. Neeche se aur rows add kar sakte ho.</p>
+                <p>Enter a name and price. You can add more rows below.</p>
               </div>
 
               {itemDrafts.map((draft, index) => (
@@ -512,7 +512,7 @@ export default function Categories() {
       <ConfirmDialog
         open={confirmOpen}
         title="Deactivate Category"
-        message="Category hide ho jayegi. Uske items rahenge lekin customers ko nahi dikhenge jab tak category inactive hai."
+        message="This category will be hidden. Its items will remain, but customers won't see them while the category is inactive."
         confirmText="Deactivate"
         cancelText="Cancel"
         danger

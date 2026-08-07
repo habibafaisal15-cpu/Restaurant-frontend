@@ -610,27 +610,6 @@ export default function Orders() {
         </button>
       </div>
 
-      <div className="orders-flow-hint panel animate-slide-up">
-        <ol className="orders-flow-steps">
-          <li>
-            <span className="orders-flow-num">1</span>
-            New request from website
-          </li>
-          <li>
-            <span className="orders-flow-num">2</span>
-            Accept order
-          </li>
-          <li>
-            <span className="orders-flow-num">3</span>
-            Share rider name + phone
-          </li>
-          <li>
-            <span className="orders-flow-num">4</span>
-            Customer sees rider on website
-          </li>
-        </ol>
-      </div>
-
       <div className="grid-4 orders-stats animate-slide-up">
         <StatCard icon={Bell} label="New requests" value={stats.pending} accent="warning" />
         <StatCard icon={Share2} label="Need rider share" value={stats.needsRider} accent="copper" />

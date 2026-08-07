@@ -46,8 +46,8 @@
 
 .pos-item-grid__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
 .pos-item-grid__card {
@@ -154,14 +154,20 @@
   font-size: 0.9rem;
 }
 
-@media (min-width: 900px) {
+@media (max-width: 1100px) {
   .pos-item-grid__grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 1200px) {
+@media (max-width: 700px) {
   .pos-item-grid__grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .pos-item-grid__grid {
+    grid-template-columns: 1fr;
   }
 }

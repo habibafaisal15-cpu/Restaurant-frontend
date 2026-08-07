@@ -76,7 +76,6 @@ export default function POS() {
 
   const [orderType, setOrderType] = useState('DINE_IN');
   const [tableNumber, setTableNumber] = useState('');
-  const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [cart, setCart] = useState([]);
@@ -159,7 +158,6 @@ export default function POS() {
   const clearCart = () => {
     setCart([]);
     setTableNumber('');
-    setCustomerName('');
     setCustomerPhone('');
   };
 
@@ -192,7 +190,7 @@ export default function POS() {
           notes: l.notes,
         })),
         customer: {
-          name: customerName.trim() || 'Walk-in Guest',
+          name: 'Walk-in Guest',
           phone: customerPhone.trim(),
         },
         tableNumber: orderType === 'DINE_IN' ? tableNumber.trim() : undefined,
@@ -288,24 +286,13 @@ export default function POS() {
 
   return (
     <div className="page pos-page">
-      <div className="page-header pos-header">
-        <div>
-          <h1>Place Walk-in Order</h1>
-          <p>Point of sale for in-restaurant orders</p>
-        </div>
-        <button
-          type="button"
-          className="btn btn-ghost pos-clear-btn"
-          onClick={clearCart}
-          disabled={cart.length === 0}
-        >
-          <Trash2 size={16} />
-          Clear cart
-        </button>
-      </div>
+      <div className="pos-layout">
+        <div className="pos-top">
+          <div className="pos-title-block">
+            <h1>Place Walk-in Order</h1>
+            <p>Point of sale for in-restaurant orders</p>
+          </div>
 
-      <div className="pos-layout animate-slide-up">
-        <div className="pos-main">
           <div className="pos-type-toggle" role="group" aria-label="Order type">
             {ORDER_TYPES.map(({ key, label, icon: Icon }) => (
               <button
@@ -316,7 +303,7 @@ export default function POS() {
                 aria-pressed={orderType === key}
               >
                 <span className="pos-type-btn-icon" aria-hidden="true">
-                  <Icon size={22} strokeWidth={2} />
+                  <Icon size={20} strokeWidth={2} />
                 </span>
                 <span className="pos-type-btn-text">
                   <span className="pos-type-btn-label">{label}</span>
@@ -327,21 +314,23 @@ export default function POS() {
               </button>
             ))}
           </div>
-
-          <div className="pos-menu panel">
-            <PosItemGrid
-              items={menuItems}
-              categories={categories}
-              onAddItem={handleAddItem}
-              currency={settings.currency === 'PKR' ? 'PKR' : 'USD'}
-            />
-          </div>
         </div>
 
         <aside className="pos-cart panel">
-          <div className="pos-cart-scroll">
+          <div className="pos-cart-head">
             <h3 className="pos-cart-title">Order details</h3>
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm pos-clear-btn"
+              onClick={clearCart}
+              disabled={cart.length === 0}
+            >
+              <Trash2 size={15} />
+              Clear cart
+            </button>
+          </div>
 
+          <div className="pos-cart-scroll">
             <div className="pos-cart-fields">
               {orderType === 'DINE_IN' && (
                 <div className="form-group">
@@ -357,29 +346,16 @@ export default function POS() {
                 </div>
               )}
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="pos-name">Customer name</label>
-                  <input
-                    id="pos-name"
-                    type="text"
-                    className="form-control"
-                    placeholder="Optional"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="pos-phone">Phone</label>
-                  <input
-                    id="pos-phone"
-                    type="tel"
-                    className="form-control"
-                    placeholder="Optional"
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                  />
-                </div>
+              <div className="form-group">
+                <label htmlFor="pos-phone">Phone</label>
+                <input
+                  id="pos-phone"
+                  type="tel"
+                  className="form-control"
+                  placeholder="Optional"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                />
               </div>
 
               <p className="pos-token-hint">
@@ -485,6 +461,15 @@ export default function POS() {
             </button>
           </div>
         </aside>
+
+        <div className="pos-menu panel">
+          <PosItemGrid
+            items={menuItems}
+            categories={categories}
+            onAddItem={handleAddItem}
+            currency={settings.currency === 'PKR' ? 'PKR' : 'USD'}
+          />
+        </div>
       </div>
     </div>
   );

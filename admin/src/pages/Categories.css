@@ -5,19 +5,6 @@
   min-height: 50vh;
 }
 
-.categories-hint {
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  line-height: 1.45;
-  border-color: color-mix(in srgb, var(--copper) 25%, transparent);
-  background: color-mix(in srgb, var(--copper) 6%, transparent);
-}
-
-.categories-hint strong {
-  color: var(--copper-light);
-}
-
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

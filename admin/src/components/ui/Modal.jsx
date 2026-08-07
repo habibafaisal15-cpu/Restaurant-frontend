@@ -48,7 +48,7 @@ export default function Modal({
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
       >
-        <div className="modal__header">
+        <div className="modal__header no-print">
           {title && (
             <h2 id="modal-title" className="modal__title">
               {title}
@@ -66,7 +66,7 @@ export default function Modal({
 
         <div className="modal__body">{children}</div>
 
-        {footer && <div className="modal__footer">{footer}</div>}
+        {footer && <div className="modal__footer no-print">{footer}</div>}
       </div>
     </div>,
     document.body,

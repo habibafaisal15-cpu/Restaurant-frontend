@@ -463,11 +463,6 @@ export default function MenuItems() {
         </div>
       </div>
 
-      <div className="menu-items-hint panel animate-slide-up">
-        Select a category, then add or edit dishes in that category. Add the first item to
-        an empty category to fill out the menu.
-      </div>
-
       {/* Category tabs = food groups */}
       <div className="tabs menu-category-tabs animate-slide-up">
         <button

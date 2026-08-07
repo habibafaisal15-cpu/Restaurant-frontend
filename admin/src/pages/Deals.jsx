@@ -70,8 +70,6 @@ export default function Deals() {
     return list;
   }, [deals, filter]);
 
-  const liveCount = deals.filter((d) => d.active && d.showOnCustomer).length;
-
   const openCreate = () => {
     setEditingId(null);
     setForm({ ...EMPTY_FORM });
@@ -201,14 +199,6 @@ export default function Deals() {
           <Plus size={18} />
           Add Deal
         </button>
-      </div>
-
-      <div className="deals-hint panel animate-slide-up">
-        <Tag size={16} />
-        <span>
-          <strong>{liveCount}</strong> deal{liveCount === 1 ? '' : 's'} currently live for customers.
-          Toggle “Show on customer” to publish or hide.
-        </span>
       </div>
 
       <div className="filters-bar animate-slide-up">

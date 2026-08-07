@@ -242,17 +242,34 @@
   }
 
   .slip-preview__viewport {
-    padding: 0;
-    background: none;
-    border: none;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    overflow: visible !important;
   }
 
   .slip-print-area {
-    box-shadow: none;
+    box-shadow: none !important;
+    color: #111 !important;
+    background: #fff !important;
   }
 
   .slip-print-area--thermal {
-    width: 80mm;
+    width: 80mm !important;
+    max-width: 80mm !important;
+  }
+
+  .slip-print-area--a4 {
+    width: 190mm !important;
+    max-width: 190mm !important;
+  }
+
+  .slip__meta,
+  .slip__label,
+  .slip__item-mod,
+  .slip__item-note,
+  .slip__footer {
+    color: #333 !important;
   }
 }
 

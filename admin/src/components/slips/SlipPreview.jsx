@@ -420,7 +420,102 @@ export default function SlipPreview({
   const printRef = useRef(null);
 
   const handlePrint = () => {
-    window.print();
+    const node = printRef.current;
+    if (!node) {
+      window.print();
+      return;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.setAttribute('title', 'Print slip');
+    Object.assign(iframe.style, {
+      position: 'fixed',
+      right: '0',
+      bottom: '0',
+      width: '0',
+      height: '0',
+      border: '0',
+      opacity: '0',
+      pointerEvents: 'none',
+    });
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentDocument;
+    if (!doc) {
+      iframe.remove();
+      window.print();
+      return;
+    }
+
+    const headStyles = [
+      ...Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map((el) => el.outerHTML),
+      ...Array.from(document.querySelectorAll('style')).map((el) => el.outerHTML),
+    ].join('');
+
+    doc.open();
+    doc.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Slip — ${order?.orderNumber ?? order?.id ?? ''}</title>
+  ${headStyles}
+  <style>
+    @page { margin: 5mm; size: auto; }
+    html, body {
+      margin: 0 !important;
+      padding: 8px !important;
+      background: #fff !important;
+      color: #111 !important;
+    }
+    .slip-print-area {
+      box-shadow: none !important;
+      margin: 0 auto !important;
+      color: #111 !important;
+      background: #fff !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .slip-print-area--thermal { width: 80mm !important; max-width: 80mm !important; }
+    .slip-print-area--a4 { width: 190mm !important; max-width: 190mm !important; }
+  </style>
+</head>
+<body>${node.outerHTML}</body>
+</html>`);
+    doc.close();
+
+    const cleanup = () => {
+      setTimeout(() => iframe.remove(), 500);
+    };
+
+    const runPrint = () => {
+      try {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+      } catch {
+        window.print();
+      } finally {
+        cleanup();
+      }
+    };
+
+    const images = Array.from(doc.images ?? []);
+    if (!images.length) {
+      setTimeout(runPrint, 200);
+      return;
+    }
+
+    Promise.all(
+      images.map(
+        (img) =>
+          img.complete
+            ? Promise.resolve()
+            : new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = resolve;
+              }),
+      ),
+    ).then(() => setTimeout(runPrint, 100));
   };
 
   const handleDownloadPdf = async () => {

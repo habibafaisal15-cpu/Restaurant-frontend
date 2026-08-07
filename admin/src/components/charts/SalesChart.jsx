@@ -18,9 +18,9 @@ const CHANNELS = [
 ];
 
 const COLORS = {
-  sales: '#D4894A',
-  onlineSales: '#5a8fc4',
-  inRestaurantSales: '#3d9b6a',
+  sales: '#51553D',
+  onlineSales: '#7D5B51',
+  inRestaurantSales: '#6C422C',
 };
 
 function formatCurrency(value) {
@@ -125,7 +125,7 @@ export default function SalesChart({ data = [], title = 'Sales Overview' }) {
               strokeWidth={2.5}
               fill="url(#salesGrad)"
               dot={false}
-              activeDot={{ r: 5, fill: COLORS.sales, stroke: '#0a0a0a', strokeWidth: 2 }}
+              activeDot={{ r: 5, fill: COLORS.sales, stroke: '#1a1612', strokeWidth: 2 }}
             />
           )}
           {showOnline && (

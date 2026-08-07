@@ -25,9 +25,9 @@ body {
 
 [data-theme='light'] body {
   background:
-    radial-gradient(1100px 480px at 8% -8%, rgba(0, 200, 83, 0.16), transparent 55%),
-    radial-gradient(900px 420px at 100% 0%, rgba(30, 136, 229, 0.08), transparent 50%),
-    radial-gradient(700px 360px at 50% 100%, rgba(0, 137, 123, 0.08), transparent 45%),
+    radial-gradient(1100px 480px at 8% -8%, rgba(81, 85, 61, 0.14), transparent 55%),
+    radial-gradient(900px 420px at 100% 0%, rgba(125, 91, 81, 0.1), transparent 50%),
+    radial-gradient(700px 360px at 50% 100%, rgba(108, 66, 44, 0.08), transparent 45%),
     var(--bg);
 }
 
@@ -244,7 +244,7 @@ ul, ol {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--copper), var(--copper-dark));
-  color: #fff;
+  color: var(--text-inverse);
   box-shadow: var(--shadow-copper);
 }
 
@@ -453,7 +453,7 @@ select.form-control {
 }
 
 [data-theme='light'] .panel {
-  box-shadow: 0 2px 12px rgba(15, 50, 100, 0.05);
+  box-shadow: 0 2px 14px rgba(108, 66, 44, 0.08);
 }
 
 .panel--accent {

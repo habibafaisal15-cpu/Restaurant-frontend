@@ -60,45 +60,45 @@
   --transition-spring: 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
-/* Light mode — Cafe Corner (sky / seafoam / indigo / charcoal / gray) */
+/* Light mode — warm ivory + copper (day version of dark brand) */
 [data-theme='light'] {
-  --copper: #3b82f6;
-  --copper-light: #60a5fa;
-  --copper-dark: #2563eb;
-  --copper-glow: rgba(59, 130, 246, 0.22);
+  --copper: #d4894a;
+  --copper-light: #e8a86a;
+  --copper-dark: #b86e35;
+  --copper-glow: rgba(212, 137, 74, 0.28);
 
-  --bg: #f3f4f6;
-  --bg-elevated: #ffffff;
+  --bg: #fbf6ef;
+  --bg-elevated: #fffdf9;
   --bg-panel: #ffffff;
-  --bg-hover: #e5e7eb;
-  --bg-input: #ffffff;
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
+  --bg-hover: #f3e9dc;
+  --bg-input: #fffdf9;
+  --border: #eadfce;
+  --border-strong: #d4c2a8;
 
-  --text: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #6b7280;
+  --text: #2a2118;
+  --text-secondary: #6b5b4a;
+  --text-muted: #8f7e6c;
   --text-inverse: #ffffff;
 
-  --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.12);
-  --warning: #d97706;
-  --warning-bg: rgba(217, 119, 6, 0.12);
-  --danger: #dc2626;
-  --danger-bg: rgba(220, 38, 38, 0.1);
-  --info: #3b82f6;
-  --info-bg: rgba(59, 130, 246, 0.1);
+  --success: #3d9b6a;
+  --success-bg: rgba(61, 155, 106, 0.12);
+  --warning: #d4a017;
+  --warning-bg: rgba(212, 160, 23, 0.14);
+  --danger: #c45c4a;
+  --danger-bg: rgba(196, 92, 74, 0.12);
+  --info: #c9783a;
+  --info-bg: rgba(201, 120, 58, 0.12);
 
-  --online: #3b82f6;
-  --walkin: #10b981;
-  --takeaway: #4b5563;
+  --online: #c9783a;
+  --walkin: #d4894a;
+  --takeaway: #3d9b6a;
 
-  --shadow: 0 12px 36px rgba(17, 24, 39, 0.08);
-  --shadow-copper: 0 6px 24px rgba(59, 130, 246, 0.22);
+  --shadow: 0 14px 40px rgba(90, 58, 28, 0.08);
+  --shadow-copper: 0 8px 28px rgba(212, 137, 74, 0.28);
 
-  --fill-accent: rgba(59, 130, 246, 0.1);
-  --fill-accent-strong: rgba(59, 130, 246, 0.16);
-  --fill-success: rgba(16, 185, 129, 0.12);
-  --fill-info: rgba(59, 130, 246, 0.1);
-  --fill-warning: rgba(217, 119, 6, 0.12);
+  --fill-accent: rgba(212, 137, 74, 0.12);
+  --fill-accent-strong: rgba(212, 137, 74, 0.2);
+  --fill-success: rgba(61, 155, 106, 0.12);
+  --fill-info: rgba(201, 120, 58, 0.12);
+  --fill-warning: rgba(212, 160, 23, 0.14);
 }

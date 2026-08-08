@@ -75,7 +75,7 @@ export default function Login() {
           <p className="login-subtitle">Restaurant Admin Dashboard</p>
         </header>
 
-        <form className="login-form panel" onSubmit={handleSubmit} noValidate>
+        <form className="login-form" onSubmit={handleSubmit} noValidate>
           <h2 className="login-form-title">Sign in</h2>
           <p className="login-form-desc">Enter your credentials to access the admin panel.</p>
 

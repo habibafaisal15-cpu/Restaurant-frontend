@@ -7,6 +7,9 @@ export const useMock = import.meta.env.VITE_USE_MOCK === 'true';
 export const api = axios.create({
   baseURL,
   timeout: 20000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use(
@@ -15,23 +18,6 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    const isFormData =
-      typeof FormData !== 'undefined' && config.data instanceof FormData;
-
-    if (isFormData) {
-      // Browser must set multipart boundary — never force Content-Type.
-      if (typeof config.headers?.delete === 'function') {
-        config.headers.delete('Content-Type');
-        config.headers.delete('content-type');
-      } else if (config.headers) {
-        delete config.headers['Content-Type'];
-        delete config.headers['content-type'];
-      }
-    } else if (config.data != null && config.headers?.['Content-Type'] == null) {
-      config.headers['Content-Type'] = 'application/json';
-    }
-
     return config;
   },
   (error) => Promise.reject(error),

@@ -235,7 +235,7 @@ export default function Dashboard() {
               label="Total Orders"
               value={summary?.totalOrders ?? 0}
               subValue={`AOV ${formatPKR(summary?.averageOrderValue ?? 0)}`}
-              accent="slate"
+              accent="copper"
             />
             <StatCard
               icon={Clock}
@@ -249,14 +249,14 @@ export default function Dashboard() {
               label="Active Kitchen"
               value={kitchenCount}
               subValue="Currently preparing"
-              accent="rose"
+              accent="info"
             />
             <StatCard
               icon={TrendingUp}
               label="AOV · Online"
               value={formatPKR(aovOnline)}
               subValue="Per online order"
-              accent="teal"
+              accent="info"
             />
             <StatCard
               icon={TrendingUp}

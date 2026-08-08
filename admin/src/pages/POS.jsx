@@ -12,6 +12,7 @@ import {
   Printer,
   RotateCcw,
   Loader2,
+  ChevronRight,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import PosItemGrid from '../components/pos/PosItemGrid';
@@ -35,7 +36,7 @@ const ORDER_TYPES = [
 const PAYMENT_METHODS = [
   { key: 'cash', label: 'Cash', icon: Banknote },
   { key: 'card', label: 'Card', icon: CreditCard },
-  { key: 'online', label: 'Online', icon: Smartphone },
+  { key: 'online', label: 'Online transfer', icon: Smartphone },
 ];
 
 function settingsForSlip(settings) {
@@ -83,6 +84,7 @@ export default function POS() {
   const [placing, setPlacing] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
   const [slipOpen, setSlipOpen] = useState(false);
+  const [paymentOpen, setPaymentOpen] = useState(false);
 
   const loadMenu = useCallback(async () => {
     setLoadingMenu(true);
@@ -147,14 +149,6 @@ export default function POS() {
     );
   };
 
-  const updateNotes = (lineKey, notes) => {
-    setCart((prev) =>
-      prev.map((l) =>
-        cartLineKey(l.menuItemId, l.notes) === lineKey ? { ...l, notes } : l,
-      ),
-    );
-  };
-
   const clearCart = () => {
     setCart([]);
     setTableNumber('');
@@ -169,7 +163,7 @@ export default function POS() {
     setOrderType('DINE_IN');
   };
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = () => {
     if (cart.length === 0) {
       toast.error('Add items to the cart first');
       return;
@@ -180,6 +174,12 @@ export default function POS() {
       return;
     }
 
+    setPaymentOpen(true);
+  };
+
+  const confirmPlaceOrder = async (method) => {
+    setPaymentMethod(method);
+    setPaymentOpen(false);
     setPlacing(true);
     try {
       const payload = {
@@ -194,7 +194,7 @@ export default function POS() {
           phone: customerPhone.trim(),
         },
         tableNumber: orderType === 'DINE_IN' ? tableNumber.trim() : undefined,
-        paymentMethod,
+        paymentMethod: method,
         paymentStatus: 'paid',
         cashierName: user?.name ?? 'Cashier',
       };
@@ -326,20 +326,20 @@ export default function POS() {
               disabled={cart.length === 0}
             >
               <Trash2 size={15} />
-              Clear
+              Clear cart
             </button>
           </div>
 
           <div className="pos-cart-scroll">
-            <div className="pos-cart-fields">
+            <div className={`pos-cart-fields ${orderType === 'DINE_IN' ? 'pos-cart-fields--row' : ''}`}>
               {orderType === 'DINE_IN' && (
                 <div className="form-group">
-                  <label htmlFor="pos-table">Table number *</label>
+                  <label htmlFor="pos-table">Table *</label>
                   <input
                     id="pos-table"
                     type="text"
-                    className="form-control pos-input-lg"
-                    placeholder="e.g. T-07"
+                    className="form-control pos-cart-field-input"
+                    placeholder="T-07"
                     value={tableNumber}
                     onChange={(e) => setTableNumber(e.target.value)}
                   />
@@ -351,21 +351,22 @@ export default function POS() {
                 <input
                   id="pos-phone"
                   type="tel"
-                  className="form-control"
+                  className="form-control pos-cart-field-input"
                   placeholder="Optional"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                 />
               </div>
-
-              <p className="pos-token-hint">Token assigned on place order.</p>
             </div>
 
             <div className="pos-cart-items">
-              <h4>Cart ({cart.reduce((s, l) => s + l.quantity, 0)} items)</h4>
-              {cart.length === 0 ? (
-                <p className="pos-cart-empty">Tap menu items to add them here</p>
-              ) : (
+              <div className="pos-cart-items-head">
+                <h4>Cart</h4>
+                <span className="pos-cart-count">
+                  {cart.reduce((s, l) => s + l.quantity, 0)} items
+                </span>
+              </div>
+              {cart.length > 0 && (
                 <ul className="pos-cart-list">
                   {cart.map((line) => {
                     const key = cartLineKey(line.menuItemId, line.notes);
@@ -377,32 +378,30 @@ export default function POS() {
                             {formatPKR(line.unitPrice * line.quantity)}
                           </span>
                         </div>
-                        <div className="pos-cart-line-controls">
-                          <button
-                            type="button"
-                            className="pos-qty-btn"
-                            onClick={() => updateQty(key, -1)}
-                            aria-label="Decrease quantity"
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span className="pos-qty-value">{line.quantity}</span>
-                          <button
-                            type="button"
-                            className="pos-qty-btn"
-                            onClick={() => updateQty(key, 1)}
-                            aria-label="Increase quantity"
-                          >
-                            <Plus size={16} />
-                          </button>
+                        <div className="pos-cart-line-meta">
+                          <div className="pos-cart-line-controls">
+                            <button
+                              type="button"
+                              className="pos-qty-btn"
+                              onClick={() => updateQty(key, -1)}
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus size={14} />
+                            </button>
+                            <span className="pos-qty-value">{line.quantity}</span>
+                            <button
+                              type="button"
+                              className="pos-qty-btn"
+                              onClick={() => updateQty(key, 1)}
+                              aria-label="Increase quantity"
+                            >
+                              <Plus size={14} />
+                            </button>
+                          </div>
+                          <span className="pos-cart-line-unit">
+                            {formatPKR(line.unitPrice)} each
+                          </span>
                         </div>
-                        <input
-                          type="text"
-                          className="form-control pos-line-notes"
-                          placeholder="Item notes (optional)"
-                          value={line.notes}
-                          onChange={(e) => updateNotes(key, e.target.value)}
-                        />
                       </li>
                     );
                   })}
@@ -425,36 +424,19 @@ export default function POS() {
               </div>
             </div>
 
-            <div className="pos-payment">
-              <h4>Payment method</h4>
-              <div className="pos-payment-btns">
-                {PAYMENT_METHODS.map(({ key, label, icon: Icon }) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`pos-payment-btn ${paymentMethod === key ? 'active' : ''}`}
-                    onClick={() => setPaymentMethod(key)}
-                  >
-                    <Icon size={14} />
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <button
               type="button"
-              className="btn btn-primary pos-place-btn"
+              className="btn btn-primary btn-lg pos-place-btn"
               disabled={cart.length === 0 || placing}
               onClick={handlePlaceOrder}
             >
               {placing ? (
                 <>
-                  <Loader2 size={16} className="pos-spin" />
-                  Placing…
+                  <Loader2 size={20} className="pos-spin" />
+                  Placing order…
                 </>
               ) : (
-                <>Place · {formatPKR(totals.total)}</>
+                <>Place Order · {formatPKR(totals.total)}</>
               )}
             </button>
           </div>
@@ -469,6 +451,37 @@ export default function POS() {
           />
         </div>
       </div>
+
+      <Modal
+        open={paymentOpen}
+        onClose={() => !placing && setPaymentOpen(false)}
+        title="Select payment method"
+        size="md"
+      >
+        <div className="pos-pay-modal">
+          <p className="pos-pay-modal-total">
+            Amount due <strong>{formatPKR(totals.total)}</strong>
+          </p>
+          <div className="pos-pay-modal-options">
+            {PAYMENT_METHODS.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                type="button"
+                className={`pos-pay-modal-option ${paymentMethod === key ? 'active' : ''}`}
+                disabled={placing}
+                onClick={() => confirmPlaceOrder(key)}
+              >
+                <span className="pos-pay-modal-icon" aria-hidden="true">
+                  <Icon size={26} strokeWidth={2} />
+                </span>
+                <span className="pos-pay-modal-label">{label}</span>
+                <ChevronRight size={18} className="pos-pay-modal-chevron" />
+              </button>
+            ))}
+          </div>
+          <p className="pos-pay-modal-hint">Tap a method to confirm and place the order</p>
+        </div>
+      </Modal>
     </div>
   );
 }

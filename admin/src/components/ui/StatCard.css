@@ -1,7 +1,7 @@
 .stat-card {
   position: relative;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
+  background: linear-gradient(165deg, var(--fill-accent) 0%, var(--bg-panel) 55%);
+  border: 1px solid color-mix(in srgb, var(--copper) 28%, var(--border));
   border-radius: var(--radius);
   padding: var(--panel-pad);
   overflow: hidden;
@@ -11,12 +11,57 @@
 
 .stat-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow);
-  border-color: var(--border-strong);
+  box-shadow: var(--shadow-copper);
+  border-color: color-mix(in srgb, var(--copper) 45%, var(--border));
 }
 
 .stat-card__accent {
-  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--copper), var(--copper-light));
+}
+
+.stat-card--success {
+  background: linear-gradient(165deg, var(--fill-success) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--success) 30%, var(--border));
+}
+
+.stat-card--success .stat-card__accent {
+  background: linear-gradient(90deg, var(--success), #5cb87e);
+}
+
+.stat-card--info {
+  background: linear-gradient(165deg, var(--fill-info) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--info) 30%, var(--border));
+}
+
+.stat-card--info .stat-card__accent {
+  background: linear-gradient(90deg, var(--info), #7aa8d4);
+}
+
+.stat-card--warning {
+  background: linear-gradient(165deg, var(--fill-warning) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--warning) 30%, var(--border));
+}
+
+.stat-card--warning .stat-card__accent {
+  background: linear-gradient(90deg, var(--warning), #e0b830);
+}
+
+.stat-card--danger {
+  background: linear-gradient(165deg, var(--danger-bg) 0%, var(--bg-panel) 55%);
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--border));
+}
+
+.stat-card--danger .stat-card__accent {
+  background: linear-gradient(90deg, var(--danger), #d47a6a);
+}
+
+.stat-card--copper {
+  background: linear-gradient(165deg, var(--fill-accent-strong) 0%, var(--bg-panel) 55%);
 }
 
 .stat-card__top {
@@ -33,46 +78,33 @@
   width: 42px;
   height: 42px;
   border-radius: var(--radius-sm);
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  box-shadow: none;
-}
-
-[data-theme='light'] .stat-card__icon {
-  background: #ffffff;
-}
-
-.stat-card--copper .stat-card__icon {
-  color: #d4894a;
-}
-
-.stat-card--info .stat-card__icon {
-  color: #5a8fc4;
+  background: var(--copper);
+  color: #fff;
+  box-shadow: var(--shadow-copper);
 }
 
 .stat-card--success .stat-card__icon {
-  color: #3d9b6a;
+  background: var(--success);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--success) 35%, transparent);
+}
+
+.stat-card--info .stat-card__icon {
+  background: var(--info);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--info) 35%, transparent);
 }
 
 .stat-card--warning .stat-card__icon {
-  color: #d4a017;
+  background: var(--warning);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--warning) 35%, transparent);
 }
 
 .stat-card--danger .stat-card__icon {
-  color: #c45c4a;
-}
-
-.stat-card--teal .stat-card__icon {
-  color: #2a9d8f;
-}
-
-.stat-card--rose .stat-card__icon {
-  color: #c45c6a;
-}
-
-.stat-card--slate .stat-card__icon {
-  color: #8a8074;
+  background: var(--danger);
+  color: #fff;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--danger) 35%, transparent);
 }
 
 .stat-card__trend {

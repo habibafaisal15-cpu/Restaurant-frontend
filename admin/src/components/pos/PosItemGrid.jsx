@@ -114,11 +114,11 @@ export default function PosItemGrid({
                   />
                 ) : (
                   <div className="pos-item-grid__image-fallback">
-                    <ImageOff size={28} strokeWidth={1.25} />
+                    <ImageOff size={20} strokeWidth={1.25} />
                   </div>
                 )}
                 <span className="pos-item-grid__add-badge">
-                  <Plus size={16} />
+                  <Plus size={13} />
                 </span>
               </div>
               <div className="pos-item-grid__info">

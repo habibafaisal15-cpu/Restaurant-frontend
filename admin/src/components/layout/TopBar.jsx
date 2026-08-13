@@ -6,6 +6,8 @@ import { useTheme } from '../../context/ThemeContext';
 import './TopBar.css';
 
 const ROLE_LABELS = {
+  admin: 'Store Admin',
+  'store-admin': 'Store Admin',
   'super-admin': 'Super Admin',
   manager: 'Manager',
   cashier: 'Cashier',

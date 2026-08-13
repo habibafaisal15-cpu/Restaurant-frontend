@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   ShoppingCart,
   Tag,
+  Users,
   UtensilsCrossed,
 } from 'lucide-react';
 import './Sidebar.css';
@@ -24,8 +25,9 @@ const NAV_ITEMS = [
   { to: '/deals', label: 'Deals', icon: Tag },
   { to: '/riders', label: 'Riders', icon: Bike },
   { to: '/locations', label: 'Delivery Locations', icon: MapPinned },
-  { to: '/slips', label: 'Slips / Receipts', icon: Receipt },
+  { to: '/slips', label: 'Receipts', icon: Receipt },
   { to: '/reports', label: 'Reports', icon: FileText },
+  { to: '/staff', label: 'Staff', icon: Users },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 

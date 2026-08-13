@@ -74,6 +74,10 @@ function settingsForSlip(settings) {
     phone: settings.phone,
     footer: settings.slipFooter,
     taxRate: settings.taxPercent,
+    showName: settings.showNameOnBill !== false,
+    showLogo: settings.showLogoOnBill !== false,
+    showAddress: settings.showAddressOnBill !== false,
+    showPhone: settings.showPhoneOnBill !== false,
   };
 }
 

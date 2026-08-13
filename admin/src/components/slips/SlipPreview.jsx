@@ -29,14 +29,25 @@ function formatStatus(status) {
 }
 
 function SlipHeader({ settings }) {
+  const showLogo = settings?.showLogo !== false;
+  const showName = settings?.showName !== false;
+  const showAddress = settings?.showAddress !== false;
+  const showPhone = settings?.showPhone !== false;
+
   return (
     <header className="slip__header">
-      {settings?.logo && (
+      {showLogo && settings?.logo ? (
         <img src={settings.logo} alt="" className="slip__logo" />
-      )}
-      <p className="slip__name">{settings?.name ?? 'Restaurant'}</p>
-      {settings?.address && <p className="slip__meta">{settings.address}</p>}
-      {settings?.phone && <p className="slip__meta">Tel: {settings.phone}</p>}
+      ) : null}
+      {showName ? (
+        <p className="slip__name">{settings?.name ?? 'Restaurant'}</p>
+      ) : null}
+      {showAddress && settings?.address ? (
+        <p className="slip__meta">{settings.address}</p>
+      ) : null}
+      {showPhone && settings?.phone ? (
+        <p className="slip__meta">Tel: {settings.phone}</p>
+      ) : null}
     </header>
   );
 }

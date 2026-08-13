@@ -13,6 +13,7 @@ const Deals = lazy(() => import('./pages/Deals'));
 const Riders = lazy(() => import('./pages/Riders'));
 const Slips = lazy(() => import('./pages/Slips'));
 const Reports = lazy(() => import('./pages/Reports'));
+const Staff = lazy(() => import('./pages/Staff'));
 const Settings = lazy(() => import('./pages/Settings'));
 const DeliveryLocations = lazy(() => import('./pages/DeliveryLocations'));
 
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="locations" element={<DeliveryLocations />} />
           <Route path="slips" element={<Slips />} />
           <Route path="reports" element={<Reports />} />
+          <Route path="staff" element={<Staff />} />
           <Route path="settings" element={<Settings />} />
           <Route path="hero" element={<Navigate to="/settings" replace />} />
         </Route>

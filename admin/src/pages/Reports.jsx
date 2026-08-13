@@ -1,56 +1,53 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import {
-  Banknote,
-  ShoppingBag,
-  TrendingUp,
-  XCircle,
-  Globe,
-  UtensilsCrossed,
+  BarChart3,
+  RefreshCw,
   Download,
   Calendar,
+  DollarSign,
+  Package,
+  Users,
+  Layers,
+  Lock,
+  TrendingUp,
+  CreditCard,
+  Target,
+  Wallet,
+  Box,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format, subDays, parseISO } from 'date-fns';
 import StatCard from '../components/ui/StatCard';
 import DataTable from '../components/ui/DataTable';
 import SalesChart from '../components/charts/SalesChart';
-import ChannelBadge from '../components/ui/ChannelBadge';
 import Skeleton from '../components/ui/Skeleton';
 import * as salesService from '../services/salesService';
 import { formatPKR, formatDate } from '../utils/format';
 import './Reports.css';
 
-const RANGES = [
-  { key: 'daily', label: 'Daily' },
-  { key: 'weekly', label: 'Weekly' },
-  { key: 'monthly', label: 'Monthly' },
+const PERIODS = [
+  { key: 'daily', label: 'Today', days: 1 },
+  { key: 'weekly', label: 'Last 7 Days', days: 7 },
+  { key: 'monthly', label: 'Last 30 Days', days: 30 },
 ];
 
-const CHANNELS = [
-  { value: 'ALL', label: 'All Channels' },
-  { value: 'ONLINE', label: 'Online' },
-  { value: 'IN_RESTAURANT', label: 'In-Restaurant' },
+const REPORT_TABS = [
+  { key: 'sales', label: 'Sales', icon: DollarSign, ready: true },
+  { key: 'products', label: 'Products', icon: Box, ready: true },
+  { key: 'customers', label: 'Customers', icon: Users, ready: false },
+  { key: 'inventory', label: 'Inventory', icon: Layers, ready: false },
+  { key: 'daily-closing', label: 'Daily Closing', icon: Wallet, ready: false },
+  { key: 'udhaar', label: 'Udhaar / Credit', icon: CreditCard, ready: false },
+  { key: 'payables', label: 'Supplier Payables', icon: CreditCard, ready: false },
+  { key: 'profit', label: 'Profit / Products', icon: Target, ready: false },
 ];
 
-const SUBTYPES = [
-  { value: 'ALL', label: 'All subtypes' },
-  { value: 'DINE_IN', label: 'Dine-in' },
-  { value: 'TAKEAWAY', label: 'Takeaway' },
-];
-
-const PAYMENT_METHODS = [
-  { value: 'ALL', label: 'All payments' },
-  { value: 'cash', label: 'Cash' },
-  { value: 'card', label: 'Card' },
-  { value: 'online', label: 'Online' },
-];
-
-function getDefaultDates(range) {
+function getDefaultDates(rangeKey) {
+  const period = PERIODS.find((p) => p.key === rangeKey) || PERIODS[1];
   const today = new Date();
-  const days = range === 'monthly' ? 30 : range === 'weekly' ? 7 : 1;
   return {
-    from: format(subDays(today, days - 1), 'yyyy-MM-dd'),
+    from: format(subDays(today, period.days - 1), 'yyyy-MM-dd'),
     to: format(today, 'yyyy-MM-dd'),
   };
 }
@@ -58,8 +55,7 @@ function getDefaultDates(range) {
 function formatChartLabel(dateStr) {
   if (!dateStr) return '';
   try {
-    const d = parseISO(dateStr);
-    return format(d, 'MMM d');
+    return format(parseISO(dateStr), 'MMM d');
   } catch {
     return dateStr;
   }
@@ -70,12 +66,10 @@ function downloadCSV(filename, rows, columns) {
     const str = val == null ? '' : String(val);
     return `"${str.replace(/"/g, '""')}"`;
   };
-
   const header = columns.map((c) => escape(c.label)).join(',');
   const body = rows
     .map((row) => columns.map((c) => escape(c.export ? c.export(row) : row[c.key])).join(','))
     .join('\n');
-
   const blob = new Blob([`${header}\n${body}`], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -87,13 +81,12 @@ function downloadCSV(filename, rows, columns) {
 
 export default function Reports() {
   const { refreshKey } = useOutletContext() || {};
+  const [activeTab, setActiveTab] = useState('products');
   const [range, setRange] = useState('weekly');
   const [dateFrom, setDateFrom] = useState(() => getDefaultDates('weekly').from);
   const [dateTo, setDateTo] = useState(() => getDefaultDates('weekly').to);
-  const [channel, setChannel] = useState('ALL');
-  const [subtype, setSubtype] = useState('ALL');
-  const [paymentMethod, setPaymentMethod] = useState('ALL');
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const [summary, setSummary] = useState(null);
   const [byDay, setByDay] = useState([]);
@@ -101,12 +94,13 @@ export default function Reports() {
   const [byCategory, setByCategory] = useState([]);
 
   const params = useMemo(
-    () => ({ range, channel, from: dateFrom, to: dateTo, subtype, paymentMethod }),
-    [range, channel, dateFrom, dateTo, subtype, paymentMethod],
+    () => ({ range, from: dateFrom, to: dateTo, channel: 'ALL' }),
+    [range, dateFrom, dateTo],
   );
 
   const loadReports = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
+    else setRefreshing(true);
     try {
       const [summaryData, dayData, itemData, categoryData] = await Promise.all([
         salesService.getSummary(params),
@@ -119,7 +113,6 @@ export default function Reports() {
         ...summaryData,
         cancelledOrders: summaryData.cancelledOrders ?? 0,
       };
-
       if (adjusted.totalOrders && !adjusted.averageOrderValue) {
         adjusted.averageOrderValue = Math.round(adjusted.totalRevenue / adjusted.totalOrders);
       }
@@ -131,7 +124,8 @@ export default function Reports() {
     } catch {
       toast.error('Failed to load report data');
     } finally {
-      if (!silent) setLoading(false);
+      setLoading(false);
+      setRefreshing(false);
     }
   }, [params]);
 
@@ -139,17 +133,24 @@ export default function Reports() {
     loadReports({ silent: Boolean(refreshKey) });
   }, [loadReports, refreshKey]);
 
-  useEffect(() => {
-    const interval = setInterval(() => loadReports({ silent: true }), 30000);
-    return () => clearInterval(interval);
-  }, [loadReports]);
-
-  const handleRangeChange = (newRange) => {
-    setRange(newRange);
-    const dates = getDefaultDates(newRange);
+  const handlePeriodChange = (key) => {
+    setRange(key);
+    const dates = getDefaultDates(key);
     setDateFrom(dates.from);
     setDateTo(dates.to);
   };
+
+  const productMetrics = useMemo(() => {
+    const unitsSold = byItem.reduce((sum, row) => sum + (Number(row.quantity) || 0), 0);
+    const revenue = byItem.reduce((sum, row) => sum + (Number(row.revenue) || 0), 0);
+    const avgUnit = unitsSold ? Math.round(revenue / unitsSold) : 0;
+    return {
+      revenue: summary?.totalRevenue ?? revenue,
+      unitsSold,
+      categories: byCategory.length,
+      avgUnit,
+    };
+  }, [byItem, byCategory, summary]);
 
   const chartData = useMemo(
     () =>
@@ -162,37 +163,19 @@ export default function Reports() {
     [byDay],
   );
 
-  const channelRows = useMemo(() => {
-    if (!summary?.channels) return [];
-    return Object.entries(summary.channels).map(([key, data]) => ({
-      id: key,
-      channel: key,
-      orders: data.orders,
-      revenue: data.revenue,
-      percentage: data.percentage,
-      aov: Math.round(data.revenue / Math.max(data.orders, 1)),
-    }));
-  }, [summary]);
-
-  const onlineChannel = summary?.channels?.ONLINE;
-  const inRestChannel = summary?.channels?.IN_RESTAURANT;
-
-  const dayColumns = useMemo(
-    () => [
-      { key: 'date', label: 'Date', sortable: true, export: (r) => r.date, render: (_, r) => formatDate(r.date) },
-      { key: 'orders', label: 'Orders', sortable: true },
-      { key: 'revenue', label: 'Revenue', sortable: true, export: (r) => r.revenue, render: (_, r) => formatPKR(r.revenue) },
-      { key: 'online', label: 'Online', sortable: true, export: (r) => r.online, render: (_, r) => formatPKR(r.online) },
-      { key: 'inRestaurant', label: 'In-Restaurant', sortable: true, export: (r) => r.inRestaurant, render: (_, r) => formatPKR(r.inRestaurant) },
-    ],
-    [],
-  );
+  const topProducts = useMemo(() => byItem.slice(0, 8), [byItem]);
 
   const itemColumns = useMemo(
     () => [
-      { key: 'name', label: 'Item', sortable: true },
-      { key: 'quantity', label: 'Qty Sold', sortable: true },
-      { key: 'revenue', label: 'Revenue', sortable: true, export: (r) => r.revenue, render: (_, r) => formatPKR(r.revenue) },
+      { key: 'name', label: 'Product', sortable: true },
+      { key: 'quantity', label: 'Units', sortable: true },
+      {
+        key: 'revenue',
+        label: 'Revenue',
+        sortable: true,
+        export: (r) => r.revenue,
+        render: (_, r) => formatPKR(r.revenue),
+      },
     ],
     [],
   );
@@ -201,243 +184,335 @@ export default function Reports() {
     () => [
       { key: 'name', label: 'Category', sortable: true },
       { key: 'orders', label: 'Orders', sortable: true },
-      { key: 'revenue', label: 'Revenue', sortable: true, export: (r) => r.revenue, render: (_, r) => formatPKR(r.revenue) },
-      { key: 'percentage', label: 'Share', sortable: true, render: (val) => `${val ?? 0}%` },
+      {
+        key: 'revenue',
+        label: 'Revenue',
+        sortable: true,
+        export: (r) => r.revenue,
+        render: (_, r) => formatPKR(r.revenue),
+      },
+      {
+        key: 'percentage',
+        label: 'Share',
+        sortable: true,
+        render: (val) => `${val ?? 0}%`,
+      },
     ],
     [],
   );
 
-  const channelColumns = useMemo(
+  const dayColumns = useMemo(
     () => [
       {
-        key: 'channel',
-        label: 'Channel',
-        render: (_, row) => (
-          <ChannelBadge
-            channel={row.channel}
-            orderType={row.channel === 'IN_RESTAURANT' ? 'DINE_IN' : undefined}
-          />
-        ),
-        export: (r) => r.channel,
+        key: 'date',
+        label: 'Date',
+        sortable: true,
+        export: (r) => r.date,
+        render: (_, r) => formatDate(r.date),
       },
       { key: 'orders', label: 'Orders', sortable: true },
-      { key: 'revenue', label: 'Revenue', sortable: true, export: (r) => r.revenue, render: (_, r) => formatPKR(r.revenue) },
-      { key: 'aov', label: 'AOV', sortable: true, export: (r) => r.aov, render: (_, r) => formatPKR(r.aov) },
-      { key: 'percentage', label: 'Share', sortable: true, render: (val) => `${val ?? 0}%` },
+      {
+        key: 'revenue',
+        label: 'Revenue',
+        sortable: true,
+        export: (r) => r.revenue,
+        render: (_, r) => formatPKR(r.revenue),
+      },
     ],
     [],
   );
 
-  const exportTable = (name, rows, columns) => {
-    if (!rows.length) {
-      toast.error('No data to export');
+  const handleExport = () => {
+    if (activeTab === 'products') {
+      if (!byItem.length) {
+        toast.error('No data to export');
+        return;
+      }
+      downloadCSV(`products-${dateFrom}-to-${dateTo}.csv`, byItem, itemColumns);
+      toast.success('Products report exported');
       return;
     }
-    downloadCSV(`your-kitchen-${name}-${range}-${dateFrom}-to-${dateTo}.csv`, rows, columns);
-    toast.success(`${name} exported`);
+    if (activeTab === 'sales') {
+      if (!byDay.length) {
+        toast.error('No data to export');
+        return;
+      }
+      downloadCSV(`sales-${dateFrom}-to-${dateTo}.csv`, byDay, dayColumns);
+      toast.success('Sales report exported');
+      return;
+    }
+    toast.error('Export is not available for this report yet');
   };
+
+  const currentTab = REPORT_TABS.find((tab) => tab.key === activeTab) || REPORT_TABS[1];
+  const periodLabel = PERIODS.find((p) => p.key === range)?.label || 'Last 7 Days';
 
   return (
     <div className="page reports-page">
-      <div className="page-header">
-        <div>
-          <h1>Reports</h1>
-          <p>Sales analytics, channel breakdown, and exports</p>
-        </div>
-        <div className="tabs reports-range-tabs">
-          {RANGES.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              className={`tab ${range === key ? 'active' : ''}`}
-              onClick={() => handleRangeChange(key)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="filters-bar reports-filters animate-slide-up">
-        <div className="reports-date-group">
-          <Calendar size={16} className="reports-date-icon" />
-          <input
-            type="date"
-            className="form-control"
-            value={dateFrom}
-            max={dateTo}
-            onChange={(e) => setDateFrom(e.target.value)}
-          />
-          <span className="reports-date-sep">to</span>
-          <input
-            type="date"
-            className="form-control"
-            value={dateTo}
-            min={dateFrom}
-            onChange={(e) => setDateTo(e.target.value)}
-          />
-        </div>
-        <select
-          className="form-control"
-          value={channel}
-          onChange={(e) => setChannel(e.target.value)}
-        >
-          {CHANNELS.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <select
-          className="form-control"
-          value={subtype}
-          onChange={(e) => setSubtype(e.target.value)}
-        >
-          {SUBTYPES.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <select
-          className="form-control"
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        >
-          {PAYMENT_METHODS.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="grid-4 reports-stats animate-slide-up">
-        {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="reports-stat-skeleton panel">
-              <Skeleton height={20} width="50%" />
-              <Skeleton height={32} width="70%" />
-              <Skeleton height={14} width="40%" />
-            </div>
-          ))
-        ) : (
-          <>
-            <StatCard
-              icon={Banknote}
-              label="Gross Sales"
-              value={formatPKR(summary?.totalRevenue ?? 0)}
-              subValue={`${formatDate(dateFrom)} – ${formatDate(dateTo)}`}
-              accent="copper"
-            />
-            <StatCard
-              icon={ShoppingBag}
-              label="Order Count"
-              value={summary?.totalOrders ?? 0}
-              subValue={`${range.charAt(0).toUpperCase()}${range.slice(1)} period`}
-              accent="copper"
-            />
-            <StatCard
-              icon={TrendingUp}
-              label="Average Order Value"
-              value={formatPKR(summary?.averageOrderValue ?? 0)}
-              subValue="Per completed order"
-              accent="info"
-            />
-            <StatCard
-              icon={XCircle}
-              label="Cancelled Orders"
-              value={summary?.cancelledOrders ?? 0}
-              subValue={`${(((summary?.cancelledOrders ?? 0) / Math.max(summary?.totalOrders ?? 1, 1)) * 100).toFixed(1)}% of total`}
-              accent="danger"
-            />
-            <StatCard
-              icon={Globe}
-              label="Online Sales"
-              value={formatPKR(onlineChannel?.revenue ?? 0)}
-              subValue={`${onlineChannel?.orders ?? 0} orders · ${onlineChannel?.percentage ?? 0}%`}
-              accent="info"
-            />
-            <StatCard
-              icon={UtensilsCrossed}
-              label="Walk-in / In-Restaurant"
-              value={formatPKR(inRestChannel?.revenue ?? 0)}
-              subValue={`${inRestChannel?.orders ?? 0} orders · ${inRestChannel?.percentage ?? 0}%`}
-              accent="success"
-            />
-          </>
-        )}
-      </div>
-
-      <div className="reports-chart-wrap animate-slide-up">
-        {loading ? (
-          <div className="panel reports-chart-skeleton">
-            <Skeleton height={24} width={200} />
-            <Skeleton height={280} />
+      <div className="page-header reports-header">
+        <div className="reports-title-block">
+          <BarChart3 size={26} strokeWidth={1.75} className="reports-title-icon" />
+          <div>
+            <h1>Reports & Analytics</h1>
+            <p>Comprehensive business insights and performance metrics</p>
           </div>
-        ) : (
-          <SalesChart
-            data={chartData}
-            title={`Sales Trend · ${RANGES.find((r) => r.key === range)?.label}`}
-          />
-        )}
-      </div>
-
-      <div className="reports-tables animate-slide-up">
-        <ReportSection
-          title="Sales by Day"
-          loading={loading}
-          onExport={() => exportTable('sales-by-day', byDay, dayColumns)}
-        >
-          <DataTable columns={dayColumns} data={byDay} loading={loading} skeletonRows={7} />
-        </ReportSection>
-
-        <ReportSection
-          title="Sales by Item"
-          loading={loading}
-          onExport={() => exportTable('sales-by-item', byItem, itemColumns)}
-        >
-          <DataTable columns={itemColumns} data={byItem} loading={loading} skeletonRows={8} />
-        </ReportSection>
-
-        <div className="grid-2">
-          <ReportSection
-            title="Sales by Category"
-            loading={loading}
-            onExport={() => exportTable('sales-by-category', byCategory, categoryColumns)}
+        </div>
+        <div className="reports-header-actions">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => loadReports({ silent: true })}
+            disabled={refreshing || loading}
           >
-            <DataTable columns={categoryColumns} data={byCategory} loading={loading} skeletonRows={6} />
-          </ReportSection>
-
-          <ReportSection
-            title="Sales by Channel"
-            loading={loading}
-            onExport={() => exportTable('sales-by-channel', channelRows, channelColumns)}
-          >
-            <DataTable columns={channelColumns} data={channelRows} loading={loading} skeletonRows={2} />
-          </ReportSection>
+            <RefreshCw size={16} className={refreshing ? 'reports-spin' : ''} />
+            Refresh
+          </button>
+          <button type="button" className="btn btn-primary" onClick={handleExport}>
+            <Download size={16} />
+            Export CSV
+          </button>
         </div>
       </div>
-    </div>
-  );
-}
 
-function ReportSection({ title, loading, onExport, children }) {
-  return (
-    <div className="panel reports-section">
-      <div className="reports-section-header">
-        <h3 className="panel-title">{title}</h3>
-        <button
-          type="button"
-          className="btn btn-secondary btn-sm reports-export-btn"
-          onClick={onExport}
-          disabled={loading}
-        >
-          <Download size={14} />
-          Export CSV
-        </button>
+      <div className="reports-tabs animate-slide-up">
+        {REPORT_TABS.map(({ key, label, icon: Icon, ready }) => (
+          <button
+            key={key}
+            type="button"
+            className={`reports-tab ${activeTab === key ? 'active' : ''} ${!ready ? 'reports-tab--locked' : ''}`}
+            onClick={() => setActiveTab(key)}
+          >
+            <Icon size={15} strokeWidth={2} />
+            <span>{label}</span>
+            {!ready && <Lock size={12} strokeWidth={2.25} />}
+          </button>
+        ))}
       </div>
-      {children}
+
+      <div className="reports-period-bar animate-slide-up">
+        <span className="reports-period-label">Period</span>
+        <div className="reports-period-controls">
+          <div className="reports-period-pills">
+            {PERIODS.map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                className={`reports-period-pill ${range === key ? 'active' : ''}`}
+                onClick={() => handlePeriodChange(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="reports-date-group">
+            <Calendar size={16} className="reports-date-icon" />
+            <input
+              type="date"
+              className="form-control"
+              value={dateFrom}
+              max={dateTo}
+              onChange={(e) => setDateFrom(e.target.value)}
+            />
+            <span className="reports-date-sep">to</span>
+            <input
+              type="date"
+              className="form-control"
+              value={dateTo}
+              min={dateFrom}
+              onChange={(e) => setDateTo(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {!currentTab.ready ? (
+        <div className="panel reports-locked animate-slide-up">
+          <Lock size={28} strokeWidth={1.5} />
+          <h3>{currentTab.label}</h3>
+          <p>This report module is coming soon. Sales and Products reports are available now.</p>
+        </div>
+      ) : activeTab === 'products' ? (
+        <>
+          <div className="grid-4 reports-stats animate-slide-up">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="reports-stat-skeleton panel">
+                  <Skeleton height={20} width="50%" />
+                  <Skeleton height={32} width="70%" />
+                  <Skeleton height={14} width="40%" />
+                </div>
+              ))
+            ) : (
+              <>
+                <StatCard
+                  icon={DollarSign}
+                  label="Total Revenue"
+                  value={formatPKR(productMetrics.revenue)}
+                  subValue="Product revenue"
+                  accent="success"
+                />
+                <StatCard
+                  icon={Package}
+                  label="Units Sold"
+                  value={productMetrics.unitsSold}
+                  subValue="Total quantity"
+                  accent="info"
+                />
+                <StatCard
+                  icon={Layers}
+                  label="Categories"
+                  value={productMetrics.categories}
+                  subValue="Active categories"
+                  accent="copper"
+                />
+                <StatCard
+                  icon={TrendingUp}
+                  label="Avg Unit Price"
+                  value={formatPKR(productMetrics.avgUnit)}
+                  subValue="Per unit"
+                  accent="warning"
+                />
+              </>
+            )}
+          </div>
+
+          <div className="reports-panels grid-2 animate-slide-up">
+            <div className="panel reports-panel">
+              <div className="reports-panel-header">
+                <BarChart3 size={16} />
+                <h3>Category Distribution</h3>
+              </div>
+              {loading ? (
+                <Skeleton height={220} />
+              ) : byCategory.length === 0 ? (
+                <p className="reports-empty">No category sales in {periodLabel.toLowerCase()}</p>
+              ) : (
+                <div className="reports-distribution">
+                  {byCategory.slice(0, 6).map((cat) => (
+                    <div key={cat.categoryId || cat.name} className="reports-distribution-row">
+                      <div className="reports-distribution-meta">
+                        <span>{cat.name}</span>
+                        <strong>{cat.percentage ?? 0}%</strong>
+                      </div>
+                      <div className="reports-distribution-track">
+                        <span
+                          className="reports-distribution-fill"
+                          style={{ width: `${Math.min(100, Number(cat.percentage) || 0)}%` }}
+                        />
+                      </div>
+                      <span className="reports-distribution-value">{formatPKR(cat.revenue)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="panel reports-panel">
+              <div className="reports-panel-header">
+                <Package size={16} />
+                <h3>Top Products</h3>
+              </div>
+              {loading ? (
+                <Skeleton height={220} />
+              ) : topProducts.length === 0 ? (
+                <p className="reports-empty">No product sales in {periodLabel.toLowerCase()}</p>
+              ) : (
+                <DataTable
+                  columns={itemColumns}
+                  data={topProducts}
+                  loading={false}
+                  skeletonRows={5}
+                />
+              )}
+            </div>
+          </div>
+
+          <div className="panel reports-section animate-slide-up">
+            <div className="reports-section-header">
+              <h3 className="panel-title">All Products</h3>
+            </div>
+            <DataTable columns={itemColumns} data={byItem} loading={loading} skeletonRows={8} />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="grid-4 reports-stats animate-slide-up">
+            {loading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="reports-stat-skeleton panel">
+                  <Skeleton height={20} width="50%" />
+                  <Skeleton height={32} width="70%" />
+                  <Skeleton height={14} width="40%" />
+                </div>
+              ))
+            ) : (
+              <>
+                <StatCard
+                  icon={DollarSign}
+                  label="Gross Sales"
+                  value={formatPKR(summary?.totalRevenue ?? 0)}
+                  subValue={`${formatDate(dateFrom)} – ${formatDate(dateTo)}`}
+                  accent="success"
+                />
+                <StatCard
+                  icon={Package}
+                  label="Orders"
+                  value={summary?.totalOrders ?? 0}
+                  subValue={periodLabel}
+                  accent="info"
+                />
+                <StatCard
+                  icon={TrendingUp}
+                  label="Average Order"
+                  value={formatPKR(summary?.averageOrderValue ?? 0)}
+                  subValue="Per completed order"
+                  accent="copper"
+                />
+                <StatCard
+                  icon={Users}
+                  label="Cancelled"
+                  value={summary?.cancelledOrders ?? 0}
+                  subValue="Cancelled orders"
+                  accent="danger"
+                />
+              </>
+            )}
+          </div>
+
+          <div className="reports-chart-wrap animate-slide-up">
+            {loading ? (
+              <div className="panel reports-chart-skeleton">
+                <Skeleton height={24} width={200} />
+                <Skeleton height={280} />
+              </div>
+            ) : (
+              <SalesChart data={chartData} title={`Sales Trend · ${periodLabel}`} />
+            )}
+          </div>
+
+          <div className="reports-panels grid-2 animate-slide-up">
+            <div className="panel reports-panel">
+              <div className="reports-panel-header">
+                <BarChart3 size={16} />
+                <h3>Category Distribution</h3>
+              </div>
+              <DataTable
+                columns={categoryColumns}
+                data={byCategory}
+                loading={loading}
+                skeletonRows={5}
+              />
+            </div>
+            <div className="panel reports-panel">
+              <div className="reports-panel-header">
+                <Calendar size={16} />
+                <h3>Sales by Day</h3>
+              </div>
+              <DataTable columns={dayColumns} data={byDay} loading={loading} skeletonRows={5} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

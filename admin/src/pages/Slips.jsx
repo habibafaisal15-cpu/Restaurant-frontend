@@ -1,15 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Search, RefreshCw, Printer, Eye } from 'lucide-react';
+import { Search, RefreshCw, Printer, Eye, Receipt, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DataTable from '../components/ui/DataTable';
 import Modal from '../components/ui/Modal';
 import ChannelBadge from '../components/ui/ChannelBadge';
 import SlipPreview from '../components/slips/SlipPreview';
+import BillHeaderSettings from '../components/receipts/BillHeaderSettings';
 import { useSettings } from '../context/SettingsContext';
 import * as slipService from '../services/slipService';
 import * as orderService from '../services/orderService';
 import { formatDateTime } from '../utils/format';
 import './Slips.css';
+
+const PAGE_TABS = [
+  { key: 'header', label: 'Bill Header', icon: Receipt },
+  { key: 'printed', label: 'Printed Slips', icon: FileText },
+];
 
 const CHANNEL_OPTIONS = [
   { key: '', label: 'All channels' },
@@ -38,6 +44,11 @@ function settingsForSlip(settings) {
     phone: settings.phone,
     footer: settings.slipFooter,
     taxRate: settings.taxPercent,
+    showName: settings.showNameOnBill !== false,
+    showLogo: settings.showLogoOnBill !== false,
+    showAddress: settings.showAddressOnBill !== false,
+    showPhone: settings.showPhoneOnBill !== false,
+    billWidth: settings.billWidth || 'short',
   };
 }
 
@@ -70,6 +81,7 @@ function endOfToday() {
 
 export default function Slips() {
   const { settings } = useSettings();
+  const [pageTab, setPageTab] = useState('header');
 
   const [slips, setSlips] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -125,8 +137,8 @@ export default function Slips() {
   );
 
   useEffect(() => {
-    loadSlips();
-  }, [loadSlips]);
+    if (pageTab === 'printed') loadSlips();
+  }, [loadSlips, pageTab]);
 
   const filteredSlips = useMemo(() => {
     let list = [...slips];
@@ -264,20 +276,40 @@ export default function Slips() {
     <div className="page slips-page">
       <div className="page-header">
         <div>
-          <h1>Slips / Receipts</h1>
-          <p>View and reprint order slips and receipts</p>
+          <h1>Receipts</h1>
+          <p>Configure bill headers and reprint order slips</p>
         </div>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={() => loadSlips(true)}
-          disabled={refreshing}
-        >
-          <RefreshCw size={16} className={refreshing ? 'slips-spin' : ''} />
-          Refresh
-        </button>
+        {pageTab === 'printed' ? (
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => loadSlips(true)}
+            disabled={refreshing}
+          >
+            <RefreshCw size={16} className={refreshing ? 'slips-spin' : ''} />
+            Refresh
+          </button>
+        ) : null}
       </div>
 
+      <div className="slips-page-tabs animate-slide-up">
+        {PAGE_TABS.map(({ key, label, icon: Icon }) => (
+          <button
+            key={key}
+            type="button"
+            className={`slips-page-tab ${pageTab === key ? 'active' : ''}`}
+            onClick={() => setPageTab(key)}
+          >
+            <Icon size={16} />
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {pageTab === 'header' ? (
+        <BillHeaderSettings />
+      ) : (
+        <>
       <div className="panel slips-filters animate-slide-up">
         <div className="filters-bar">
           <div className="search-input">
@@ -375,6 +407,8 @@ export default function Slips() {
           />
         ) : null}
       </Modal>
+        </>
+      )}
     </div>
   );
 }

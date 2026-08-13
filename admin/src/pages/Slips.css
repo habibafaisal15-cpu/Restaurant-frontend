@@ -2,6 +2,33 @@
   margin-bottom: 1.25rem;
 }
 
+.slips-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.slips-page-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 560;
+  cursor: pointer;
+}
+
+.slips-page-tab.active {
+  background: color-mix(in srgb, var(--copper) 18%, var(--bg-panel));
+  border-color: color-mix(in srgb, var(--copper) 45%, var(--border));
+  color: var(--copper-light);
+}
+
 .slips-filters .filters-bar {
   margin-bottom: 0;
 }

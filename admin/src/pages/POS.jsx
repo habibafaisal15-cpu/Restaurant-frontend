@@ -23,6 +23,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
 import * as menuService from '../services/menuService';
 import * as categoryService from '../services/categoryService';
+import * as dealService from '../services/dealService';
 import * as orderService from '../services/orderService';
 import * as slipService from '../services/slipService';
 import { formatPKR } from '../utils/format';
@@ -38,6 +39,32 @@ const PAYMENT_METHODS = [
   { key: 'card', label: 'Card', icon: CreditCard },
   { key: 'online', label: 'Online transfer', icon: Smartphone },
 ];
+
+const POS_DEALS_CATEGORY = { id: '__pos_deals__', name: 'Deals', active: true };
+
+function isDealsCategoryName(name) {
+  return String(name || '').trim().toLowerCase() === 'deals';
+}
+
+function dealToPosItem(deal) {
+  const productId = deal.productId || deal.product_id || null;
+  if (!productId) return null;
+
+  return {
+    id: productId,
+    dealId: deal.id,
+    categoryId: POS_DEALS_CATEGORY.id,
+    categoryName: POS_DEALS_CATEGORY.name,
+    name: deal.title,
+    description: deal.description || '',
+    price: Number(deal.price) || 0,
+    discountPrice: undefined,
+    image: deal.image || '',
+    available: deal.active !== false,
+    active: deal.active !== false,
+    badge: deal.badge || '',
+  };
+}
 
 function settingsForSlip(settings) {
   return {
@@ -89,12 +116,30 @@ export default function POS() {
   const loadMenu = useCallback(async () => {
     setLoadingMenu(true);
     try {
-      const [items, cats] = await Promise.all([
+      const [items, cats, deals] = await Promise.all([
         menuService.getAll({ available: true }),
         categoryService.getAll(),
+        dealService.getAll({ active: true }),
       ]);
-      setMenuItems(items);
-      setCategories(cats.filter((c) => c.active));
+
+      const dealItems = (deals || [])
+        .filter((deal) => deal.active !== false)
+        .map(dealToPosItem)
+        .filter(Boolean);
+
+      const dealProductIds = new Set(dealItems.map((item) => item.id));
+      const regularItems = (items || []).filter((item) => !dealProductIds.has(item.id));
+
+      const regularCategories = (cats || []).filter(
+        (category) => category.active && !isDealsCategoryName(category.name),
+      );
+
+      setMenuItems([...regularItems, ...dealItems]);
+      setCategories(
+        dealItems.length
+          ? [...regularCategories, POS_DEALS_CATEGORY]
+          : regularCategories,
+      );
     } catch {
       toast.error('Failed to load menu');
     } finally {

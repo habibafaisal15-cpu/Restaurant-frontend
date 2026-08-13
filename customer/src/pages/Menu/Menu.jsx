@@ -17,12 +17,20 @@ const EXTRA_MENU_SECTIONS = [
   { id: DEALS_SECTION_ID, name: 'Deals' },
 ];
 
+function isDealsCategoryName(name) {
+  return String(name || '').trim().toLowerCase() === 'deals';
+}
+
 function Menu() {
   const { branch } = useLocationContext();
   const { addItem } = useCart();
   const [searchParams, setSearchParams] = useSearchParams();
   const { menu, loading, error } = useFullMenu(branch?.id);
-  const categoryList = menu.categories || [];
+  // Hide DB "Deals" category — marketing deals already render as one Deals section.
+  const categoryList = useMemo(
+    () => (menu.categories || []).filter((category) => !isDealsCategoryName(category.name)),
+    [menu.categories],
+  );
   const bestSellers = menu.bestSellers || [];
   const deals = menu.deals?.length
     ? menu.deals

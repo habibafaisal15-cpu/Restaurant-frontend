@@ -313,7 +313,7 @@ export default function POS() {
           <div className="pos-success-actions">
             <button type="button" className="btn btn-primary btn-lg" onClick={() => setSlipOpen(true)}>
               <Printer size={18} />
-              Print Slip
+              Print Receipt
             </button>
             <button type="button" className="btn btn-secondary btn-lg" onClick={resetForNewOrder}>
               <RotateCcw size={18} />
@@ -322,10 +322,10 @@ export default function POS() {
           </div>
         </div>
 
-        <Modal open={slipOpen} onClose={() => setSlipOpen(false)} title="Kitchen slip" size="lg">
+        <Modal open={slipOpen} onClose={() => setSlipOpen(false)} title="Customer receipt" size="lg">
           <SlipPreview
             order={successOrder}
-            slipType="KITCHEN"
+            slipType="CUSTOMER_RECEIPT"
             settings={settingsForSlip(settings)}
           />
         </Modal>

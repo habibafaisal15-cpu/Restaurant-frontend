@@ -199,13 +199,30 @@ function SlipItems({ items = [], showPrices = true }) {
 
 function SlipTotals({ order, settings }) {
   const taxRate = settings?.taxRate ?? order?.taxRate;
-  const subtotal = order?.subtotal;
-  const tax = order?.tax ?? order?.taxAmount;
-  const deliveryFee = order?.deliveryFee;
-  const serviceCharge = order?.serviceCharge;
-  const discount = order?.discount ?? order?.discountAmount;
-  const tip = order?.tip;
-  const total = order?.total ?? order?.grandTotal;
+  const itemSubtotal = (order?.items ?? []).reduce((sum, item) => {
+    const quantity = Number(item.quantity ?? item.qty ?? 1);
+    const unitPrice = Number(item.unitPrice ?? item.price ?? 0);
+    return sum + Number(item.lineTotal ?? item.total ?? unitPrice * quantity);
+  }, 0);
+  const subtotal = order?.subtotal ?? order?.subTotal ?? itemSubtotal;
+  const tax = order?.tax ?? order?.taxAmount ?? order?.tax_amount ?? 0;
+  const deliveryFee = order?.deliveryFee ?? order?.delivery_fee ?? 0;
+  const serviceCharge = order?.serviceCharge ?? order?.service_charge ?? 0;
+  const discount = order?.discount ?? order?.discountAmount ?? 0;
+  const tip = order?.tip ?? 0;
+  const calculatedTotal =
+    Number(subtotal) +
+    Number(tax) +
+    Number(deliveryFee) +
+    Number(serviceCharge) +
+    Number(tip) -
+    Number(discount);
+  const total =
+    order?.total ??
+    order?.totalAmount ??
+    order?.total_amount ??
+    order?.grandTotal ??
+    calculatedTotal;
 
   const hasTotals = [subtotal, tax, deliveryFee, serviceCharge, discount, tip, total].some(
     (v) => v != null,

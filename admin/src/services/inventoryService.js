@@ -1,5 +1,6 @@
 import { api, withFallback } from '../api/client';
 import { unwrap, resolveMediaUrl } from '../api/adapters';
+import * as menuService from './menuService';
 
 const delay = (ms = 100) => new Promise((r) => setTimeout(r, ms));
 
@@ -101,11 +102,54 @@ export async function getSummary() {
   );
 }
 
+function fromMenuItem(item) {
+  return mapInventoryItem({
+    id: item.id,
+    name: item.name,
+    categoryId: item.categoryId,
+    categoryName: item.categoryName || 'Uncategorized',
+    image: item.image,
+    price: item.price,
+    active: item.active,
+    inStock: item.available,
+    trackStock: false,
+    stockQty: 0,
+    lowStockThreshold: 5,
+    stockStatus: item.available === false ? 'out_of_stock' : 'available',
+  });
+}
+
 export async function getAll(filters = {}) {
   await delay();
   return withFallback(
-    async () =>
-      (unwrap(await api.get('/admin/inventory', { params: filters })) || []).map(mapInventoryItem),
+    async () => {
+      let list = [];
+      try {
+        list = (unwrap(await api.get('/admin/inventory', { params: filters })) || []).map(
+          mapInventoryItem,
+        );
+      } catch {
+        list = [];
+      }
+
+      if (!list.length) {
+        const menuItems = await menuService.getAll();
+        list = menuItems.map(fromMenuItem);
+        if (filters.search) {
+          const q = String(filters.search).toLowerCase();
+          list = list.filter(
+            (item) =>
+              item.name.toLowerCase().includes(q) ||
+              item.categoryName.toLowerCase().includes(q),
+          );
+        }
+        if (filters.status && filters.status !== 'all') {
+          list = list.filter((item) => item.stockStatus === filters.status);
+        }
+      }
+
+      return list;
+    },
     () => {
       let list = mockItems.map((i) => ({ ...i }));
       if (filters.status) list = list.filter((i) => i.stockStatus === filters.status);

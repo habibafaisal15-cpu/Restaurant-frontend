@@ -209,6 +209,7 @@ export function mapMenuItem(row) {
   return {
     id: row.id,
     categoryId: row.category_id || row.categoryId,
+    categoryName: row.category_name || row.categoryName || '',
     name: row.name,
     description: row.description || '',
     price: Number(row.price),

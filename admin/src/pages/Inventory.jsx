@@ -70,11 +70,24 @@ export default function Inventory() {
 
       const [list, stats, moves] = await Promise.all([
         inventoryService.getAll(filters),
-        inventoryService.getSummary(),
-        inventoryService.getMovements({ limit: 30 }),
+        inventoryService.getSummary().catch(() => null),
+        inventoryService.getMovements({ limit: 30 }).catch(() => []),
       ]);
       setItems(list);
-      setSummary(stats);
+      setSummary(
+        list.length
+          ? {
+              totalItems: list.length,
+              trackedItems: list.filter((item) => item.trackStock).length,
+              inStock: list.filter((item) => item.stockStatus === 'in_stock').length,
+              lowStock: list.filter((item) => item.stockStatus === 'low_stock').length,
+              outOfStock: list.filter((item) => item.stockStatus === 'out_of_stock').length,
+              totalUnits: list
+                .filter((item) => item.trackStock)
+                .reduce((sum, item) => sum + (Number(item.stockQty) || 0), 0),
+            }
+          : stats,
+      );
       setMovements(moves);
     } catch {
       toast.error('Failed to load inventory');

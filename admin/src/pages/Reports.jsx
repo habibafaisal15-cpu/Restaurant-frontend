@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import {
   BarChart3,
   RefreshCw,
@@ -36,7 +36,7 @@ const REPORT_TABS = [
   { key: 'sales', label: 'Sales', icon: DollarSign, ready: true },
   { key: 'products', label: 'Products', icon: Box, ready: true },
   { key: 'customers', label: 'Customers', icon: Users, ready: false },
-  { key: 'inventory', label: 'Inventory', icon: Layers, ready: false },
+  { key: 'inventory', label: 'Inventory', icon: Layers, ready: true },
   { key: 'daily-closing', label: 'Daily Closing', icon: Wallet, ready: false },
   { key: 'udhaar', label: 'Udhaar / Credit', icon: CreditCard, ready: false },
   { key: 'payables', label: 'Supplier Payables', icon: CreditCard, ready: false },
@@ -330,6 +330,17 @@ export default function Reports() {
           <Lock size={28} strokeWidth={1.5} />
           <h3>{currentTab.label}</h3>
           <p>This report module is coming soon. Sales and Products reports are available now.</p>
+        </div>
+      ) : activeTab === 'inventory' ? (
+        <div className="panel reports-locked animate-slide-up">
+          <Layers size={28} strokeWidth={1.5} />
+          <h3>Inventory & Stock</h3>
+          <p>
+            Manage stock quantities, low-stock alerts, and movement history in the Inventory module.
+          </p>
+          <Link to="/inventory" className="btn btn-primary" style={{ marginTop: '0.75rem' }}>
+            Open Inventory
+          </Link>
         </div>
       ) : activeTab === 'products' ? (
         <>

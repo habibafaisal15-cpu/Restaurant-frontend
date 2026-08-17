@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   Bike,
+  Boxes,
   ChevronLeft,
   FileText,
   LayoutDashboard,
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { to: '/pos', label: 'Place Walk-in Order', icon: ShoppingCart },
   { to: '/categories', label: 'Food Categories', icon: Package },
   { to: '/menu', label: 'Menu Items', icon: UtensilsCrossed },
+  { to: '/inventory', label: 'Inventory', icon: Boxes },
   { to: '/deals', label: 'Deals', icon: Tag },
   { to: '/riders', label: 'Riders', icon: Bike },
   { to: '/locations', label: 'Delivery Locations', icon: MapPinned },

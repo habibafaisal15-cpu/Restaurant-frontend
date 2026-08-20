@@ -158,7 +158,9 @@ export function mapTrackingOrder(data, token) {
   const statusMap = {
     New: 'pending',
     Accepted: 'confirmed',
+    'Sent to Kitchen': 'sent_to_kitchen',
     Preparing: 'preparing',
+    'Order Prepared': 'order_prepared',
     'Rider Assigned': 'rider_assigned',
     'Out for Delivery': 'out_for_delivery',
     Delivered: 'delivered',

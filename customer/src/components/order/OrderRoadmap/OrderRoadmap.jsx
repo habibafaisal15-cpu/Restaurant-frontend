@@ -7,16 +7,16 @@ export const ORDER_STEPS = [
   { id: 'cart', label: 'Cart', to: ROUTES.CART },
   { id: 'checkout', label: 'Checkout', to: ROUTES.CHECKOUT },
   { id: 'confirmed', label: 'Confirmed', to: null },
+  { id: 'preparing', label: 'Preparing', to: null },
   { id: 'out_for_delivery', label: 'Out for delivery', to: null },
   { id: 'delivered', label: 'Delivered', to: null },
 ];
 
 /**
  * Map live order status onto the customer roadmap step.
- * Placement steps stay at "confirmed" until the kitchen sends the order out.
  */
 export function roadmapStepFromOrderStatus(status) {
-  const value = String(status || '').toLowerCase();
+  const value = String(status || '').toLowerCase().replace(/\s+/g, '_');
 
   if (
     value === ORDER_STATUS.DELIVERED ||
@@ -29,9 +29,19 @@ export function roadmapStepFromOrderStatus(status) {
   if (
     value === ORDER_STATUS.OUT_FOR_DELIVERY ||
     value === 'out_for_delivery' ||
-    value === 'out for delivery'
+    value === 'out_for_delivery'
   ) {
     return 'out_for_delivery';
+  }
+
+  if (
+    value === ORDER_STATUS.PREPARING ||
+    value === 'preparing' ||
+    value === 'order_prepared' ||
+    value === 'rider_assigned' ||
+    value === 'sent_to_kitchen'
+  ) {
+    return 'preparing';
   }
 
   if (
@@ -42,12 +52,12 @@ export function roadmapStepFromOrderStatus(status) {
     return 'confirmed';
   }
 
-  // pending / confirmed / preparing / rider_assigned / New / Accepted / etc.
   if (
     value === 'select' ||
     value === 'cart' ||
     value === 'checkout' ||
     value === 'confirmed' ||
+    value === 'preparing' ||
     value === 'out_for_delivery' ||
     value === 'delivered'
   ) {

@@ -1,7 +1,9 @@
 const STATUS_LABELS = {
   pending: 'Confirmed',
   confirmed: 'Confirmed',
+  sent_to_kitchen: 'Confirmed',
   preparing: 'Preparing',
+  order_prepared: 'Ready',
   rider_assigned: 'Rider assigned',
   out_for_delivery: 'Out for delivery',
   delivered: 'Delivered',

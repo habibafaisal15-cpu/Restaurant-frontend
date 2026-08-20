@@ -37,8 +37,10 @@ const PIPELINE_TABS = [
   { key: '', label: 'All' },
   { key: 'pending', label: 'New requests' },
   { key: 'confirmed', label: 'Accepted' },
-  { key: 'rider_assigned', label: 'Rider shared' },
+  { key: 'sent_to_kitchen', label: 'Sent to kitchen' },
   { key: 'preparing', label: 'Preparing' },
+  { key: 'order_prepared', label: 'Prepared' },
+  { key: 'rider_assigned', label: 'Rider shared' },
   { key: 'out_for_delivery', label: 'Out for delivery' },
   { key: 'delivered', label: 'Delivered' },
   { key: 'cancelled', label: 'Cancelled' },
@@ -524,35 +526,13 @@ export default function Orders() {
             type="button"
             className="btn btn-secondary"
             disabled={disabled}
-            onClick={() => handleStatus('preparing', 'Marked as preparing')}
+            onClick={() => handleStatus('sent_to_kitchen', 'Sent to kitchen')}
           >
-            <ChefHat size={16} /> Mark preparing
+            <ChefHat size={16} /> Send to Kitchen
           </button>
         )}
 
-        {['rider_assigned', 'preparing'].includes(o.status) && o.riderSharedWithCustomer && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={disabled}
-            onClick={() => handleStatus('out_for_delivery', 'Marked out for delivery')}
-          >
-            <Truck size={16} /> Out for delivery
-          </button>
-        )}
-
-        {o.status === 'out_for_delivery' && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            disabled={disabled}
-            onClick={() => handleStatus('delivered', 'Order delivered')}
-          >
-            <PackageCheck size={16} /> Mark delivered
-          </button>
-        )}
-
-        {o.status === 'confirmed' && (
+        {['confirmed', 'sent_to_kitchen'].includes(o.status) && (
           <button
             type="button"
             className="btn btn-danger"
@@ -587,7 +567,9 @@ export default function Orders() {
 
   const canShareRider =
     selectedOrder &&
-    ['confirmed', 'preparing', 'rider_assigned'].includes(selectedOrder.status);
+    ['confirmed', 'sent_to_kitchen', 'preparing', 'order_prepared', 'rider_assigned'].includes(
+      selectedOrder.status,
+    );
 
   return (
     <div className="page orders-page">
@@ -595,8 +577,8 @@ export default function Orders() {
         <div>
           <h1>Online Orders</h1>
           <p>
-            Delivery requests from the website — accept them, then share the rider&apos;s name
-            and contact with the customer
+            Accept delivery requests, assign a rider, then send the order to the kitchen.
+            Kitchen and rider update preparation and delivery status.
           </p>
         </div>
         <button

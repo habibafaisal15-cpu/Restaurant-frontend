@@ -16,7 +16,9 @@ export function resolveMediaUrl(url) {
 const STATUS_FROM_BACKEND = {
   New: 'pending',
   Accepted: 'confirmed',
+  'Sent to Kitchen': 'sent_to_kitchen',
   Preparing: 'preparing',
+  'Order Prepared': 'order_prepared',
   Draft: 'draft',
   'Rider Assigned': 'rider_assigned',
   'Out for Delivery': 'out_for_delivery',
@@ -28,13 +30,15 @@ const STATUS_FROM_BACKEND = {
 const STATUS_TO_BACKEND = {
   pending: 'New',
   confirmed: 'Accepted',
+  sent_to_kitchen: 'Sent to Kitchen',
   preparing: 'Preparing',
+  order_prepared: 'Order Prepared',
   rider_assigned: 'Rider Assigned',
   out_for_delivery: 'Out for Delivery',
   delivered: 'Delivered',
   cancelled: 'Cancelled',
   placed: 'Preparing',
-  ready: 'Preparing',
+  ready: 'Order Prepared',
   served: 'Delivered',
   draft: 'Draft',
 };
@@ -392,8 +396,10 @@ export function mapOrderFiltersToBackend(filters = {}) {
 
   if (filters.status === 'pending') params.status = 'New';
   else if (filters.status === 'confirmed') params.status = 'Accepted';
+  else if (filters.status === 'sent_to_kitchen') params.status = 'Sent to Kitchen';
   else if (filters.status === 'preparing') params.status = 'Preparing';
-  else if (filters.status === 'rider_assigned') params.status = 'Preparing';
+  else if (filters.status === 'order_prepared') params.status = 'Order Prepared';
+  else if (filters.status === 'rider_assigned') params.status = 'Rider Assigned';
   else if (filters.status === 'out_for_delivery') params.status = 'Out for Delivery';
   else if (filters.status === 'delivered') params.status = 'Delivered';
   else if (filters.status === 'cancelled') params.status = 'Cancelled';

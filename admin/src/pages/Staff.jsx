@@ -33,6 +33,7 @@ export const STAFF_ROLES = [
   { value: 'super-admin', label: 'Super Admin' },
   { value: 'manager', label: 'Manager' },
   { value: 'cashier', label: 'Cashier' },
+  { value: 'kitchen', label: 'Kitchen' },
 ];
 
 export function roleLabel(role) {

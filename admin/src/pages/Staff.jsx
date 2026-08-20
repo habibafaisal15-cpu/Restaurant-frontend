@@ -34,6 +34,7 @@ export const STAFF_ROLES = [
   { value: 'manager', label: 'Manager' },
   { value: 'cashier', label: 'Cashier' },
   { value: 'kitchen', label: 'Kitchen' },
+  { value: 'rider', label: 'Rider' },
 ];
 
 export function roleLabel(role) {

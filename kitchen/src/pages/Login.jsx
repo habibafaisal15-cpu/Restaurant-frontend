@@ -1,15 +1,19 @@
 import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ChefHat, Bike } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const { loginKitchen, loginRider } = useAuth();
+  const { loginKitchen, loginRider, isAuthenticated, isRider } = useAuth();
   const [mode, setMode] = useState('kitchen');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+
+  if (isAuthenticated) {
+    return <Navigate to={isRider ? '/rider' : '/'} replace />;
+  }
 
   const submit = async (e) => {
     e.preventDefault();
@@ -17,10 +21,10 @@ export default function Login() {
     try {
       if (mode === 'kitchen') {
         await loginKitchen(email.trim(), password);
-        toast.success('Kitchen signed in');
+        toast.success('Welcome to Kitchen');
       } else {
-        await loginRider(phone.trim());
-        toast.success('Rider signed in');
+        await loginRider(email.trim(), password);
+        toast.success('Welcome, rider');
       }
     } catch (err) {
       toast.error(err.message || 'Login failed');
@@ -33,10 +37,16 @@ export default function Login() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-brand">
-          <ChefHat size={28} />
+          <div className="login-brand-icon">
+            {mode === 'kitchen' ? <ChefHat size={22} /> : <Bike size={22} />}
+          </div>
           <div>
-            <h1>Kitchen Ops</h1>
-            <p>Prep board & rider handoff</p>
+            <h1>{mode === 'kitchen' ? 'Restaurant Kitchen' : 'Rider Portal'}</h1>
+            <p>
+              {mode === 'kitchen'
+                ? 'Kitchen handler sign-in only'
+                : 'Rider staff sign-in only'}
+            </p>
           </div>
         </div>
 
@@ -46,61 +56,47 @@ export default function Login() {
             className={mode === 'kitchen' ? 'active' : ''}
             onClick={() => setMode('kitchen')}
           >
-            <ChefHat size={16} /> Kitchen
+            <ChefHat size={15} /> Kitchen
           </button>
           <button
             type="button"
             className={mode === 'rider' ? 'active' : ''}
             onClick={() => setMode('rider')}
           >
-            <Bike size={16} /> Rider
+            <Bike size={15} /> Rider
           </button>
         </div>
 
         <form onSubmit={submit} className="login-form">
-          {mode === 'kitchen' ? (
-            <>
-              <label>
-                Email
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="kitchen@restaurant.com"
-                />
-              </label>
-              <label>
-                Password
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </label>
-            </>
-          ) : (
-            <label>
-              Rider phone
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="03XXXXXXXXX"
-              />
-            </label>
-          )}
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <label>
+            Email
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={mode === 'kitchen' ? 'kitchen@restaurant.com' : 'rider@restaurant.com'}
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+          <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
 
         <p className="login-hint">
-          Use the same staff login as Admin (example: admin@restaurant.com / Admin@123).
-          Rider tab: enter the phone saved under Admin → Riders.
+          Admin creates your account under Staff with role{' '}
+          <strong>{mode === 'kitchen' ? 'Kitchen' : 'Rider'}</strong>. Admin accounts cannot sign
+          in here.
         </p>
       </div>
     </div>

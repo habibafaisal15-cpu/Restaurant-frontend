@@ -34,8 +34,21 @@ function mockGetCurrentUser() {
 export async function login(email, password) {
   const data = await withFallback(
     async () => {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', {
+        email,
+        password,
+        portal: 'admin',
+      });
       const mapped = mapAuthResponse(unwrap(response));
+      const role = String(mapped.user?.role || '').toLowerCase();
+      if (role === 'kitchen' || role === 'rider') {
+        clearAuth();
+        throw new Error(
+          role === 'kitchen'
+            ? 'Kitchen staff must sign in on the Kitchen site'
+            : 'Riders must sign in on the Rider site',
+        );
+      }
       setToken(mapped.token);
       setUser(mapped.user);
       return mapped;

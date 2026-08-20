@@ -10,12 +10,19 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getUser());
 
   const loginKitchen = useCallback(async (email, password) => {
-    const data = unwrap(await api.post('/auth/login', { email, password }));
+    const data = unwrap(
+      await api.post('/auth/login', { email, password, portal: 'kitchen' }),
+    );
+    const role = String(data.admin?.role || '').toLowerCase();
+    if (role !== 'kitchen') {
+      throw new Error('Only kitchen staff can sign in here');
+    }
     const nextUser = {
       id: data.admin?.id,
       name: data.admin?.full_name || data.admin?.name || email,
       email: data.admin?.email || email,
-      role: data.admin?.role || 'kitchen',
+      phone: data.admin?.phone || null,
+      role: 'kitchen',
     };
     setAuth(data.token, nextUser);
     setToken(data.token);
@@ -24,12 +31,19 @@ export function AuthProvider({ children }) {
     return nextUser;
   }, []);
 
-  const loginRider = useCallback(async (phone) => {
-    const data = unwrap(await api.post('/auth/rider-login', { phone }));
+  const loginRider = useCallback(async (email, password) => {
+    const data = unwrap(
+      await api.post('/auth/login', { email, password, portal: 'rider' }),
+    );
+    const role = String(data.admin?.role || '').toLowerCase();
+    if (role !== 'rider') {
+      throw new Error('Only riders can sign in here');
+    }
     const nextUser = {
-      id: data.rider?.id,
-      name: data.rider?.name,
-      phone: data.rider?.phone || phone,
+      id: data.admin?.id,
+      name: data.admin?.full_name || data.admin?.name || email,
+      email: data.admin?.email || email,
+      phone: data.admin?.phone || null,
       role: 'rider',
     };
     setAuth(data.token, nextUser);
@@ -50,8 +64,9 @@ export function AuthProvider({ children }) {
     () => ({
       token,
       user,
-      isAuthenticated: Boolean(token),
+      isAuthenticated: Boolean(token && user),
       isRider: user?.role === 'rider',
+      isKitchen: user?.role === 'kitchen',
       loginKitchen,
       loginRider,
       logout,

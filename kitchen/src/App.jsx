@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
-import KitchenBoard from './pages/KitchenBoard';
+import KitchenDashboard from './pages/KitchenBoard';
 import RiderBoard from './pages/RiderBoard';
 
 function Guard({ children, riderOnly = false, kitchenOnly = false }) {
@@ -20,18 +20,14 @@ export default function App() {
       <Route
         path="/login"
         element={
-          isAuthenticated ? (
-            <Navigate to={isRider ? '/rider' : '/'} replace />
-          ) : (
-            <Login />
-          )
+          isAuthenticated ? <Navigate to={isRider ? '/rider' : '/'} replace /> : <Login />
         }
       />
       <Route
         path="/"
         element={(
           <Guard kitchenOnly>
-            <KitchenBoard />
+            <KitchenDashboard />
           </Guard>
         )}
       />

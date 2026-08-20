@@ -1,13 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { formatDistanceToNow } from 'date-fns';
-import { Bike, LogOut, RefreshCw } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import { Bike, CheckCircle2, LogOut, MapPin, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import * as ordersApi from '../services/orders';
 import { connectKitchenSocket, onKitchenEvents } from '../api/socket';
 
-function formatMoney(n) {
-  return `Rs ${Number(n || 0).toLocaleString('en-PK')}`;
+function money(n) {
+  return `Rs. ${Number(n || 0).toLocaleString('en-PK')}`;
+}
+
+function initials(name = '') {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase())
+    .join('') || 'RD';
 }
 
 export default function RiderBoard() {
@@ -22,7 +31,7 @@ export default function RiderBoard() {
       const list = await ordersApi.listRiderOrders('active');
       setOrders(list);
     } catch (err) {
-      toast.error(err.message || 'Failed to load rider orders');
+      toast.error(err.message || 'Failed to load deliveries');
     } finally {
       setLoading(false);
     }
@@ -57,80 +66,108 @@ export default function RiderBoard() {
   };
 
   return (
-    <div className="ops-page">
-      <header className="ops-header">
-        <div className="ops-brand">
-          <Bike size={24} />
+    <div className="shell">
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <Bike size={22} />
           <div>
-            <h1>Rider Board</h1>
-            <p>{user?.name || 'Rider'} · {user?.phone}</p>
+            <strong>RIDER PORTAL</strong>
+            <span>Delivery handoff</span>
           </div>
         </div>
-        <div className="ops-header-actions">
-          <button type="button" className="btn-ghost" onClick={() => load()}>
-            <RefreshCw size={16} /> Refresh
+        <nav className="sidebar-nav">
+          <button type="button" className="sidebar-link active">
+            <span><Bike size={16} /> My Deliveries</span>
+            <em className="sidebar-badge">{orders.length}</em>
           </button>
-          <button type="button" className="btn-ghost" onClick={logout}>
-            <LogOut size={16} /> Sign out
-          </button>
-        </div>
-      </header>
+        </nav>
+        <button type="button" className="btn btn-ghost sidebar-logout" onClick={logout}>
+          <LogOut size={16} /> Logout
+        </button>
+      </aside>
 
-      {loading ? (
-        <p className="ops-empty">Loading deliveries…</p>
-      ) : orders.length === 0 ? (
-        <p className="ops-empty">No active deliveries assigned to you.</p>
-      ) : (
-        <div className="order-grid">
-          {orders.map((order) => (
-            <article key={order.id} className="order-card">
-              <div className="order-card-top">
-                <div>
-                  <strong>{order.order_number}</strong>
-                  <span className="order-status">{order.order_status}</span>
-                </div>
-                <em>
-                  {order.order_time
-                    ? formatDistanceToNow(new Date(order.order_time), { addSuffix: true })
-                    : ''}
-                </em>
+      <div className="main">
+        <header className="topbar">
+          <div className="topbar-date">{format(new Date(), 'd MMM yyyy, EEEE')}</div>
+          <div className="topbar-user">
+            <button type="button" className="btn btn-ghost" onClick={() => load()}>
+              <RefreshCw size={15} /> Refresh
+            </button>
+            <div>
+              <strong>{user?.name || 'Rider'}</strong>
+              <em>Online</em>
+            </div>
+            <div className="avatar">{initials(user?.name)}</div>
+          </div>
+        </header>
+
+        <div className="content">
+          <div className="page-title">
+            <h1>Rider Dashboard</h1>
+            <p>Pickup prepared orders and update delivery status.</p>
+          </div>
+
+          {loading ? (
+            <p className="empty">Loading deliveries…</p>
+          ) : orders.length === 0 ? (
+            <div className="panel">
+              <p className="empty">No active deliveries assigned to you yet.</p>
+            </div>
+          ) : (
+            <div className="board" style={{ gridTemplateColumns: '1fr' }}>
+              <div className="panel">
+                {orders.map((order) => (
+                  <article
+                    key={order.id}
+                    className={`order-card ${order.order_status === 'Out for Delivery' ? 'preparing' : 'prepared'}`}
+                    style={{ marginBottom: '0.85rem' }}
+                  >
+                    <div className="order-card-top">
+                      <strong>#{order.order_number}</strong>
+                      <em>
+                        {order.order_time
+                          ? formatDistanceToNow(new Date(order.order_time), { addSuffix: true })
+                          : ''}
+                      </em>
+                    </div>
+                    <div className="order-meta">
+                      {order.customer_name} · {order.customer_phone}
+                    </div>
+                    <div className="order-meta" style={{ display: 'flex', gap: '0.35rem', alignItems: 'flex-start' }}>
+                      <MapPin size={14} style={{ marginTop: 2 }} />
+                      <span>{order.delivery_address}</span>
+                    </div>
+                    <div className="order-foot">
+                      <span className="order-type">{order.order_status}</span>
+                      <strong>{money(order.total_amount)}</strong>
+                    </div>
+                    {['Order Prepared', 'Rider Assigned'].includes(order.order_status) && (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        disabled={actingId === order.id}
+                        onClick={() => act(order, 'Out for Delivery', 'On the way')}
+                      >
+                        On the Way
+                      </button>
+                    )}
+                    {order.order_status === 'Out for Delivery' && (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        disabled={actingId === order.id}
+                        onClick={() => act(order, 'Delivered', 'Delivered')}
+                      >
+                        <CheckCircle2 size={16} /> Mark Delivered
+                      </button>
+                    )}
+                  </article>
+                ))}
               </div>
-              <p className="order-customer">
-                {order.customer_name} · {order.customer_phone}
-              </p>
-              <p className="order-notes">{order.delivery_address}</p>
-              {order.delivery_instructions ? (
-                <p className="order-notes">Note: {order.delivery_instructions}</p>
-              ) : null}
-              <div className="order-card-foot">
-                <strong>{formatMoney(order.total_amount)}</strong>
-                <div className="order-actions">
-                  {['Order Prepared', 'Rider Assigned'].includes(order.order_status) && (
-                    <button
-                      type="button"
-                      className="btn-primary"
-                      disabled={actingId === order.id}
-                      onClick={() => act(order, 'Out for Delivery', 'On the way')}
-                    >
-                      On the Way
-                    </button>
-                  )}
-                  {order.order_status === 'Out for Delivery' && (
-                    <button
-                      type="button"
-                      className="btn-primary"
-                      disabled={actingId === order.id}
-                      onClick={() => act(order, 'Delivered', 'Marked delivered')}
-                    >
-                      Delivered
-                    </button>
-                  )}
-                </div>
-              </div>
-            </article>
-          ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

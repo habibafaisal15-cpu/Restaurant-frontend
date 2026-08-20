@@ -3,7 +3,6 @@ import {
   Bike,
   Boxes,
   ChevronLeft,
-  ChefHat,
   FileText,
   LayoutDashboard,
   MapPinned,
@@ -21,7 +20,6 @@ import './Sidebar.css';
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/orders', label: 'Online Orders', icon: ShoppingBag },
-  { to: '/kitchen', label: 'Kitchen Board', icon: ChefHat },
   { to: '/pos', label: 'Place Walk-in Order', icon: ShoppingCart },
   { to: '/categories', label: 'Food Categories', icon: Package },
   { to: '/menu', label: 'Menu Items', icon: UtensilsCrossed },

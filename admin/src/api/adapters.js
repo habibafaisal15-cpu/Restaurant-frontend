@@ -17,6 +17,7 @@ const STATUS_FROM_BACKEND = {
   New: 'pending',
   Accepted: 'confirmed',
   Preparing: 'preparing',
+  Draft: 'draft',
   'Rider Assigned': 'rider_assigned',
   'Out for Delivery': 'out_for_delivery',
   Delivered: 'delivered',
@@ -35,9 +36,12 @@ const STATUS_TO_BACKEND = {
   placed: 'Preparing',
   ready: 'Preparing',
   served: 'Delivered',
+  draft: 'Draft',
 };
 
 export function mapBackendStatus(status, channel = 'ONLINE') {
+  if (status === 'Draft') return 'draft';
+  if (channel === 'IN_RESTAURANT' && status === 'Delivered') return 'served';
   if (channel === 'IN_RESTAURANT' && status === 'Preparing') {
     return 'preparing';
   }
@@ -47,6 +51,7 @@ export function mapBackendStatus(status, channel = 'ONLINE') {
 export function mapUiStatusToBackend(status, channel = 'ONLINE') {
   if (channel === 'IN_RESTAURANT') {
     const inStoreMap = {
+      draft: 'Draft',
       placed: 'Preparing',
       preparing: 'Preparing',
       ready: 'Preparing',

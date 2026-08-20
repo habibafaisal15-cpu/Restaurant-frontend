@@ -202,12 +202,14 @@ export async function createWalkIn(orderPayload) {
         buildOrderItem(line.menuItemId, line.quantity, line.notes ?? ''),
       );
       const totals = calcTotals(items, { deliveryFee: 0, discount: orderPayload.discount ?? 0 });
+      const isDineIn = (orderPayload.type ?? 'DINE_IN') === 'DINE_IN';
       const order = {
         id: nextId('ord'),
         orderNumber: `YK-${1000 + getOrders().length + 1}`,
         channel: 'IN_RESTAURANT',
         type: orderPayload.type ?? 'DINE_IN',
-        status: 'placed',
+        status: isDineIn ? 'draft' : 'preparing',
+        orderStatus: isDineIn ? 'Draft' : 'Preparing',
         customer: {
           name: orderPayload.customer?.name ?? 'Walk-in Guest',
           phone: orderPayload.customer?.phone ?? '',
@@ -215,14 +217,35 @@ export async function createWalkIn(orderPayload) {
         items,
         ...totals,
         paymentMethod: orderPayload.paymentMethod ?? 'cash',
-        paymentStatus: orderPayload.paymentStatus ?? 'pending',
+        paymentStatus: isDineIn ? 'pending' : (orderPayload.paymentStatus ?? 'paid'),
         tokenNumber: generateTokenNumber(),
+        tableNumber: orderPayload.tableNumber ?? null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       getOrders().unshift(order);
       if (settings.autoSlipWalkIn) createSlipRecord(order, 'kitchen');
       return order;
+    },
+  );
+}
+
+export async function requestBill(orderId, payload = {}) {
+  await delay(200);
+  return withFallback(
+    async () => unwrap(await api.post(`/orders/${orderId}/request-bill`, payload)),
+    () => {
+      const order = getOrders().find((o) => o.id === orderId);
+      if (!order) throw new Error('Order not found');
+      if (order.type !== 'DINE_IN' || order.status !== 'draft') {
+        throw new Error('Bill can only be requested for draft dine-in orders');
+      }
+      order.status = 'served';
+      order.orderStatus = 'Delivered';
+      order.paymentStatus = 'paid';
+      order.paymentMethod = payload.paymentMethod ?? order.paymentMethod ?? 'cash';
+      order.updatedAt = new Date().toISOString();
+      return enrichOrder(order);
     },
   );
 }

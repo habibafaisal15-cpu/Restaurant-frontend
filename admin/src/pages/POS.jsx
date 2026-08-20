@@ -130,6 +130,8 @@ export default function POS() {
   const [successOrder, setSuccessOrder] = useState(null);
   const [slipOpen, setSlipOpen] = useState(false);
   const [paymentOpen, setPaymentOpen] = useState(false);
+  const [paymentMode, setPaymentMode] = useState('place'); // 'place' | 'request-bill'
+  const [settlingBill, setSettlingBill] = useState(false);
 
   const loadMenu = useCallback(async () => {
     setLoadingMenu(true);
@@ -243,10 +245,18 @@ export default function POS() {
       return;
     }
 
+    // Dine-in opens as an unpaid draft until the customer asks for the bill.
+    if (orderType === 'DINE_IN') {
+      confirmPlaceOrder('cash', { asDraft: true });
+      return;
+    }
+
+    setPaymentMode('place');
     setPaymentOpen(true);
   };
 
-  const confirmPlaceOrder = async (method) => {
+  const confirmPlaceOrder = async (method, options = {}) => {
+    const asDraft = options.asDraft === true || orderType === 'DINE_IN';
     setPaymentMethod(method);
     setPaymentOpen(false);
     setPlacing(true);
@@ -264,7 +274,7 @@ export default function POS() {
         },
         tableNumber: orderType === 'DINE_IN' ? tableNumber.trim() : undefined,
         paymentMethod: method,
-        paymentStatus: 'paid',
+        paymentStatus: asDraft ? 'pending' : 'paid',
         discount: totals.discount > 0 ? totals.discount : 0,
         cashierName: user?.name ?? 'Cashier',
       };
@@ -282,13 +292,57 @@ export default function POS() {
       }
 
       setSuccessOrder(slipOrder);
-      toast.success('Order placed successfully!');
+      toast.success(
+        asDraft
+          ? 'Dine-in draft saved — request the bill when ready'
+          : 'Order placed successfully!',
+      );
     } catch (err) {
       toast.error(err.message ?? 'Failed to place order');
     } finally {
       setPlacing(false);
     }
   };
+
+  const handleRequestBill = () => {
+    if (!successOrder?.id) return;
+    setPaymentMode('request-bill');
+    setPaymentOpen(true);
+  };
+
+  const confirmRequestBill = async (method) => {
+    if (!successOrder?.id) return;
+    setPaymentMethod(method);
+    setPaymentOpen(false);
+    setSettlingBill(true);
+    try {
+      const settled = await orderService.requestBill(successOrder.id, {
+        paymentMethod: method,
+        cashierName: user?.name ?? 'Cashier',
+      });
+      setSuccessOrder({ ...successOrder, ...settled });
+      toast.success('Bill settled — you can print the receipt');
+      setSlipOpen(true);
+    } catch (err) {
+      toast.error(err.message ?? 'Failed to request bill');
+    } finally {
+      setSettlingBill(false);
+    }
+  };
+
+  const handlePaymentSelect = (method) => {
+    if (paymentMode === 'request-bill') {
+      confirmRequestBill(method);
+      return;
+    }
+    confirmPlaceOrder(method, { asDraft: false });
+  };
+
+  const isDraftOrder =
+    successOrder &&
+    (successOrder.status === 'draft' ||
+      successOrder.orderStatus === 'Draft' ||
+      successOrder.paymentStatus === 'pending');
 
   if (loadingMenu) {
     return (
@@ -305,14 +359,24 @@ export default function POS() {
           <div className="pos-success-icon">
             <CheckCircle2 size={56} />
           </div>
-          <h1>Order Placed!</h1>
-          <p className="pos-success-sub">Your walk-in order has been sent to the kitchen.</p>
+          <h1>{isDraftOrder ? 'Draft Saved' : 'Order Placed!'}</h1>
+          <p className="pos-success-sub">
+            {isDraftOrder
+              ? 'Kitchen has the order. This table stays as a draft until the customer asks for the bill.'
+              : 'Your walk-in order has been sent to the kitchen.'}
+          </p>
 
           <div className="pos-success-details">
             <div className="pos-success-row">
               <span>Order ID</span>
               <strong>{successOrder.orderNumber}</strong>
             </div>
+            {isDraftOrder && (
+              <div className="pos-success-row">
+                <span>Status</span>
+                <strong>Draft · awaiting bill</strong>
+              </div>
+            )}
             {successOrder.tokenNumber && (
               <div className="pos-success-row pos-success-token">
                 <span>Token</span>
@@ -338,10 +402,31 @@ export default function POS() {
           </div>
 
           <div className="pos-success-actions">
-            <button type="button" className="btn btn-primary btn-lg" onClick={() => setSlipOpen(true)}>
-              <Printer size={18} />
-              Print Receipt
-            </button>
+            {isDraftOrder ? (
+              <button
+                type="button"
+                className="btn btn-primary btn-lg"
+                disabled={settlingBill}
+                onClick={handleRequestBill}
+              >
+                {settlingBill ? (
+                  <>
+                    <Loader2 size={18} className="pos-spin" />
+                    Settling…
+                  </>
+                ) : (
+                  <>
+                    <CreditCard size={18} />
+                    Request Bill
+                  </>
+                )}
+              </button>
+            ) : (
+              <button type="button" className="btn btn-primary btn-lg" onClick={() => setSlipOpen(true)}>
+                <Printer size={18} />
+                Print Receipt
+              </button>
+            )}
             <button type="button" className="btn btn-secondary btn-lg" onClick={resetForNewOrder}>
               <RotateCcw size={18} />
               New Order
@@ -355,6 +440,39 @@ export default function POS() {
             slipType="CUSTOMER_RECEIPT"
             settings={settingsForSlip(settings)}
           />
+        </Modal>
+
+        <Modal
+          open={paymentOpen}
+          onClose={() => !settlingBill && setPaymentOpen(false)}
+          title="Settle bill"
+          size="md"
+        >
+          <div className="pos-pay-modal">
+            <p className="pos-pay-modal-total">
+              Amount due <strong>{formatPKR(successOrder.total)}</strong>
+            </p>
+            <div className="pos-pay-modal-options">
+              {PAYMENT_METHODS.map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`pos-pay-modal-option ${paymentMethod === key ? 'active' : ''}`}
+                  disabled={settlingBill}
+                  onClick={() => handlePaymentSelect(key)}
+                >
+                  <span className="pos-pay-modal-icon" aria-hidden="true">
+                    <Icon size={26} strokeWidth={2} />
+                  </span>
+                  <span className="pos-pay-modal-label">{label}</span>
+                  <ChevronRight size={18} className="pos-pay-modal-chevron" />
+                </button>
+              ))}
+            </div>
+            <p className="pos-pay-modal-hint">
+              Tap a method to settle the draft and print the receipt
+            </p>
+          </div>
         </Modal>
       </div>
     );
@@ -564,8 +682,10 @@ export default function POS() {
               {placing ? (
                 <>
                   <Loader2 size={20} className="pos-spin" />
-                  Placing order…
+                  {orderType === 'DINE_IN' ? 'Saving draft…' : 'Placing order…'}
                 </>
+              ) : orderType === 'DINE_IN' ? (
+                <>Save Draft · {formatPKR(totals.total)}</>
               ) : (
                 <>Place Order · {formatPKR(totals.total)}</>
               )}
@@ -585,13 +705,20 @@ export default function POS() {
 
       <Modal
         open={paymentOpen}
-        onClose={() => !placing && setPaymentOpen(false)}
-        title="Select payment method"
+        onClose={() => !placing && !settlingBill && setPaymentOpen(false)}
+        title={paymentMode === 'request-bill' ? 'Settle bill' : 'Select payment method'}
         size="md"
       >
         <div className="pos-pay-modal">
           <p className="pos-pay-modal-total">
-            Amount due <strong>{formatPKR(totals.total)}</strong>
+            Amount due{' '}
+            <strong>
+              {formatPKR(
+                paymentMode === 'request-bill'
+                  ? (successOrder?.total ?? totals.total)
+                  : totals.total,
+              )}
+            </strong>
           </p>
           <div className="pos-pay-modal-options">
             {PAYMENT_METHODS.map(({ key, label, icon: Icon }) => (
@@ -599,8 +726,8 @@ export default function POS() {
                 key={key}
                 type="button"
                 className={`pos-pay-modal-option ${paymentMethod === key ? 'active' : ''}`}
-                disabled={placing}
-                onClick={() => confirmPlaceOrder(key)}
+                disabled={placing || settlingBill}
+                onClick={() => handlePaymentSelect(key)}
               >
                 <span className="pos-pay-modal-icon" aria-hidden="true">
                   <Icon size={26} strokeWidth={2} />
@@ -610,7 +737,11 @@ export default function POS() {
               </button>
             ))}
           </div>
-          <p className="pos-pay-modal-hint">Tap a method to confirm and place the order</p>
+          <p className="pos-pay-modal-hint">
+            {paymentMode === 'request-bill'
+              ? 'Tap a method to settle the draft and print the receipt'
+              : 'Tap a method to confirm and place the order'}
+          </p>
         </div>
       </Modal>
     </div>

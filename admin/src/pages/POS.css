@@ -443,6 +443,67 @@
   width: 100%;
 }
 
+.pos-discount {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.pos-discount-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.pos-discount-head label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.pos-discount-type {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-panel);
+}
+
+.pos-discount-type button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  min-width: 2rem;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.pos-discount-type button.active {
+  background: color-mix(in srgb, var(--copper) 18%, transparent);
+  color: var(--copper);
+}
+
+.pos-discount-type button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pos-discount-input {
+  width: 100%;
+}
+
+.pos-cart-discount-row span:last-child {
+  color: #c45c26 !important;
+}
+
 .pos-cart-totals > div {
   display: grid;
   grid-template-columns: 1fr auto;

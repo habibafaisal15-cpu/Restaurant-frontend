@@ -81,7 +81,7 @@ function settingsForSlip(settings) {
   };
 }
 
-function calcCartTotals(cart, settings) {
+function calcCartTotals(cart, settings, discountInput = { type: 'fixed', value: 0 }) {
   const subtotal = cart.reduce(
     (sum, line) => sum + line.unitPrice * line.quantity,
     0,
@@ -90,8 +90,20 @@ function calcCartTotals(cart, settings) {
   const servicePercent = settings.serviceChargePercent ?? 0;
   const tax = Math.round(subtotal * (taxPercent / 100));
   const serviceCharge = Math.round(subtotal * (servicePercent / 100));
-  const total = subtotal + tax + serviceCharge;
-  return { subtotal, tax, serviceCharge, total };
+  const preDiscount = subtotal + tax + serviceCharge;
+
+  const rawValue = Math.max(0, Number(discountInput?.value) || 0);
+  let discount = 0;
+  if (discountInput?.type === 'percent') {
+    const pct = Math.min(rawValue, 100);
+    discount = Math.round(subtotal * (pct / 100));
+  } else {
+    discount = Math.round(rawValue);
+  }
+  discount = Math.min(discount, preDiscount);
+
+  const total = Math.max(0, preDiscount - discount);
+  return { subtotal, tax, serviceCharge, discount, total };
 }
 
 function cartLineKey(menuItemId, notes) {
@@ -111,6 +123,8 @@ export default function POS() {
   const [customerPhone, setCustomerPhone] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [cart, setCart] = useState([]);
+  const [discountType, setDiscountType] = useState('fixed'); // 'fixed' | 'percent'
+  const [discountValue, setDiscountValue] = useState('');
 
   const [placing, setPlacing] = useState(false);
   const [successOrder, setSuccessOrder] = useState(null);
@@ -156,8 +170,12 @@ export default function POS() {
   }, [loadMenu]);
 
   const totals = useMemo(
-    () => calcCartTotals(cart, settings),
-    [cart, settings],
+    () =>
+      calcCartTotals(cart, settings, {
+        type: discountType,
+        value: discountValue,
+      }),
+    [cart, settings, discountType, discountValue],
   );
 
   const handleAddItem = (item) => {
@@ -202,6 +220,8 @@ export default function POS() {
     setCart([]);
     setTableNumber('');
     setCustomerPhone('');
+    setDiscountType('fixed');
+    setDiscountValue('');
   };
 
   const resetForNewOrder = () => {
@@ -245,6 +265,7 @@ export default function POS() {
         tableNumber: orderType === 'DINE_IN' ? tableNumber.trim() : undefined,
         paymentMethod: method,
         paymentStatus: 'paid',
+        discount: totals.discount > 0 ? totals.discount : 0,
         cashierName: user?.name ?? 'Cashier',
       };
 
@@ -308,6 +329,12 @@ export default function POS() {
               <span>Total</span>
               <strong>{formatPKR(successOrder.total)}</strong>
             </div>
+            {Number(successOrder.discount) > 0 && (
+              <div className="pos-success-row">
+                <span>Discount applied</span>
+                <strong>-{formatPKR(successOrder.discount)}</strong>
+              </div>
+            )}
           </div>
 
           <div className="pos-success-actions">
@@ -460,6 +487,55 @@ export default function POS() {
           </div>
 
           <div className="pos-cart-footer">
+            <div className="pos-discount">
+              <div className="pos-discount-head">
+                <label htmlFor="pos-discount-value">Discount</label>
+                <div className="pos-discount-type" role="group" aria-label="Discount type">
+                  <button
+                    type="button"
+                    className={discountType === 'fixed' ? 'active' : ''}
+                    onClick={() => setDiscountType('fixed')}
+                    disabled={cart.length === 0}
+                  >
+                    Rs
+                  </button>
+                  <button
+                    type="button"
+                    className={discountType === 'percent' ? 'active' : ''}
+                    onClick={() => setDiscountType('percent')}
+                    disabled={cart.length === 0}
+                  >
+                    %
+                  </button>
+                </div>
+              </div>
+              <input
+                id="pos-discount-value"
+                type="number"
+                min="0"
+                step={discountType === 'percent' ? '1' : '1'}
+                max={discountType === 'percent' ? '100' : undefined}
+                className="form-control pos-cart-field-input pos-discount-input"
+                placeholder={discountType === 'percent' ? '0' : '0'}
+                value={discountValue}
+                disabled={cart.length === 0}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  if (next === '') {
+                    setDiscountValue('');
+                    return;
+                  }
+                  const num = Number(next);
+                  if (Number.isNaN(num) || num < 0) return;
+                  if (discountType === 'percent' && num > 100) {
+                    setDiscountValue('100');
+                    return;
+                  }
+                  setDiscountValue(next);
+                }}
+              />
+            </div>
+
             <div className="pos-cart-totals">
               <div><span>Subtotal</span><span>{formatPKR(totals.subtotal)}</span></div>
               <div><span>Tax ({settings.taxPercent}%)</span><span>{formatPKR(totals.tax)}</span></div>
@@ -467,6 +543,12 @@ export default function POS() {
                 <span>Service ({settings.serviceChargePercent}%)</span>
                 <span>{formatPKR(totals.serviceCharge)}</span>
               </div>
+              {totals.discount > 0 && (
+                <div className="pos-cart-discount-row">
+                  <span>Discount</span>
+                  <span>-{formatPKR(totals.discount)}</span>
+                </div>
+              )}
               <div className="pos-cart-grand">
                 <span>Total</span>
                 <span>{formatPKR(totals.total)}</span>

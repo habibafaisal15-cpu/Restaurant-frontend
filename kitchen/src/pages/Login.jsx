@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ChefHat, Bike } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -100,9 +99,8 @@ export default function Login() {
         </form>
 
         <p className="login-hint">
-          Kitchen uses a staff account. Riders use the phone number saved in Admin → Riders.
-          {' '}
-          <Link to="/login">Refresh</Link>
+          Use the same staff login as Admin (example: admin@restaurant.com / Admin@123).
+          Rider tab: enter the phone saved under Admin → Riders.
         </p>
       </div>
     </div>

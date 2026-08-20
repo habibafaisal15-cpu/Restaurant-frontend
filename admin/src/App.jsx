@@ -10,6 +10,7 @@ const POS = lazy(() => import('./pages/POS'));
 const Categories = lazy(() => import('./pages/Categories'));
 const MenuItems = lazy(() => import('./pages/MenuItems'));
 const Inventory = lazy(() => import('./pages/Inventory'));
+const KitchenBoard = lazy(() => import('./pages/KitchenBoard'));
 const Deals = lazy(() => import('./pages/Deals'));
 const Riders = lazy(() => import('./pages/Riders'));
 const Slips = lazy(() => import('./pages/Slips'));
@@ -42,6 +43,7 @@ export default function App() {
         >
           <Route index element={<Dashboard />} />
           <Route path="orders" element={<Orders />} />
+          <Route path="kitchen" element={<KitchenBoard />} />
           <Route path="pos" element={<POS />} />
           <Route path="categories" element={<Categories />} />
           <Route path="menu" element={<MenuItems />} />

@@ -18,7 +18,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.message || error.message || 'Request failed';
+    const message =
+      error.response?.data?.message ||
+      (error.code === 'ERR_NETWORK'
+        ? 'Cannot reach API. Check Kitchen site env (VITE_API_BASE_URL).'
+        : error.message) ||
+      'Request failed';
     if (error.response?.status === 401) clearAuth();
     return Promise.reject(new Error(message));
   },

@@ -94,9 +94,9 @@ export default function Login() {
         </form>
 
         <p className="login-hint">
-          Admin creates your account under Staff with role{' '}
-          <strong>{mode === 'kitchen' ? 'Kitchen' : 'Rider'}</strong>. Admin accounts cannot sign
-          in here.
+          Ask admin to create your Staff account with role{' '}
+          <strong>{mode === 'kitchen' ? 'Kitchen' : 'Rider'}</strong>.
+          Demo logins: {mode === 'kitchen' ? 'kitchen@restaurant.com / Kitchen@123' : 'rider@restaurant.com / Rider@123'}
         </p>
       </div>
     </div>

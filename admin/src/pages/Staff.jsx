@@ -163,6 +163,10 @@ export default function Staff() {
       toast.error('Password must be at least 6 characters');
       return;
     }
+    if (form.role === 'rider' && !form.phone.trim()) {
+      toast.error('Phone is required for rider accounts');
+      return;
+    }
 
     setSaving(true);
     try {
@@ -180,7 +184,13 @@ export default function Staff() {
         toast.success('Staff member updated');
       } else {
         await staffService.create(payload);
-        toast.success('Staff member added');
+        if (form.role === 'kitchen') {
+          toast.success('Kitchen staff added — they sign in on the Kitchen site');
+        } else if (form.role === 'rider') {
+          toast.success('Rider added — they sign in on the Kitchen site (Rider tab)');
+        } else {
+          toast.success('Staff member added');
+        }
       }
 
       closeModal();

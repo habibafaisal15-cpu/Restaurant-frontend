@@ -75,7 +75,7 @@ export default function Login() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={mode === 'kitchen' ? 'kitchen@restaurant.com' : 'rider@restaurant.com'}
+              placeholder={mode === 'kitchen' ? 'kitchen.ops@restaurant.com' : 'rider@restaurant.com'}
             />
           </label>
           <label>
@@ -96,7 +96,7 @@ export default function Login() {
         <p className="login-hint">
           Ask admin to create your Staff account with role{' '}
           <strong>{mode === 'kitchen' ? 'Kitchen' : 'Rider'}</strong>.
-          Demo logins: {mode === 'kitchen' ? 'kitchen@restaurant.com / Kitchen@123' : 'rider@restaurant.com / Rider@123'}
+          Demo logins: {mode === 'kitchen' ? 'kitchen.ops@restaurant.com / Kitchen@123' : 'rider@restaurant.com / Rider@123'}
         </p>
       </div>
     </div>

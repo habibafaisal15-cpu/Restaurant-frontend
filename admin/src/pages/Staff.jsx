@@ -391,14 +391,21 @@ export default function Staff() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="staff-phone">Contact</label>
+            <label htmlFor="staff-phone">
+              Contact {form.role === 'rider' ? '*' : ''}
+            </label>
             <input
               id="staff-phone"
               type="tel"
               className="form-control"
+              required={form.role === 'rider'}
               value={form.phone}
               onChange={(e) => updateForm('phone', e.target.value)}
-              placeholder="+92 300 1234567"
+              placeholder={
+                form.role === 'rider'
+                  ? 'Required for rider assignment'
+                  : '+92 300 1234567'
+              }
             />
           </div>
         </div>

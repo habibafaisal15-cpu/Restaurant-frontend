@@ -13,15 +13,16 @@ export function AuthProvider({ children }) {
     const data = unwrap(
       await api.post('/auth/login', { email, password, portal: 'kitchen' }),
     );
-    const role = String(data.admin?.role || '').toLowerCase();
+    const account = data.admin || data.user || {};
+    const role = String(account.role || '').toLowerCase();
     if (role !== 'kitchen') {
       throw new Error('Only kitchen staff can sign in here');
     }
     const nextUser = {
-      id: data.admin?.id,
-      name: data.admin?.full_name || data.admin?.name || email,
-      email: data.admin?.email || email,
-      phone: data.admin?.phone || null,
+      id: account.id,
+      name: account.full_name || account.name || email,
+      email: account.email || email,
+      phone: account.phone || null,
       role: 'kitchen',
     };
     setAuth(data.token, nextUser);
@@ -35,15 +36,16 @@ export function AuthProvider({ children }) {
     const data = unwrap(
       await api.post('/auth/login', { email, password, portal: 'rider' }),
     );
-    const role = String(data.admin?.role || '').toLowerCase();
+    const account = data.admin || data.user || {};
+    const role = String(account.role || '').toLowerCase();
     if (role !== 'rider') {
       throw new Error('Only riders can sign in here');
     }
     const nextUser = {
-      id: data.admin?.id,
-      name: data.admin?.full_name || data.admin?.name || email,
-      email: data.admin?.email || email,
-      phone: data.admin?.phone || null,
+      id: account.id,
+      name: account.full_name || account.name || email,
+      email: account.email || email,
+      phone: account.phone || null,
       role: 'rider',
     };
     setAuth(data.token, nextUser);

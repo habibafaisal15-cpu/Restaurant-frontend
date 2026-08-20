@@ -1,7 +1,12 @@
 import { io } from 'socket.io-client';
 import { getToken, getUser } from '../utils/storage';
 
-const WS_URL = import.meta.env.VITE_WS_URL ?? '';
+const PRODUCTION_WS =
+  'https://restaurantapp-backend-production-7986.up.railway.app';
+
+const WS_URL =
+  import.meta.env.VITE_WS_URL ||
+  (import.meta.env.PROD ? PRODUCTION_WS : '');
 
 let socket;
 

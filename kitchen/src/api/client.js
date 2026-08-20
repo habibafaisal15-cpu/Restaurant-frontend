@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { clearAuth, getToken } from '../utils/storage';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+const PRODUCTION_API =
+  'https://restaurantapp-backend-production-7986.up.railway.app/api/v1';
+
+const baseURL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? PRODUCTION_API : '/api/v1');
 
 export const api = axios.create({
   baseURL,

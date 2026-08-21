@@ -292,7 +292,9 @@ function Menu() {
         </div>
 
         <aside className="menu-explore__aside">
-          <OrderPanel />
+          <div className="menu-explore__aside-sticky">
+            <OrderPanel />
+          </div>
         </aside>
       </div>
     </section>

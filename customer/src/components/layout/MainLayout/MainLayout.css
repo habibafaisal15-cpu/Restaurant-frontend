@@ -1,3 +1,8 @@
+.main-layout,
+.main-layout__content {
+  overflow: visible;
+}
+
 .main-layout {
   min-height: 100vh;
   display: flex;

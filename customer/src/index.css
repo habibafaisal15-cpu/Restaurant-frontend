@@ -35,7 +35,8 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   letter-spacing: 0.01em;
-  overflow-x: hidden;
+  /* clip avoids creating a scroll container that breaks position:sticky */
+  overflow-x: clip;
   transition: background-color 0.35s var(--ease-soft), color 0.35s var(--ease-soft);
 }
 
@@ -47,7 +48,7 @@ svg {
 }
 
 #root {
-  overflow-x: hidden;
+  overflow-x: clip;
   min-width: 0;
 }
 

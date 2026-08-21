@@ -11,6 +11,11 @@ import RiderInfo from '../../components/order/RiderInfo';
 import { ORDER_STATUS, ROUTES } from '../../constants';
 import { useOrder } from '../../context';
 import { useOrderTracking } from '../../hooks/useOrderTracking';
+import {
+  pushNotification,
+  rememberOrder,
+  updateOrderInHistory,
+} from '../../utils/orderHistory';
 import './OrderTracking.css';
 
 const STATUS_HEADING = {
@@ -73,6 +78,26 @@ function OrderTracking() {
       setPopupOpen(true);
     }
   }, [orderId, popupDismissed, resolvedOrder.status, resolvedRider]);
+
+  useEffect(() => {
+    if (!order?.id) return;
+    rememberOrder(order);
+    updateOrderInHistory(order.id, { status: order.status, total: order.total });
+    window.dispatchEvent(new Event('customer-orders'));
+  }, [order?.id, order?.status, order?.total, order]);
+
+  useEffect(() => {
+    if (!order?.id || !order?.status) return;
+    const key = `notif-status-${order.id}-${order.status}`;
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, '1');
+    pushNotification({
+      title: 'Order update',
+      body: `Your order is now ${String(order.status).replace(/_/g, ' ')}.`,
+      orderId: order.id,
+    });
+    window.dispatchEvent(new Event('customer-notifications'));
+  }, [order?.id, order?.status]);
 
   const handleRiderReady = useCallback(
     (nextRider) => {

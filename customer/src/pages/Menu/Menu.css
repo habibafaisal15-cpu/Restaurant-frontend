@@ -15,9 +15,14 @@
 
 .menu-explore__aside {
   position: sticky;
-  top: 10rem;
+  top: 5.5rem;
   z-index: 20;
   align-self: start;
+  max-height: calc(100vh - 6.5rem);
+}
+
+.menu-explore__aside .order-panel {
+  max-height: calc(100vh - 6.5rem);
 }
 
 .menu-explore__section {

@@ -226,7 +226,18 @@ export function mapMenuItem(row) {
     image: resolveMediaUrl(row.image_url || row.image),
     available,
     active: row.is_active ?? row.active ?? true,
-    tags: row.tags || [],
+    tags: Array.isArray(row.tags)
+      ? row.tags
+      : typeof row.tags === 'string' && row.tags.trim()
+        ? (() => {
+            try {
+              const parsed = JSON.parse(row.tags);
+              return Array.isArray(parsed) ? parsed : [];
+            } catch {
+              return row.tags.split(',').map((t) => t.trim()).filter(Boolean);
+            }
+          })()
+        : [],
     availabilityStatus: row.availability_status,
     createdAt: row.created_at || row.createdAt,
     updatedAt: row.updated_at || row.updatedAt,
@@ -302,6 +313,7 @@ export function toMenuItemPayload(payload) {
     available_for_delivery: payload.available,
     in_stock: payload.available,
     is_active: payload.active,
+    tags: Array.isArray(payload.tags) ? payload.tags : [],
   };
 }
 

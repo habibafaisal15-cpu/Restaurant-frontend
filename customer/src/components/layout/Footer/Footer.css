@@ -74,6 +74,16 @@
   color: var(--color-gold-bright);
 }
 
+.app-footer__loops {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.app-footer__loops sup {
+  font-size: 0.65em;
+  margin-left: 0.05em;
+}
+
 @media (max-width: 720px) {
   .app-footer__inner {
     grid-template-columns: 1fr;

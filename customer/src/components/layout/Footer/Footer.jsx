@@ -37,6 +37,9 @@ function Footer() {
       <div className="app-footer__bottom">
         <p>
           © {new Date().getFullYear()} {brandName}
+          <span className="app-footer__loops">
+            {' '}· Powered by loops<sup>®</sup>
+          </span>
         </p>
         <div className="app-footer__bottom-links">
           {FOOTER_LEGAL_LINKS.map((link) => (

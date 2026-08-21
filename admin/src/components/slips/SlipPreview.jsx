@@ -11,7 +11,7 @@ const SLIP_TITLES = {
 
 function formatMoney(amount) {
   const num = Number(amount ?? 0);
-  return `Rs ${num.toLocaleString('en-PK')}`;
+  return `PKR ${num.toLocaleString('en-PK')}`;
 }
 
 function formatDateTime(dateStr) {
@@ -578,7 +578,14 @@ export default function SlipPreview({
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
 
       const orderNum = order?.orderNumber ?? order?.id ?? 'slip';
-      pdf.save(`${slipType.toLowerCase()}-${orderNum}.pdf`);
+      const safeType = String(slipType || 'receipt')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      const safeOrder = String(orderNum)
+        .replace(/[^a-zA-Z0-9_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      pdf.save(`${safeType || 'receipt'}-${safeOrder || 'slip'}.pdf`);
     } catch (err) {
       console.error('PDF download failed:', err);
     } finally {

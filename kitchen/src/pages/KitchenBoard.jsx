@@ -19,7 +19,7 @@ import * as ordersApi from '../services/orders';
 import { connectKitchenSocket, onKitchenEvents } from '../api/socket';
 
 function money(n) {
-  return `Rs. ${Number(n || 0).toLocaleString('en-PK')}`;
+  return `PKR ${Number(n || 0).toLocaleString('en-PK')}`;
 }
 
 function initials(name = '') {

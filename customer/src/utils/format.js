@@ -1,9 +1,11 @@
-export const formatCurrency = (amount, currency = 'PKR') =>
-  new Intl.NumberFormat('en-PK', {
-    style: 'currency',
-    currency,
+export const formatCurrency = (amount, currency = 'PKR') => {
+  const num = Number(amount);
+  const safe = Number.isFinite(num) ? num : 0;
+  const formatted = new Intl.NumberFormat('en-PK', {
     maximumFractionDigits: 0,
-  }).format(amount || 0);
+  }).format(safe);
+  return `${currency} ${formatted}`;
+};
 
 export const formatPhone = (phone) => {
   if (!phone) return '';

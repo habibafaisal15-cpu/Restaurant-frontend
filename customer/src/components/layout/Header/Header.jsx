@@ -6,6 +6,7 @@ import {
   useNavDrawer,
   useTheme,
 } from '../../../context';
+import { CustomerActionButtons } from '../CustomerPanels';
 import './Header.css';
 
 function ModeIcon({ theme }) {
@@ -94,6 +95,15 @@ function Header({ variant = 'page' }) {
           >
             Menu
           </Link>
+
+          <CustomerActionButtons
+            onOpenOrders={() =>
+              window.dispatchEvent(new Event('open-customer-orders'))
+            }
+            onOpenNotifications={() =>
+              window.dispatchEvent(new Event('open-customer-notifications'))
+            }
+          />
 
           <button
             type="button"

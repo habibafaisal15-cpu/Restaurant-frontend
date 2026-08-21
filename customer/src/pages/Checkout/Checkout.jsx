@@ -23,6 +23,7 @@ import {
   processPayment,
 } from '../../services/paymentService';
 import { formatCurrency } from '../../utils/format';
+import { pushNotification, rememberOrder } from '../../utils/orderHistory';
 import './Checkout.css';
 
 const FLOW_STEPS = [
@@ -297,6 +298,14 @@ function Checkout() {
 
       setActiveOrder(order);
       localStorage.setItem(STORAGE_KEYS.ORDER_ID, order.id);
+      rememberOrder(order);
+      pushNotification({
+        title: 'Order placed',
+        body: `Order ${order.orderNumber || order.id} is confirmed.`,
+        orderId: order.id,
+      });
+      window.dispatchEvent(new Event('customer-orders'));
+      window.dispatchEvent(new Event('customer-notifications'));
       clearCart();
       closeLocationModal();
       setRiderPopup({ open: true, orderId: order.id });
@@ -475,7 +484,7 @@ function Checkout() {
                   <div className="order-form__section checkout-payment-fields">
                     <h3 className="order-form__section-title">Wallet details</h3>
                     <Input
-                      label="JazzCash / EasyPaisa number"
+                      label="Mobile wallet number"
                       name="walletPhone"
                       type="tel"
                       value={formValues.walletPhone || ''}

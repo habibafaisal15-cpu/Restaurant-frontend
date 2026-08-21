@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../../constants';
 import { useNavDrawer } from '../../../context';
+import { CustomerActionButtons } from '../../layout/CustomerPanels';
 import CategoryPills from '../CategoryPills';
 import './MenuTopBar.css';
 
@@ -38,6 +39,16 @@ function MenuTopBar({
             <span className="menu-top__divider" aria-hidden="true" />
 
             <h1 className="menu-top__title">Menu</h1>
+
+            <CustomerActionButtons
+              className="menu-top__actions"
+              onOpenOrders={() =>
+                window.dispatchEvent(new Event('open-customer-orders'))
+              }
+              onOpenNotifications={() =>
+                window.dispatchEvent(new Event('open-customer-notifications'))
+              }
+            />
           </nav>
         </div>
 

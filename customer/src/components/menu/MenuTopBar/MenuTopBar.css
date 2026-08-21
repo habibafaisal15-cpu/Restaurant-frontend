@@ -103,6 +103,16 @@
   align-items: center;
 }
 
+.menu-top__actions {
+  margin-left: auto;
+}
+
+.menu-top__actions .customer-actions__btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+
 [data-theme='day'] .menu-top__title {
   color: var(--color-gold-bright);
 }

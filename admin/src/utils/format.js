@@ -14,8 +14,8 @@ function toDate(value) {
 
 export function formatPKR(amount) {
   const num = Number(amount);
-  if (Number.isNaN(num)) return 'Rs 0';
-  return `Rs ${PKR_FORMATTER.format(num)}`;
+  if (Number.isNaN(num)) return 'PKR 0';
+  return `PKR ${PKR_FORMATTER.format(num)}`;
 }
 
 export function formatDate(date) {

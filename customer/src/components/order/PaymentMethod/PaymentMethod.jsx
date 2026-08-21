@@ -16,8 +16,8 @@ const OPTIONS = [
   },
   {
     value: PAYMENT_METHODS.ONLINE,
-    label: 'Online / Wallet',
-    description: 'JazzCash, EasyPaisa, or bank transfer.',
+    label: 'Mobile wallet',
+    description: 'Pay with your mobile wallet account.',
     icon: 'wallet',
   },
 ];

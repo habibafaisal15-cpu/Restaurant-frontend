@@ -6,6 +6,8 @@ export const STORAGE_KEYS = {
   BRANCH_ID: 'selected_branch_id',
   CART: 'customer_cart',
   ORDER_ID: 'active_order_id',
+  ORDER_HISTORY: 'customer_order_history',
+  NOTIFICATIONS: 'customer_notifications',
   THEME: 'site_theme',
   LOCATION_PROMPT_DISMISSED: 'location_prompt_dismissed',
 };

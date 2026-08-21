@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import LocationModal from '../../location/LocationModal';
 import { ROUTES } from '../../../constants';
@@ -6,12 +6,18 @@ import { useLocationContext, useNavDrawer } from '../../../context';
 import Footer from '../Footer';
 import Header from '../Header';
 import SideDrawer from '../SideDrawer';
+import {
+  NotificationsSidePanel,
+  OrdersSidePanel,
+} from '../CustomerPanels';
 import './MainLayout.css';
 
 function MainLayout() {
   const { pathname } = useLocation();
   const { drawerOpen, closeDrawer } = useNavDrawer();
   const { isLocationModalOpen } = useLocationContext();
+  const [ordersOpen, setOrdersOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const isHome = pathname === ROUTES.HOME;
   const isMenu = pathname === ROUTES.MENU;
   const isCart = pathname === ROUTES.CART;
@@ -35,6 +41,17 @@ function MainLayout() {
     };
   }, [hideChromeHeader, drawerOpen, isLocationModalOpen, closeDrawer]);
 
+  useEffect(() => {
+    const openOrders = () => setOrdersOpen(true);
+    const openNotifications = () => setNotificationsOpen(true);
+    window.addEventListener('open-customer-orders', openOrders);
+    window.addEventListener('open-customer-notifications', openNotifications);
+    return () => {
+      window.removeEventListener('open-customer-orders', openOrders);
+      window.removeEventListener('open-customer-notifications', openNotifications);
+    };
+  }, []);
+
   const layoutClass = isHome
     ? 'main-layout main-layout--home'
     : isMenu
@@ -54,6 +71,11 @@ function MainLayout() {
       <Footer />
       <SideDrawer open={drawerOpen} onClose={closeDrawer} />
       <LocationModal />
+      <OrdersSidePanel open={ordersOpen} onClose={() => setOrdersOpen(false)} />
+      <NotificationsSidePanel
+        open={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+      />
     </div>
   );
 }

@@ -77,7 +77,7 @@ export async function processPayment({
   if (method === PAYMENT_METHODS.ONLINE) {
     const phone = digitsOnly(walletPhone);
     if (phone.length < 10) {
-      throw new Error('Enter a valid JazzCash / EasyPaisa number.');
+      throw new Error('Enter a valid mobile wallet number.');
     }
 
     return {

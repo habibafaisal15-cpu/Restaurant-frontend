@@ -5,6 +5,8 @@ import {
   ROUTES,
 } from '../../../constants';
 import { useSiteSettings } from '../../../context/SiteSettingsContext';
+import loopsLogoDark from '../../../assets/brand/loops-logo-dark.png';
+import loopsLogoLight from '../../../assets/brand/loops-logo-light.png';
 import './Footer.css';
 
 function Footer() {
@@ -35,10 +37,26 @@ function Footer() {
       </div>
 
       <div className="app-footer__bottom">
-        <p>
-          © {new Date().getFullYear()} {brandName}
+        <p className="app-footer__credit">
+          <span>
+            © {new Date().getFullYear()} {brandName}
+          </span>
           <span className="app-footer__loops">
-            {' '}· Powered by loops<sup>®</sup>
+            <span className="app-footer__loops-label">Powered by</span>
+            <span className="app-footer__loops-mark" aria-label="loops">
+              <img
+                className="app-footer__loops-logo app-footer__loops-logo--dark"
+                src={loopsLogoDark}
+                alt="loops"
+              />
+              <img
+                className="app-footer__loops-logo app-footer__loops-logo--light"
+                src={loopsLogoLight}
+                alt=""
+                aria-hidden="true"
+              />
+              <sup>®</sup>
+            </span>
           </span>
         </p>
         <div className="app-footer__bottom-links">
